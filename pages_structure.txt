@@ -1,0 +1,110 @@
+Folder PATH listing
+Volume serial number is 766B-8792
+E:\LAPTOP-MARKETPLACE\CLIENT\SRC\PAGES
+|   AdminDashboard.css
+|   AdminDashboard.js
+|   AdminDashboard.professional.css
+|   AuthPages.css
+|   CompanyAboutPage.css
+|   CompanyAboutPage.js
+|   ContactPage.css
+|   ContactPage.js
+|   DealsPage.css
+|   DealsPage.js
+|   DealsPageNew.js
+|   DealsPageSafe.js
+|   DealsPageSimple.js
+|   HomePage.css
+|   HomePage.enhanced.css
+|   HomePage.js
+|   HomePage.professional.css
+|   InstallmentGuidePage.css
+|   InstallmentGuidePage.js
+|   ManagerDashboard.css
+|   ManagerDashboard.js
+|   NewsPage.css
+|   NewsPage.js
+|   PartnerDashboard.js
+|   PaymentGuidePage.css
+|   PaymentGuidePage.js
+|   StoresPage.css
+|   StoresPage.js
+|   TermsPage.css
+|   TermsPage.js
+|   
++---admin
++---auth
++---chat
+|       HuongDanMuaHang.js
+|       
++---common
+|       AboutPage.css
+|       AboutPage.js
+|       BlogPage.css
+|       BlogPage.js
+|       CareersPage.css
+|       CareersPage.js
+|       FAQPage.css
+|       FAQPage.js
+|       GuidePage.css
+|       GuidePage.js
+|       
++---notification
+|       PolicyPage.css
+|       PolicyPages.css
+|       
++---order
++---partner
+|       PartnerDashboard.css
+|       PartnerDashboard.js
+|       
++---product
+|       BestSellersPage.css
+|       BestSellersPage.js
+|       ProductDetailPage.css
+|       ProductDetailPage.js
+|       ProductDetailPageSimple.js
+|       ProductDetailPageUltra.css
+|       ProductDetailPageUltra.js
+|       ProductDetailPageV2.js
+|       ProductDetailTest.js
+|       TestProductPage.js
+|       
++---review
+\---user
+    +---auth
+    |       AuthPages.css
+    |       ForgotPasswordPage.js
+    |       LoginPage.js
+    |       RegisterPage.js
+    |       ResetPasswordPage.js
+    |       
+    +---cart
+    |       CartPage.backup.css
+    |       CartPage.css
+    |       CartPage.improved.css
+    |       CartPage.js
+    |       CheckoutPage.css
+    |       CheckoutPage.js
+    |       
+    +---orders
+    |       OrderDetailPage.css
+    |       OrderDetailPage.js
+    |       OrdersPage.css
+    |       OrdersPage.js
+    |       
+    +---policies
+    |       PolicyPage.css
+    |       ReturnPolicyPage.js
+    |       ShippingPolicyPage.js
+    |       WarrantyPolicyPage.js
+    |       
+    +---profile
+    |       ProfilePage.css
+    |       ProfilePage.js
+    |       ProfilePage.old.js
+    |       
+    \---wishlist
+            WishlistPage.css
+            WishlistPage.js
+            

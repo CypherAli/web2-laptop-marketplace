@@ -1,0 +1,20 @@
+{
+  "name": "laptop-marketplace",
+  "version": "1.0.0",
+  "description": "Laptop Marketplace - Full Stack Application",
+  "scripts": {
+    "install-all": "cd server && npm install && cd ../client && npm install",
+    "server": "cd server && npm start",
+    "client": "cd client && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "cd client && npm run build"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "react-live-chat-loader": "^2.11.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
