@@ -52,23 +52,23 @@ const QuickViewModal = ({ product, onClose, onAddToCart }) => {
         return {
             ...product,
             // Prioritize specifications object over direct properties
-            processor: specs.processor || product.processor || 'Đang cập nhật',
-            ram: specs.ram || product.ram || 'Đang cập nhật',
-            storage: specs.storage || product.storage || 'Đang cập nhật',
-            screen: specs.display || product.screen || 'Đang cập nhật',
+            processor: specs.processor || product.processor || 'Updating...',
+            ram: specs.ram || product.ram || 'Updating...',
+            storage: specs.storage || product.storage || 'Updating...',
+            screen: specs.display || product.screen || 'Updating...',
             graphics: specs.graphics || product.graphics || 'Tích hợp',
             os: specs.operatingSystem || product.os || 'Windows 11',
             weight: specs.weight || product.weight || '~2kg',
-            description: product.description || 'Sản phẩm laptop chính hãng với cấu hình mạnh mẽ, thiết kế hiện đại, phù hợp cho công việc và giải trí. Bảo hành chính hãng toàn quốc.',
+            description: product.description || 'Genuine laptop product with powerful configuration, modern design, suitable for work and entertainment. Official nationwide warranty.',
             features: product.features && product.features.length > 0 ? product.features : [
-                'Sản phẩm mới 100%, nguyên seal',
+                'Brand new 100%, original seal',
                 'Bảo hành chính hãng 12-36 tháng',
-                'Giao hàng toàn quốc, thanh toán linh hoạt',
-                'Hỗ trợ trả góp 0% lãi suất',
+                'Nationwide delivery, flexible payment',
+                '0% interest installment support',
                 'Tặng kèm balo + chuột không dây'
             ],
             brand: product.brand || 'Laptop',
-            name: product.name || 'Sản phẩm laptop'
+            name: product.name || 'Laptop product'
         };
     }, [product]);
 
@@ -184,7 +184,7 @@ const QuickViewModal = ({ product, onClose, onAddToCart }) => {
 
                         {/* Specs */}
                         <div className="quickview-specs">
-                            <h4>Thông số kỹ thuật</h4>
+                            <h4>Specifications</h4>
                             <div className="quickview-spec-grid">
                                 <div className="quickview-spec-item">
                                     <span className="spec-label">CPU:</span>
@@ -195,34 +195,34 @@ const QuickViewModal = ({ product, onClose, onAddToCart }) => {
                                     <span className="spec-value">{displayProduct.ram}</span>
                                 </div>
                                 <div className="quickview-spec-item">
-                                    <span className="spec-label">Ổ cứng:</span>
+                                    <span className="spec-label">Storage:</span>
                                     <span className="spec-value">{displayProduct.storage}</span>
                                 </div>
                                 <div className="quickview-spec-item">
-                                    <span className="spec-label">Màn hình:</span>
+                                    <span className="spec-label">Display:</span>
                                     <span className="spec-value">{displayProduct.screen}</span>
                                 </div>
                                 {displayProduct.graphics && (
                                     <div className="quickview-spec-item">
-                                        <span className="spec-label">Card đồ họa:</span>
+                                        <span className="spec-label">Graphics:</span>
                                         <span className="spec-value">{displayProduct.graphics}</span>
                                     </div>
                                 )}
                                 {displayProduct.os && (
                                     <div className="quickview-spec-item">
-                                        <span className="spec-label">Hệ điều hành:</span>
+                                        <span className="spec-label">OS:</span>
                                         <span className="spec-value">{displayProduct.os}</span>
                                     </div>
                                 )}
                                 {displayProduct.weight && (
                                     <div className="quickview-spec-item">
-                                        <span className="spec-label">Trọng lượng:</span>
+                                        <span className="spec-label">Weight:</span>
                                         <span className="spec-value">{displayProduct.weight}</span>
                                     </div>
                                 )}
                                 {displayProduct.specifications?.battery && (
                                     <div className="quickview-spec-item">
-                                        <span className="spec-label">Pin:</span>
+                                        <span className="spec-label">Battery:</span>
                                         <span className="spec-value">{displayProduct.specifications.battery}</span>
                                     </div>
                                 )}
@@ -231,14 +231,14 @@ const QuickViewModal = ({ product, onClose, onAddToCart }) => {
 
                         {/* Description */}
                         <div className="quickview-description">
-                            <h4>Mô tả sản phẩm</h4>
+                            <h4>Product Description</h4>
                             <p className="description-text">{displayProduct.description}</p>
                         </div>
 
                         {/* Features */}
                         {displayProduct.features && displayProduct.features.length > 0 && (
                             <div className="quickview-features">
-                                <h4>Điểm nổi bật</h4>
+                                <h4>Highlights</h4>
                                 <ul className="features-list">
                                     {displayProduct.features.map((feature, index) => (
                                         <li key={index}>✓ {feature}</li>
@@ -246,6 +246,22 @@ const QuickViewModal = ({ product, onClose, onAddToCart }) => {
                                 </ul>
                             </div>
                         )}
+
+                        {/* Stock Status */}
+                        <div className="quickview-stock-status" style={{
+                            padding: '12px 20px',
+                            borderRadius: '8px',
+                            marginBottom: '15px',
+                            background: (displayProduct.stock && displayProduct.stock > 0) ? '#d4edda' : '#f8d7da',
+                            color: (displayProduct.stock && displayProduct.stock > 0) ? '#155724' : '#721c24',
+                            fontWeight: 'bold',
+                            textAlign: 'center'
+                        }}>
+                            {(displayProduct.stock && displayProduct.stock > 0) 
+                                ? `✓ Còn ${displayProduct.stock} sản phẩm` 
+                                : '✗ Hết hàng'
+                            }
+                        </div>
 
                         {/* Action Buttons */}
                         <div className="quickview-actions">
@@ -255,8 +271,13 @@ const QuickViewModal = ({ product, onClose, onAddToCart }) => {
                                     onAddToCart(displayProduct);
                                     onClose();
                                 }}
+                                disabled={!displayProduct.stock || displayProduct.stock <= 0}
+                                style={{
+                                    opacity: (!displayProduct.stock || displayProduct.stock <= 0) ? 0.5 : 1,
+                                    cursor: (!displayProduct.stock || displayProduct.stock <= 0) ? 'not-allowed' : 'pointer'
+                                }}
                             >
-                                <FiShoppingCart /> Thêm vào giỏ
+                                <FiShoppingCart /> {(displayProduct.stock && displayProduct.stock > 0) ? 'Thêm vào giỏ' : 'Hết hàng'}
                             </button>
                             <Link 
                                 to={`/product/${displayProduct._id}`}

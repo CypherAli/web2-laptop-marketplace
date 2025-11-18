@@ -31,7 +31,7 @@ const NotificationCenter = ({ onCountChange }) => {
             }
         } catch (error) {
             console.error('Error fetching notifications:', error);
-            toast.error('Không thể tải thông báo');
+            toast.error('Cannot load notifications');
         } finally {
             setLoading(false);
         }
@@ -51,35 +51,35 @@ const NotificationCenter = ({ onCountChange }) => {
         try {
             await axios.post('/notifications/mark-all-read');
             fetchNotifications();
-            toast.success('Đã đánh dấu tất cả là đã đọc');
+            toast.success('Marked all as read');
         } catch (error) {
-            toast.error('Không thể đánh dấu tất cả');
+            toast.error('Failed to mark all');
         }
     };
 
     const handleDelete = async (notificationId) => {
-        if (!window.confirm('Bạn có chắc muốn xóa thông báo này?')) {
+        if (!window.confirm('Are you sure you want to delete this notification?')) {
             return;
         }
 
         try {
             await axios.delete(`/notifications/${notificationId}`);
             fetchNotifications();
-            toast.success('Đã xóa thông báo');
+            toast.success('Notification deleted');
         } catch (error) {
             toast.error('Không thể xóa thông báo');
         }
     };
 
     const handleDeleteAllRead = async () => {
-        if (!window.confirm('Bạn có chắc muốn xóa tất cả thông báo đã đọc?')) {
+        if (!window.confirm('Are you sure you want to delete all read notifications?')) {
             return;
         }
 
         try {
             await axios.delete('/notifications/read');
             fetchNotifications();
-            toast.success('Đã xóa tất cả thông báo đã đọc');
+            toast.success('Deleted all read notifications');
         } catch (error) {
             toast.error('Không thể xóa thông báo');
         }
@@ -147,7 +147,7 @@ const NotificationCenter = ({ onCountChange }) => {
         return (
             <div className="notification-loading">
                 <div className="spinner"></div>
-                <p>Đang tải thông báo...</p>
+                <p>Loading notifications...</p>
             </div>
         );
     }
@@ -164,7 +164,7 @@ const NotificationCenter = ({ onCountChange }) => {
                             className="btn-mark-all-read"
                             onClick={handleMarkAllAsRead}
                         >
-                            <FiCheck /> Đánh dấu tất cả là đã đọc
+                            <FiCheck /> Mark all as read
                         </button>
                     )}
                     <button 
@@ -182,7 +182,7 @@ const NotificationCenter = ({ onCountChange }) => {
                     className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
                     onClick={() => setFilter('all')}
                 >
-                    Tất cả ({notifications.length})
+                    All ({notifications.length})
                 </button>
                 <button 
                     className={`filter-btn ${filter === 'unread' ? 'active' : ''}`}
@@ -292,7 +292,7 @@ const NotificationCenter = ({ onCountChange }) => {
                 <div className="settings-options">
                     <label className="setting-item">
                         <input type="checkbox" defaultChecked />
-                        <span>Thông báo đơn hàng</span>
+                        <span>Order notifications</span>
                     </label>
                     <label className="setting-item">
                         <input type="checkbox" defaultChecked />

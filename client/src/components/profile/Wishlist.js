@@ -22,7 +22,7 @@ const Wishlist = () => {
             setWishlist(response.data);
         } catch (error) {
             console.error('Fetch wishlist error:', error);
-            toast.error('Không thể tải danh sách yêu thích');
+            toast.error('Cannot load wishlist');
         } finally {
             setLoading(false);
         }
@@ -32,10 +32,10 @@ const Wishlist = () => {
         try {
             await axios.delete(`/user/wishlist/${productId}`);
             setWishlist(wishlist.filter(item => item.product._id !== productId));
-            toast.success('Đã xóa khỏi danh sách yêu thích');
+            toast.success('Removed from wishlist');
         } catch (error) {
             console.error('Remove wishlist error:', error);
-            toast.error('Không thể xóa sản phẩm');
+            toast.error('Failed to remove product');
         }
     };
 
@@ -45,10 +45,10 @@ const Wishlist = () => {
                 productId: product._id, 
                 quantity: 1 
             });
-            toast.success('Đã thêm vào giỏ hàng');
+            toast.success('Added to cart');
         } catch (error) {
             console.error('Add to cart error:', error);
-            toast.error(error.response?.data?.message || 'Không thể thêm vào giỏ hàng');
+            toast.error(error.response?.data?.message || 'Cannot add to cart');
         }
     };
 
@@ -69,13 +69,13 @@ const Wishlist = () => {
         return (
             <div className="empty-state">
                 <div className="empty-icon">❤️</div>
-                <h3>Danh sách yêu thích trống</h3>
-                <p>Bạn chưa thêm sản phẩm nào vào danh sách yêu thích</p>
+                <h3>Wishlist is empty</h3>
+                <p>You haven't added any products to your wishlist</p>
                 <button 
                     className="btn-primary"
                     onClick={() => navigate('/')}
                 >
-                    Khám phá sản phẩm
+                    Explore Products
                 </button>
             </div>
         );
@@ -86,9 +86,9 @@ const Wishlist = () => {
             <div className="tab-header">
                 <h2>
                     <span className="icon">❤️</span>
-                    Danh sách yêu thích
+                    Wishlist
                 </h2>
-                <p className="subtitle">{wishlist.length} sản phẩm</p>
+                <p className="subtitle">{wishlist.length} {wishlist.length === 1 ? 'product' : 'products'}</p>
             </div>
 
             <div className="wishlist-grid">
@@ -104,12 +104,12 @@ const Wishlist = () => {
                             <button 
                                 className="btn-remove"
                                 onClick={() => handleRemove(item.product._id)}
-                                title="Xóa khỏi yêu thích"
+                                title="Remove from wishlist"
                             >
                                 ×
                             </button>
-                            {item.product?.stock === 0 && (
-                                <div className="out-of-stock-badge">Hết hàng</div>
+                            {(!item.product?.stock || item.product?.stock <= 0) && (
+                                <div className="out-of-stock-badge">Out of Stock</div>
                             )}
                         </div>
                         
@@ -140,16 +140,16 @@ const Wishlist = () => {
                                 <button 
                                     className="btn-add-cart"
                                     onClick={() => handleAddToCart(item.product)}
-                                    disabled={item.product?.stock === 0}
+                                    disabled={!item.product?.stock || item.product?.stock <= 0}
                                 >
                                     <span>🛒</span>
-                                    Thêm vào giỏ
+                                    Add to Cart
                                 </button>
                                 <button 
                                     className="btn-view"
                                     onClick={() => handleViewProduct(item.product._id)}
                                 >
-                                    Xem chi tiết
+                                    View Details
                                 </button>
                             </div>
 

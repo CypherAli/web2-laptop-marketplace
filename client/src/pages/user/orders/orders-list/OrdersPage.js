@@ -32,7 +32,7 @@ const OrdersPage = () => {
             setOrders(Array.isArray(ordersData) ? ordersData : []);
             setError(null);
         } catch (err) {
-            setError('Không thể tải đơn hàng. Vui lòng thử lại.');
+            setError('Cannot load orders. Please try again.');
             setOrders([]);
         } finally {
             setLoading(false);
@@ -40,26 +40,26 @@ const OrdersPage = () => {
     };
 
     const handleCancelOrder = async (orderId) => {
-        if (!window.confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
+        if (!window.confirm('Are you sure you want to cancel this order?')) {
             return;
         }
 
         try {
             await axios.put(`/orders/${orderId}/cancel`);
-            alert('Đơn hàng đã được hủy thành công!');
+            alert('Order has been cancelled successfully!');
             fetchOrders();
         } catch (err) {
-            alert(err.response?.data?.message || 'Không thể hủy đơn hàng');
+            alert(err.response?.data?.message || 'Cannot cancel order');
         }
     };
 
     const getStatusInfo = (status) => {
         const statusMap = {
-            pending: { label: 'Chờ xác nhận', color: '#f39c12', icon: '⏳' },
-            processing: { label: 'Đang xử lý', color: '#3498db', icon: '📦' },
-            shipped: { label: 'Đang giao', color: '#9b59b6', icon: '🚚' },
-            delivered: { label: 'Đã giao', color: '#27ae60', icon: '✅' },
-            cancelled: { label: 'Đã hủy', color: '#e74c3c', icon: '❌' }
+            pending: { label: 'Pending', color: '#f39c12', icon: '⏳' },
+            processing: { label: 'Processing', color: '#3498db', icon: '📦' },
+            shipped: { label: 'Shipping', color: '#9b59b6', icon: '🚚' },
+            delivered: { label: 'Delivered', color: '#27ae60', icon: '✅' },
+            cancelled: { label: 'Cancelled', color: '#e74c3c', icon: '❌' }
         };
         return statusMap[status] || { label: status, color: '#95a5a6', icon: '❓' };
     };
@@ -95,7 +95,7 @@ const OrdersPage = () => {
     if (loading) return (
         <div className="loading-container">
             <div className="spinner"></div>
-            <h2>Đang tải đơn hàng...</h2>
+            <h2>Loading orders...</h2>
         </div>
     );
 
@@ -111,9 +111,9 @@ const OrdersPage = () => {
             <div className="orders-header">
                 <h1>
                     <span className="header-icon">📦</span>
-                    Đơn hàng của tôi
+                    My Orders
                 </h1>
-                <span className="orders-count">{orders.length} đơn hàng</span>
+                <span className="orders-count">{orders.length} {orders.length === 1 ? 'order' : 'orders'}</span>
             </div>
 
             {/* Status Filter Tabs */}
@@ -122,52 +122,52 @@ const OrdersPage = () => {
                     className={`tab ${filterStatus === 'all' ? 'active' : ''}`}
                     onClick={() => setFilterStatus('all')}
                 >
-                    Tất cả ({statusCounts.all})
+                    All ({statusCounts.all})
                 </button>
                 <button 
                     className={`tab ${filterStatus === 'pending' ? 'active' : ''}`}
                     onClick={() => setFilterStatus('pending')}
                 >
-                    ⏳ Chờ xác nhận ({statusCounts.pending})
+                    ⏳ Pending ({statusCounts.pending})
                 </button>
                 <button 
                     className={`tab ${filterStatus === 'processing' ? 'active' : ''}`}
                     onClick={() => setFilterStatus('processing')}
                 >
-                    📦 Đang xử lý ({statusCounts.processing})
+                    📦 Processing ({statusCounts.processing})
                 </button>
                 <button 
                     className={`tab ${filterStatus === 'shipped' ? 'active' : ''}`}
                     onClick={() => setFilterStatus('shipped')}
                 >
-                    🚚 Đang giao ({statusCounts.shipped})
+                    🚚 Shipping ({statusCounts.shipped})
                 </button>
                 <button 
                     className={`tab ${filterStatus === 'delivered' ? 'active' : ''}`}
                     onClick={() => setFilterStatus('delivered')}
                 >
-                    ✅ Đã giao ({statusCounts.delivered})
+                    ✅ Delivered ({statusCounts.delivered})
                 </button>
                 <button 
                     className={`tab ${filterStatus === 'cancelled' ? 'active' : ''}`}
                     onClick={() => setFilterStatus('cancelled')}
                 >
-                    ❌ Đã hủy ({statusCounts.cancelled})
+                    ❌ Cancelled ({statusCounts.cancelled})
                 </button>
             </div>
 
             {filteredOrders.length === 0 ? (
                 <div className="no-orders">
                     <div className="empty-icon">📦</div>
-                    <h2>Không có đơn hàng nào</h2>
+                    <h2>No orders found</h2>
                     <p>
                         {filterStatus === 'all' 
-                            ? 'Bạn chưa có đơn hàng nào. Hãy bắt đầu mua sắm!' 
-                            : `Không có đơn hàng ${getStatusInfo(filterStatus).label.toLowerCase()}`
+                            ? 'You have no orders yet. Start shopping!' 
+                            : `No orders with status "${getStatusInfo(filterStatus).label.toLowerCase()}"`
                         }
                     </p>
                     <button onClick={() => navigate('/')} className="shop-btn">
-                        🛍️ Mua sắm ngay
+                                                🛒 Shop Now
                     </button>
                 </div>
             ) : (
@@ -184,7 +184,7 @@ const OrdersPage = () => {
                                         <p className="order-date">{formatDate(order.createdAt)}</p>
                                         {order.paymentMethod && (
                                             <p className="payment-method">
-                                                💳 {order.paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng' : 
+                                                💳 {order.paymentMethod === 'cod' ? 'Cash on Delivery' : 
                                                     order.paymentMethod === 'bank' ? 'Chuyển khoản' :
                                                     order.paymentMethod === 'momo' ? 'Ví MoMo' :
                                                     order.paymentMethod === 'zalopay' ? 'ZaloPay' : 'Khác'}
@@ -200,7 +200,7 @@ const OrdersPage = () => {
                                         </span>
                                         {order.paymentStatus && (
                                             <span className="payment-status">
-                                                {order.paymentStatus === 'paid' ? '✅ Đã thanh toán' : '⏳ Chưa thanh toán'}
+                                                {order.paymentStatus === 'paid' ? '✅ Paid' : '⏳ Unpaid'}
                                             </span>
                                         )}
                                     </div>
@@ -289,7 +289,7 @@ const OrdersPage = () => {
                                             )}
                                             {order.discount > 0 && (
                                                 <div className="price-row discount">
-                                                    <span>Giảm giá:</span>
+                                                    <span>Discount:</span>
                                                     <span>-{order.discount.toLocaleString()} ₫</span>
                                                 </div>
                                             )}
@@ -314,7 +314,7 @@ const OrdersPage = () => {
                                                 onClick={() => handleCancelOrder(order._id)}
                                                 className="btn-cancel"
                                             >
-                                                ❌ Hủy đơn
+                                                ❌ Cancel
                                             </button>
                                         )}
                                         {order.status === 'delivered' && (
@@ -371,7 +371,7 @@ const OrdersPage = () => {
                             </div>
 
                             <div className="detail-section">
-                                <h3>Sản phẩm</h3>
+                                <h3>Products</h3>
                                 {selectedOrder.items.map((item, index) => (
                                     <div key={index} className="detail-item">
                                         <img src={item.imageUrl} alt={item.name} />
@@ -395,7 +395,7 @@ const OrdersPage = () => {
                             )}
 
                             <div className="detail-section total-section">
-                                <h3>Tổng thanh toán</h3>
+                                <h3>Total Payment</h3>
                                 <p className="detail-total">{selectedOrder.totalAmount.toLocaleString()} VNĐ</p>
                             </div>
                         </div>

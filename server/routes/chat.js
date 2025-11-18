@@ -49,6 +49,80 @@ router.get('/partners/search', async (req, res) => {
     }
 });
 
+// Get list of customers who have chatted with partner
+router.get('/chat/partner/:partnerId/customers', async (req, res) => {
+    try {
+        const { partnerId } = req.params;
+        
+        if (!partnerId) {
+            return res.status(400).json({
+                success: false,
+                message: 'Partner ID is required'
+            });
+        }
+        
+        // Get all chats where partner is sender or receiver
+        const chats = await Chat.aggregate([
+            {
+                $match: {
+                    $or: [
+                        { senderId: partnerId },
+                        { receiverId: partnerId }
+                    ],
+                    isDeleted: false
+                }
+            },
+            {
+                $sort: { createdAt: -1 }
+            },
+            {
+                $group: {
+                    _id: {
+                        $cond: [
+                            { $eq: ['$senderId', partnerId] },
+                            '$receiverId',
+                            '$senderId'
+                        ]
+                    },
+                    lastMessage: { $first: '$message' },
+                    lastMessageTime: { $first: '$createdAt' },
+                    customerName: {
+                        $first: {
+                            $cond: [
+                                { $eq: ['$senderId', partnerId] },
+                                '$receiverName',
+                                '$senderName'
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                $sort: { lastMessageTime: -1 }
+            }
+        ]);
+        
+        const customers = chats.map(chat => ({
+            _id: chat._id,
+            name: chat.customerName || 'Khách hàng',
+            lastMessage: chat.lastMessage,
+            lastMessageTime: chat.lastMessageTime
+        }));
+        
+        res.json({
+            success: true,
+            customers,
+            count: customers.length
+        });
+    } catch (error) {
+        console.error('Error getting partner customers:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
+    }
+});
+
 // Get chat history between two users
 router.get('/chat/history/:userId/:partnerId', async (req, res) => {
     try {

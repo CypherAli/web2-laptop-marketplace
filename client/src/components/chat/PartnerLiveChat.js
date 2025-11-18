@@ -25,14 +25,19 @@ const PartnerLiveChat = () => {
     const [unreadCounts, setUnreadCounts] = useState({});
     const messagesEndRef = useRef(null);
 
-    const partnerId = user?._id;
+    // Get partner ID safely
+    const partnerId = user?._id || user?.id;
 
     useEffect(() => {
         // Check if partner is logged in and has valid ID
         if (!user || !partnerId) {
-            console.log('⚠️ Partner not logged in or ID not available');
+            console.log('⚠️ PartnerLiveChat: Partner not logged in or ID not available');
+            console.log('   User:', user);
+            console.log('   Partner ID:', partnerId);
             return;
         }
+
+        console.log('🔌 PartnerLiveChat: Initializing socket for partner:', partnerId);
 
         // Initialize Socket.IO
         const newSocket = io(process.env.REACT_APP_SERVER_URL || 'http://localhost:5000', {
@@ -44,7 +49,10 @@ const PartnerLiveChat = () => {
 
         newSocket.on('connect', () => {
             console.log('✅ Partner connected to chat');
+            console.log('   Partner ID:', partnerId);
+            console.log('   Emitting partner:join...');
             setIsConnected(true);
+            // Join as partner - this registers the partner to receive messages
             newSocket.emit('partner:join', partnerId);
         });
 
@@ -55,6 +63,8 @@ const PartnerLiveChat = () => {
 
         // Receive new message from customer
         newSocket.on('chat:message', (message) => {
+            console.log('📩 Partner received message:', message);
+            
             // If message is for this partner
             if (message.receiverId === partnerId) {
                 // Update customer list
@@ -63,12 +73,24 @@ const PartnerLiveChat = () => {
                 // If currently chatting with this customer, add message
                 if (selectedCustomer && message.senderId === selectedCustomer._id) {
                     setMessages(prev => {
-                        const exists = prev.some(m => m._id === message._id);
-                        if (exists) return prev;
+                        // Check for duplicates more thoroughly
+                        const exists = prev.some(m => 
+                            m._id === message._id || 
+                            (m.message === message.message && 
+                             m.senderId === message.senderId && 
+                             Math.abs(new Date(m.createdAt) - new Date(message.createdAt)) < 2000)
+                        );
+                        
+                        if (exists) {
+                            console.log('⚠️ Duplicate message detected, skipping');
+                            return prev;
+                        }
+                        
+                        console.log('✅ Adding new message from customer');
                         return [...prev, message];
                     });
                 } else {
-                    // Increase unread count
+                    // Increase unread count for other customers
                     setUnreadCounts(prev => ({
                         ...prev,
                         [message.senderId]: (prev[message.senderId] || 0) + 1
@@ -80,8 +102,7 @@ const PartnerLiveChat = () => {
         return () => {
             newSocket.disconnect();
         };
-        // eslint-disable-next-line
-    }, [partnerId, selectedCustomer]);
+    }, [partnerId, selectedCustomer, user]); // Add user as dependency
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -98,8 +119,11 @@ const PartnerLiveChat = () => {
         // Check if partnerId is valid
         if (!partnerId) {
             console.log('⚠️ Cannot load customers: partnerId is undefined');
+            console.log('   User object:', user);
             return;
         }
+
+        console.log('📋 Loading customers for partner:', partnerId);
 
         try {
             const response = await fetch(
@@ -107,11 +131,14 @@ const PartnerLiveChat = () => {
             );
             const data = await response.json();
             
+            console.log('📥 Customers response:', data);
+            
             if (data.success && data.customers) {
                 setCustomers(data.customers);
+                console.log('✅ Loaded', data.customers.length, 'customers');
             }
         } catch (error) {
-            console.error('Error loading customers:', error);
+            console.error('❌ Error loading customers:', error);
         }
     };
 
@@ -158,22 +185,44 @@ const PartnerLiveChat = () => {
             receiverName: selectedCustomer.name,
             message: newMessage.trim(),
             timestamp: new Date(),
-            senderType: 'partner'
+            senderType: 'partner',
+            isTemp: true
         };
 
         setMessages(prev => [...prev, messageData]);
         setNewMessage('');
 
         try {
+            // Send via Socket.IO only (server will save and emit)
             if (socket?.connected) {
+                console.log('📤 Partner sending via socket:', messageData.message);
                 socket.emit('chat:send', messageData);
+                
+                // Mark as sent
+                setTimeout(() => {
+                    setMessages(prev => 
+                        prev.map(msg => 
+                            msg._id === tempId ? { ...msg, isTemp: false } : msg
+                        )
+                    );
+                }, 500);
+            } else {
+                // Fallback to API if socket not connected
+                const response = await fetch('http://localhost:5000/api/chat/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(messageData)
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    setMessages(prev => 
+                        prev.map(msg => 
+                            msg._id === tempId ? { ...data.chat, isTemp: false } : msg
+                        )
+                    );
+                }
             }
-
-            await fetch('http://localhost:5000/api/chat/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(messageData)
-            });
         } catch (error) {
             console.error('Error sending:', error);
             setMessages(prev => prev.filter(m => m._id !== tempId));

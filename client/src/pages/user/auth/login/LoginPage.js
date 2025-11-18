@@ -26,12 +26,12 @@ const LoginPage = () => {
             if (response?.warning) {
                 toast.warning(response.warning);
             } else {
-                toast.success('Đăng nhập thành công!');
+                toast.success('Login successful!');
             }
             
             setTimeout(() => navigate('/'), 500);
         } catch (err) {
-            const errorMsg = err.response?.data?.message || 'Đăng nhập thất bại. Vui lòng kiểm tra email và mật khẩu.';
+            const errorMsg = err.response?.data?.message || 'Login failed. Please check your email and password.';
             setError(errorMsg);
             toast.error(errorMsg);
         } finally {
@@ -51,7 +51,7 @@ const LoginPage = () => {
                             </svg>
                         </div>
                         <h1>Laptop Store</h1>
-                        <p>Nền tảng mua bán laptop chất lượng cao</p>
+                        <p>High-quality laptop marketplace platform</p>
                     </div>
                     <div className="auth-illustration">
                         <div className="floating-laptop">
@@ -71,8 +71,8 @@ const LoginPage = () => {
                 <div className="auth-right">
                     <div className="auth-form-wrapper">
                         <div className="auth-header">
-                            <h2>Đăng Nhập</h2>
-                            <p>Chào mừng trở lại! Vui lòng đăng nhập vào tài khoản của bạn.</p>
+                            <h2>Login</h2>
+                            <p>Welcome back! Please login to your account.</p>
                         </div>
 
                         {error && (
@@ -108,7 +108,7 @@ const LoginPage = () => {
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style={{marginRight: '6px', verticalAlign: 'middle'}}>
                                         <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
                                     </svg>
-                                    Mật khẩu
+                                    Password
                                 </label>
                                 <div className="password-input-wrapper">
                                     <input 
@@ -143,7 +143,7 @@ const LoginPage = () => {
 
                             <div className="form-options">
                                 <Link to="/forgot-password" className="forgot-password-link">
-                                    Quên mật khẩu?
+                                    Forgot password?
                                 </Link>
                             </div>
 
@@ -155,11 +155,11 @@ const LoginPage = () => {
                                 {loading ? (
                                     <>
                                         <span className="btn-spinner"></span>
-                                        <span>Đang đăng nhập...</span>
+                                        <span>Logging in...</span>
                                     </>
                                 ) : (
                                     <>
-                                        <span>Đăng Nhập</span>
+                                        <span>Login</span>
                                         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                                             <path fillRule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
                                         </svg>
@@ -169,13 +169,13 @@ const LoginPage = () => {
                         </form>
 
                         <div className="auth-divider">
-                            <span>Hoặc</span>
+                            <span>Or</span>
                         </div>
 
                         <div className="auth-footer">
                             <p>
-                                Chưa có tài khoản? 
-                                <Link to="/register" className="auth-link">Đăng ký ngay</Link>
+                                Don't have an account? 
+                                <Link to="/register" className="auth-link">Register now</Link>
                             </p>
                         </div>
                     </div>

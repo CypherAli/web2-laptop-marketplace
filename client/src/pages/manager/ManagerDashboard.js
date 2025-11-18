@@ -39,7 +39,7 @@ const ManagerDashboard = () => {
         // Check if partner is approved
         if (user.role === 'partner' && !user.isApproved) {
             // Show pending approval message but don't redirect
-            setError('Tài khoản Partner của bạn đang chờ Admin phê duyệt. Bạn có thể xem nhưng chưa thể thêm sản phẩm.');
+            setError('Your Partner account is pending Admin approval. You can view but cannot add products yet.');
         }
         
         fetchMyProducts();
@@ -190,7 +190,7 @@ const ManagerDashboard = () => {
                                 minWidth: 'fit-content'
                             }}
                         >
-                            💰 Doanh Thu
+                            💰 Revenue
                         </button>
                     )}
                     {user?.role === 'partner' && user?.isApproved && (
@@ -202,7 +202,7 @@ const ManagerDashboard = () => {
                             }}
                             style={{ whiteSpace: 'nowrap' }}
                         >
-                            {showForm ? '❌ Đóng' : '➕ Thêm sản phẩm'}
+                            {showForm ? '❌ Close' : '➕ Add product'}
                         </button>
                     )}
                     {user?.role === 'admin' && (
@@ -213,7 +213,7 @@ const ManagerDashboard = () => {
                                 if (editingProduct) cancelEdit();
                             }}
                         >
-                            {showForm ? '❌ Đóng' : '➕ Thêm sản phẩm mới'}
+                            {showForm ? '❌ Close' : '➕ Add new product'}
                         </button>
                     )}
                 </div>
@@ -259,7 +259,7 @@ const ManagerDashboard = () => {
             {/* Product Form */}
             {showForm && (
                 <div className="product-form-card">
-                    <h2>{editingProduct ? '✏️ Chỉnh sửa sản phẩm' : '➕ Thêm sản phẩm mới'}</h2>
+                    <h2>{editingProduct ? '✏️ Edit product' : '➕ Add new product'}</h2>
                     <form onSubmit={handleSubmit} className="product-form">
                         <div className="form-row">
                             <div className="form-group">
@@ -359,7 +359,7 @@ const ManagerDashboard = () => {
 
                         <div className="form-actions">
                             <button type="submit" className="btn-submit" disabled={loading}>
-                                {loading ? '⏳ Đang xử lý...' : editingProduct ? '💾 Cập nhật' : '➕ Tạo sản phẩm'}
+                                {loading ? '⏳ Processing...' : editingProduct ? '💾 Update' : '➕ Create product'}
                             </button>
                             {editingProduct && (
                                 <button type="button" className="btn-cancel" onClick={cancelEdit}>
@@ -381,9 +381,9 @@ const ManagerDashboard = () => {
                 {myProducts.length === 0 ? (
                     <div className="no-products">
                         <div className="empty-icon">📦</div>
-                        <p>Chưa có sản phẩm nào</p>
+                        <p>No products yet</p>
                         <button className="btn-add-first" onClick={() => setShowForm(true)}>
-                            ➕ Thêm sản phẩm đầu tiên
+                            ➕ Add first product
                         </button>
                     </div>
                 ) : (
@@ -414,7 +414,7 @@ const ManagerDashboard = () => {
                                         <div className="product-meta">
                                             <span className="price">{product.price.toLocaleString()} VNĐ</span>
                                             <span className="stock">
-                                                📦 {product.stock} {product.stock > 0 ? 'còn hàng' : 'hết hàng'}
+                                                📦 {product.stock} {product.stock > 0 ? 'in stock' : 'out of stock'}
                                             </span>
                                         </div>
 

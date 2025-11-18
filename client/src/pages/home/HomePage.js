@@ -123,7 +123,7 @@ const HomePage = () => {
         ].reduce((a, b) => a + b, 0);
 
         if (filterCount > 0) {
-            toast.success(`Đã áp dụng ${filterCount} bộ lọc`);
+            toast.success(`Applied ${filterCount} filters`);
         }
 
         // Scroll to products
@@ -156,7 +156,7 @@ const HomePage = () => {
         
         // Clear applied filters
         resetFilters();
-        toast.info('Đã xóa tất cả bộ lọc');
+        toast.info('Cleared all filters');
     };
 
     const handlePageChange = (page) => {
@@ -168,7 +168,7 @@ const HomePage = () => {
         }
     };
 
-    if (loading) return <Loading message="Đang tải sản phẩm..." size="large" />;
+    if (loading) return <Loading message="Loading products..." size="large" />;
     
     if (error) return (
         <div className="error-container">
@@ -186,7 +186,7 @@ const HomePage = () => {
                 onBrandClick={(brand) => {
                     // Add brand to temporary filters
                     toggleArrayFilter('brands', brand);
-                    toast.info(`Đã chọn hãng: ${brand}. Nhấn "Tìm kiếm" để áp dụng."`);
+                    toast.info(`Selected brand: ${brand}. Click "Search" to apply."`);
                     // Scroll to products section
                     setTimeout(() => {
                         scrollToElement('.homepage-container');
@@ -289,7 +289,7 @@ const HomePage = () => {
                                 🖥️ {p}
                             </motion.span>
                         ))}
-                        <span className="filter-note">(Nhấn "Tìm kiếm" để áp dụng)</span>
+                        <span className="filter-note">(Click "Search" to apply)</span>
                     </motion.div>
                 )}
 
@@ -317,7 +317,7 @@ const HomePage = () => {
                                 onQuickView={setSelectedProduct}
                                 onAddToCart={(prod) => {
                                     addToCart(prod);
-                                    toast.success(`Đã thêm ${prod.name} vào giỏ hàng!`);
+                                    toast.success(`Added ${prod.name} to cart!`);
                                 }}
                                 onToggleWishlist={toggleWishlist}
                                 isInWishlist={isInWishlist}

@@ -54,7 +54,7 @@ const LiveChatBox = () => {
                 const autoReply = {
                     id: Date.now() + 1,
                     sender: 'support',
-                    text: 'Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong giây lát. Bạn cũng có thể gọi hotline: 084.686.5650 để được hỗ trợ nhanh hơn.',
+                    text: 'Thank you for contacting us! We will respond shortly. You can also call our hotline: 084.686.5650 for faster support.',
                     timestamp: new Date().toISOString()
                 };
                 setMessages(prev => [...prev, autoReply]);
@@ -97,7 +97,7 @@ const LiveChatBox = () => {
                                     <FiUser />
                                 </div>
                                 <div className="support-details">
-                                    <h4>Hỗ Trợ Laptop Store</h4>
+                                    <h4>Laptop Store Support</h4>
                                     <span className="online-status">
                                         <span className="status-dot"></span>
                                         Đang hoạt động
@@ -148,7 +148,7 @@ const LiveChatBox = () => {
                         <form className="chat-input-form" onSubmit={handleSendMessage}>
                             <input
                                 type="text"
-                                placeholder={user ? "Nhập tin nhắn..." : "Đăng nhập để chat..."}
+                                placeholder={user ? "Type a message..." : "Login to chat..."}
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 className="chat-input"
@@ -167,7 +167,7 @@ const LiveChatBox = () => {
 
                         {!user && (
                             <div className="chat-login-prompt">
-                                <p>Vui lòng <a href="/login">đăng nhập</a> để chat với chúng tôi</p>
+                                <p>Please <a href="/login">login</a> to chat with us</p>
                             </div>
                         )}
                     </motion.div>

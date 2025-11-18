@@ -28,14 +28,14 @@ const ProfilePage = () => {
         { id: 'overview', label: 'Tổng quan', icon: '📊' },
         { id: 'personal', label: 'Thông tin cá nhân', icon: '👤' },
         { id: 'addresses', label: 'Địa chỉ', icon: '📍' },
-        { id: 'payment', label: 'Thanh toán', icon: '💳' },
-        { id: 'orders', label: 'Đơn hàng', icon: '📦' },
+        { id: 'payment', label: 'Payment', icon: '💳' },
+        { id: 'orders', label: 'Orders', icon: '📦' },
         { id: 'warranty', label: 'Bảo hành', icon: '🛡️' },
         { id: 'wishlist', label: 'Yêu thích', icon: '❤️' },
         { id: 'reviews', label: 'Đánh giá', icon: '⭐' },
         { id: 'vouchers', label: 'Voucher', icon: '🎫' },
-        { id: 'support', label: 'Hỗ trợ', icon: '💬' },
-        { id: 'notifications', label: 'Thông báo', icon: '🔔', badge: unreadCount },
+        { id: 'support', label: 'Support', icon: '💬' },
+        { id: 'notifications', label: 'Notifications', icon: '🔔', badge: unreadCount },
         { id: 'settings', label: 'Cài đặt', icon: '⚙️' }
     ];
 
@@ -99,7 +99,7 @@ const ProfilePage = () => {
         return (
             <div className="profile-loading">
                 <div className="spinner"></div>
-                <p>Đang tải thông tin...</p>
+                <p>Loading information...</p>
             </div>
         );
     }

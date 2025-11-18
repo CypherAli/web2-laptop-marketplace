@@ -81,7 +81,7 @@ const DealsPageNew = () => {
                         animation: 'spin 1s linear infinite',
                         margin: '0 auto 20px'
                     }}></div>
-                    <h2>Đang tải khuyến mãi hot...</h2>
+                    <h2>Loading hot deals...</h2>
                     <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }}`}</style>
                 </div>
             </div>
@@ -127,7 +127,7 @@ const DealsPageNew = () => {
                         textShadow: '3px 3px 6px rgba(0,0,0,0.3)',
                         letterSpacing: '2px'
                     }}>
-                        KHUYẾN MÃI SIÊU HOT
+                        SUPER HOT DEALS
                     </h1>
                     <p style={{
                         fontSize: '1.4rem',
@@ -135,7 +135,7 @@ const DealsPageNew = () => {
                         fontWeight: '500',
                         textShadow: '2px 2px 4px rgba(0,0,0,0.2)'
                     }}>
-                        Săn deal ngay - Giảm giá sốc đến {maxDiscount}%
+                        Grab deals now - Discounts up to {maxDiscount}%
                     </p>
 
                     {/* Stats Cards */}
@@ -156,7 +156,7 @@ const DealsPageNew = () => {
                             <div style={{fontSize: '3rem', fontWeight: '900', marginBottom: '10px'}}>
                                 {products.length}
                             </div>
-                            <div style={{fontSize: '1rem', opacity: 0.9}}>Sản phẩm giảm giá</div>
+                            <div style={{fontSize: '1rem', opacity: 0.9}}>Products on sale</div>
                         </div>
                         <div style={{
                             background: 'rgba(255,255,255,0.2)',
@@ -168,7 +168,7 @@ const DealsPageNew = () => {
                             <div style={{fontSize: '3rem', fontWeight: '900', marginBottom: '10px'}}>
                                 -{maxDiscount}%
                             </div>
-                            <div style={{fontSize: '1rem', opacity: 0.9}}>Giảm tối đa</div>
+                            <div style={{fontSize: '1rem', opacity: 0.9}}>Maximum discount</div>
                         </div>
                         <div style={{
                             background: 'rgba(255,255,255,0.2)',
@@ -180,7 +180,7 @@ const DealsPageNew = () => {
                             <div style={{fontSize: '2rem', fontWeight: '900', marginBottom: '10px'}}>
                                 {(totalSavings / 1000000).toFixed(1)}M
                             </div>
-                            <div style={{fontSize: '1rem', opacity: 0.9}}>Tổng tiết kiệm</div>
+                            <div style={{fontSize: '1rem', opacity: 0.9}}>Total savings</div>
                         </div>
                     </div>
                 </div>
@@ -203,7 +203,7 @@ const DealsPageNew = () => {
                     alignItems: 'center'
                 }}>
                     <div style={{fontSize: '1.1rem', fontWeight: 'bold', color: '#333'}}>
-                        🎯 Tìm thấy {filteredProducts.length} sản phẩm hot
+                        🎯 Found {filteredProducts.length} hot products
                     </div>
                     <div style={{display: 'flex', gap: '15px'}}>
                         <button
@@ -277,7 +277,7 @@ const DealsPageNew = () => {
                     }}>
                         <div style={{fontSize: '5rem', marginBottom: '20px'}}>😔</div>
                         <h2 style={{fontSize: '2rem', color: '#333', marginBottom: '15px'}}>
-                            Chưa có chương trình khuyến mãi
+                            No ongoing promotions
                         </h2>
                         <p style={{fontSize: '1.1rem', color: '#666', marginBottom: '30px'}}>
                             Vui lòng quay lại sau hoặc xem các sản phẩm khác
@@ -491,7 +491,7 @@ const DealsPageNew = () => {
                                             fontWeight: 'bold',
                                             textAlign: 'center'
                                         }}>
-                                            💰 Tiết kiệm {product.savings.toLocaleString('vi-VN')} đ
+                                            💰 Save {product.savings.toLocaleString('vi-VN')} đ
                                         </div>
                                     </div>
 
@@ -540,7 +540,7 @@ const DealsPageNew = () => {
                                             e.target.style.boxShadow = '0 4px 15px rgba(102,126,234,0.3)';
                                         }}
                                     >
-                                        🛒 Thêm vào giỏ hàng
+                                        🛒 Add to cart
                                     </button>
                                 </div>
                             </div>
@@ -563,7 +563,7 @@ const DealsPageNew = () => {
                     gap: '30px'
                 }}>
                     {[
-                        { icon: '🚚', title: 'Miễn phí vận chuyển', desc: 'Đơn hàng từ 10 triệu' },
+                        { icon: '🚚', title: 'Free shipping', desc: 'Orders over 10 million' },
                         { icon: '🔄', title: 'Đổi trả 15 ngày', desc: 'Nếu có lỗi từ NSX' },
                         { icon: '💳', title: 'Trả góp 0%', desc: 'Duyệt nhanh 30 phút' },
                         { icon: '🛡️', title: 'Bảo hành chính hãng', desc: '12-24 tháng' }

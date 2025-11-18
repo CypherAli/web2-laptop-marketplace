@@ -43,7 +43,7 @@ const ChatWidget = () => {
                 const data = await response.json();
                 
                 if (data.success && data.adminId) {
-                    await createConversation(data.adminId, 'Hỗ trợ khách hàng');
+                    await createConversation(data.adminId, 'Customer Support');
                 }
             } catch (error) {
                 console.error('Error fetching admin:', error);

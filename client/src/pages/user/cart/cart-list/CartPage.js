@@ -61,7 +61,7 @@ const CartPage = () => {
         e.preventDefault();
 
         if (!user) {
-            alert('⚠️ Vui lòng đăng nhập để đặt hàng');
+            alert('⚠️ Please login to place an order');
             navigate('/login');
             return;
         }
@@ -103,7 +103,7 @@ const CartPage = () => {
             }, 2000);
         } catch (err) {
             console.error('Checkout error:', err);
-            setError(err.response?.data?.message || 'Đặt hàng thất bại. Vui lòng thử lại.');
+            setError(err.response?.data?.message || 'Order failed. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -115,10 +115,10 @@ const CartPage = () => {
                 <div className="empty-cart-illustration">
                     <div className="empty-cart-icon">🛒</div>
                     <h2>Giỏ hàng trống</h2>
-                    <p>Hãy thêm sản phẩm vào giỏ hàng để tiếp tục mua sắm!</p>
+                    <p>Add products to cart to continue shopping!</p>
                     <button onClick={() => navigate('/')} className="btn-continue-shopping">
                         <span>🏠</span>
-                        <span>Tiếp tục mua sắm</span>
+                        <span>Continue Shopping</span>
                     </button>
                 </div>
             </div>
@@ -132,8 +132,8 @@ const CartPage = () => {
                 <div className="success-modal-overlay">
                     <div className="success-modal">
                         <div className="success-icon">✅</div>
-                        <h2>Đặt hàng thành công!</h2>
-                        <p>Đơn hàng của bạn đang được xử lý</p>
+                        <h2>Order placed successfully!</h2>
+                        <p>Your order is being processed</p>
                         <div className="success-animation"></div>
                     </div>
                 </div>
@@ -142,10 +142,10 @@ const CartPage = () => {
             <div className="cart-header">
                 <h1>
                     <span className="cart-icon">🛒</span>
-                    Giỏ Hàng Của Bạn
+                    Your Shopping Cart
                 </h1>
                 <div className="cart-count">
-                    {cartItems.length} sản phẩm
+                    {cartItems.length} items
                 </div>
             </div>
 
@@ -161,12 +161,12 @@ const CartPage = () => {
                                 onChange={toggleSelectAll}
                             />
                             <span className="checkmark"></span>
-                            <span className="label-text">Chọn tất cả ({cartItems.length})</span>
+                            <span className="label-text">Select All ({cartItems.length})</span>
                         </label>
                         {selectedItems.length > 0 && (
                             <button 
                                 onClick={() => {
-                                    if (window.confirm(`Xóa ${selectedItems.length} sản phẩm đã chọn?`)) {
+                                    if (window.confirm(`Delete {selectedItems.length} selected items?`)) {
                                         selectedItems.forEach(id => removeFromCart(id));
                                         setSelectedItems([]);
                                     }
@@ -174,7 +174,7 @@ const CartPage = () => {
                                 className="btn-delete-selected"
                             >
                                 <span>🗑️</span>
-                                <span>Xóa đã chọn</span>
+                                <span>Delete selected</span>
                             </button>
                         )}
                     </div>
@@ -201,7 +201,7 @@ const CartPage = () => {
                                         alt={item.name}
                                     />
                                     {item.stock <= 5 && (
-                                        <div className="low-stock-badge">Chỉ còn {item.stock}</div>
+                                        <div className="low-stock-badge">Only {item.stock} left</div>
                                     )}
                                 </div>
 
@@ -209,7 +209,7 @@ const CartPage = () => {
                                     <h3 className="item-name">{item.name}</h3>
                                     <div className="item-meta">
                                         <span className="item-brand">🏷️ {item.brand}</span>
-                                        <span className="item-stock">📦 Kho: {item.stock}</span>
+                                        <span className="item-stock">📦 Stock: {item.stock}</span>
                                     </div>
                                     <div className="item-price-section">
                                         <div className="current-price">
@@ -260,13 +260,13 @@ const CartPage = () => {
 
                                     <button 
                                         onClick={() => {
-                                            if (window.confirm('Xóa sản phẩm này khỏi giỏ hàng?')) {
+                                            if (window.confirm('Remove this product from cart?')) {
                                                 removeFromCart(item._id);
                                                 setSelectedItems(prev => prev.filter(id => id !== item._id));
                                             }
                                         }}
                                         className="btn-remove-item"
-                                        title="Xóa sản phẩm"
+                                        title="Remove product"
                                     >
                                         🗑️
                                     </button>
@@ -281,32 +281,32 @@ const CartPage = () => {
                     <div className="summary-card">
                         <h2 className="summary-title">
                             <span>📋</span>
-                            <span>Thông tin đơn hàng</span>
+                            <span>Order Information</span>
                         </h2>
 
                         <div className="summary-details">
                             <div className="summary-row">
-                                <span>Tạm tính ({selectedItems.length} sản phẩm)</span>
+                                <span>Subtotal ({selectedItems.length} items)</span>
                                 <span className="amount">{getSelectedTotal().toLocaleString('vi-VN')} đ</span>
                             </div>
                             
                             <div className="summary-row">
-                                <span>Phí vận chuyển</span>
+                                <span>Shipping fee</span>
                                 <span className={`amount ${getShippingFee() === 0 ? 'free' : ''}`}>
-                                    {getShippingFee() === 0 ? 'Miễn phí' : `${getShippingFee().toLocaleString('vi-VN')} đ`}
+                                    {getShippingFee() === 0 ? 'Free' : `${getShippingFee().toLocaleString('vi-VN')} đ`}
                                 </span>
                             </div>
 
                             {getSelectedTotal() < 15000000 && getSelectedTotal() > 0 && (
                                 <div className="shipping-notice">
-                                    💡 Mua thêm {(15000000 - getSelectedTotal()).toLocaleString('vi-VN')} đ để được miễn phí vận chuyển
+                                    💡 Add {(15000000 - getSelectedTotal()).toLocaleString('vi-VN')} đ more for free shipping
                                 </div>
                             )}
 
                             <div className="summary-divider"></div>
 
                             <div className="summary-row total-row">
-                                <span>Tổng cộng</span>
+                                <span>Total</span>
                                 <span className="total-amount">
                                     {(getSelectedTotal() + getShippingFee()).toLocaleString('vi-VN')} đ
                                 </span>
@@ -320,7 +320,7 @@ const CartPage = () => {
                                     return;
                                 }
                                 if (selectedItems.length === 0) {
-                                    alert('⚠️ Vui lòng chọn sản phẩm để thanh toán');
+                                    alert('⚠️ Please select items to checkout');
                                     return;
                                 }
                                 navigate('/checkout');
@@ -328,22 +328,22 @@ const CartPage = () => {
                             className="btn-checkout"
                             disabled={selectedItems.length === 0}
                         >
-                            <span>Thanh Toán ({selectedItems.length})</span>
+                            <span>Checkout ({selectedItems.length})</span>
                             <span>→</span>
                         </button>
 
                         <div className="security-badges">
                             <div className="badge">
                                 <span>🔒</span>
-                                <span>Thanh toán an toàn</span>
+                                <span>Secure payment</span>
                             </div>
                             <div className="badge">
                                 <span>📦</span>
-                                <span>Giao hàng toàn quốc</span>
+                                <span>Nationwide delivery</span>
                             </div>
                             <div className="badge">
                                 <span>↩️</span>
-                                <span>Đổi trả dễ dàng</span>
+                                <span>Easy returns</span>
                             </div>
                         </div>
                     </div>
@@ -357,7 +357,7 @@ const CartPage = () => {
                         <div className="modal-header">
                             <h2>
                                 <span>📝</span>
-                                <span>Thông tin giao hàng</span>
+                                <span>Shipping Information</span>
                             </h2>
                             <button onClick={() => setShowCheckoutModal(false)} className="btn-close-modal">
                                 ✕
@@ -375,11 +375,11 @@ const CartPage = () => {
                             <div className="form-section">
                                 <label className="form-label">
                                     <span>👤</span>
-                                    <span>Họ và tên</span>
+                                    <span>Full Name</span>
                                 </label>
                                 <input 
                                     type="text"
-                                    placeholder="Nguyễn Văn A"
+                                    placeholder="John Doe"
                                     value={shippingInfo.fullName}
                                     onChange={(e) => setShippingInfo({...shippingInfo, fullName: e.target.value})}
                                     required
@@ -390,7 +390,7 @@ const CartPage = () => {
                             <div className="form-section">
                                 <label className="form-label">
                                     <span>📱</span>
-                                    <span>Số điện thoại</span>
+                                    <span>Phone Number</span>
                                 </label>
                                 <input 
                                     type="tel"
@@ -406,10 +406,10 @@ const CartPage = () => {
                             <div className="form-section">
                                 <label className="form-label">
                                     <span>🏠</span>
-                                    <span>Địa chỉ nhận hàng</span>
+                                    <span>Delivery Address</span>
                                 </label>
                                 <textarea 
-                                    placeholder="Số nhà, tên đường, phường/xã"
+                                    placeholder="House number, street, ward"
                                     value={shippingInfo.address}
                                     onChange={(e) => setShippingInfo({...shippingInfo, address: e.target.value})}
                                     required
@@ -421,7 +421,7 @@ const CartPage = () => {
                             <div className="form-section">
                                 <label className="form-label">
                                     <span>🏙️</span>
-                                    <span>Tỉnh/Thành phố</span>
+                                    <span>Province/City</span>
                                 </label>
                                 <select 
                                     value={shippingInfo.city}
@@ -429,18 +429,18 @@ const CartPage = () => {
                                     required
                                     className="form-select"
                                 >
-                                    <option value="Hồ Chí Minh">Hồ Chí Minh</option>
-                                    <option value="Hà Nội">Hà Nội</option>
-                                    <option value="Đà Nẵng">Đà Nẵng</option>
-                                    <option value="Cần Thơ">Cần Thơ</option>
-                                    <option value="Khác">Khác</option>
+                                    <option value="Hồ Chí Minh">Ho Chi Minh City</option>
+                                    <option value="Hà Nội">Hanoi</option>
+                                    <option value="Đà Nẵng">Da Nang</option>
+                                    <option value="Cần Thơ">Can Tho</option>
+                                    <option value="Khác">Other</option>
                                 </select>
                             </div>
 
                             <div className="form-section">
                                 <label className="form-label">
                                     <span>💳</span>
-                                    <span>Phương thức thanh toán</span>
+                                    <span>Payment Method</span>
                                 </label>
                                 <div className="payment-methods">
                                     <label className={`payment-option ${paymentMethod === 'cod' ? 'selected' : ''}`}>
@@ -454,8 +454,8 @@ const CartPage = () => {
                                         <div className="payment-content">
                                             <span className="payment-icon">💵</span>
                                             <div>
-                                                <div className="payment-name">Thanh toán khi nhận hàng (COD)</div>
-                                                <div className="payment-desc">Thanh toán bằng tiền mặt khi nhận hàng</div>
+                                                <div className="payment-name">Cash on Delivery (COD)</div>
+                                                <div className="payment-desc">Pay with cash upon receiving goods</div>
                                             </div>
                                         </div>
                                     </label>
@@ -471,8 +471,8 @@ const CartPage = () => {
                                         <div className="payment-content">
                                             <span className="payment-icon">🏦</span>
                                             <div>
-                                                <div className="payment-name">Chuyển khoản ngân hàng</div>
-                                                <div className="payment-desc">Chuyển khoản trước khi nhận hàng</div>
+                                                <div className="payment-name">Bank Transfer</div>
+                                                <div className="payment-desc">Pay before receiving goods</div>
                                             </div>
                                         </div>
                                     </label>
@@ -482,10 +482,10 @@ const CartPage = () => {
                             <div className="form-section">
                                 <label className="form-label">
                                     <span>📝</span>
-                                    <span>Ghi chú (không bắt buộc)</span>
+                                    <span>Notes (optional)</span>
                                 </label>
                                 <textarea 
-                                    placeholder="Ghi chú cho người bán..."
+                                    placeholder="Notes for seller..."
                                     value={notes}
                                     onChange={(e) => setNotes(e.target.value)}
                                     rows="2"
@@ -495,15 +495,15 @@ const CartPage = () => {
 
                             <div className="modal-summary">
                                 <div className="summary-item">
-                                    <span>Tổng tiền hàng:</span>
+                                    <span>Subtotal:</span>
                                     <span>{getSelectedTotal().toLocaleString('vi-VN')} đ</span>
                                 </div>
                                 <div className="summary-item">
-                                    <span>Phí vận chuyển:</span>
+                                    <span>Shipping fee:</span>
                                     <span>{getShippingFee().toLocaleString('vi-VN')} đ</span>
                                 </div>
                                 <div className="summary-item total">
-                                    <span>Tổng thanh toán:</span>
+                                    <span>Total payment:</span>
                                     <span className="total-price">
                                         {(getSelectedTotal() + getShippingFee()).toLocaleString('vi-VN')} đ
                                     </span>
@@ -517,7 +517,7 @@ const CartPage = () => {
                                     className="btn-cancel"
                                     disabled={loading}
                                 >
-                                    Hủy
+                                    Cancel
                                 </button>
                                 <button 
                                     type="submit" 
@@ -527,11 +527,11 @@ const CartPage = () => {
                                     {loading ? (
                                         <>
                                             <span className="spinner-icon"></span>
-                                            <span>Đang xử lý...</span>
+                                            <span>Processing...</span>
                                         </>
                                     ) : (
                                         <>
-                                            <span>Đặt hàng</span>
+                                            <span>Place Order</span>
                                             <span>→</span>
                                         </>
                                     )}

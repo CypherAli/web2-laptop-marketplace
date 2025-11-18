@@ -61,7 +61,7 @@ const ProductDetailPageUltra = () => {
                 setLoading(false);
             } catch (err) {
                 console.error('❌ Error loading product:', err);
-                setError(err.response?.data?.message || 'Không thể tải sản phẩm');
+                setError(err.response?.data?.message || 'Cannot load product');
                 setLoading(false);
             }
         };
@@ -85,9 +85,9 @@ const ProductDetailPageUltra = () => {
             for (let i = 0; i < quantity; i++) {
                 addToCart(product);
             }
-            toast.success(`✅ Đã thêm ${quantity}x ${product.name} vào giỏ hàng!`);
+            toast.success(`✅ Added ${quantity}x ${product.name} to cart!`);
         } else {
-            toast.error('❌ Sản phẩm đã hết hàng!');
+            toast.error('❌ Product is out of stock!');
         }
     };
 
@@ -102,7 +102,7 @@ const ProductDetailPageUltra = () => {
         toggleWishlist(product);
         const inWishlist = isInWishlist(product._id);
         toast[inWishlist ? 'info' : 'success'](
-            inWishlist ? '💔 Đã xóa khỏi yêu thích' : '❤️ Đã thêm vào yêu thích'
+            inWishlist ? '💔 Removed from wishlist' : '❤️ Added to wishlist'
         );
     };
 
@@ -153,7 +153,7 @@ const ProductDetailPageUltra = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                 >
-                    <FiChevronLeft /> Về trang chủ
+                    <FiChevronLeft /> Back to Home
                 </motion.button>
             </div>
         );
@@ -179,7 +179,7 @@ const ProductDetailPageUltra = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
             >
-                <Link to="/">Trang chủ</Link>
+                <Link to="/">Home</Link>
                 <span>/</span>
                 <Link to="/products">Sản phẩm</Link>
                 <span>/</span>
@@ -316,7 +316,7 @@ const ProductDetailPageUltra = () => {
                                     <FiStar key={i} fill="#FFD700" color="#FFD700" />
                                 ))}
                             </div>
-                            <span className="rating-count">(128 đánh giá)</span>
+                            <span className="rating-count">(128 reviews)</span>
                             <span className="separator">|</span>
                             <span className="sold-count">Đã bán 234</span>
                         </motion.div>
@@ -339,7 +339,7 @@ const ProductDetailPageUltra = () => {
                                         {product.originalPrice.toLocaleString()}₫
                                     </div>
                                     <div className="savings">
-                                        Tiết kiệm: {(product.originalPrice - product.price).toLocaleString()}₫
+                                        Save: {(product.originalPrice - product.price).toLocaleString()}₫
                                     </div>
                                 </>
                             )}
@@ -353,7 +353,7 @@ const ProductDetailPageUltra = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.6 }}
                     >
-                        <h3>⚡ Cấu hình nổi bật</h3>
+                        <h3>⚡ Key Specifications</h3>
                         <div className="specs-grid">
                             <div className="spec-card">
                                 <FiCpu className="spec-icon" />
@@ -458,7 +458,7 @@ const ProductDetailPageUltra = () => {
                                 </motion.button>
                             </div>
                             <span className="stock-info">
-                                {product.stock > 0 ? `Còn ${product.stock} sản phẩm` : 'Hết hàng'}
+                                {(product.stock && product.stock > 0) ? `Còn ${product.stock} sản phẩm` : 'Hết hàng'}
                             </span>
                         </div>
 
@@ -466,20 +466,20 @@ const ProductDetailPageUltra = () => {
                             <motion.button
                                 className="btn-add-cart"
                                 onClick={handleAddToCart}
-                                disabled={product.stock === 0}
+                                disabled={!product.stock || product.stock <= 0}
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
-                                <FiShoppingCart /> Thêm vào giỏ hàng
+                                <FiShoppingCart /> Add to Cart
                             </motion.button>
                             <motion.button
                                 className="btn-buy-now"
                                 onClick={handleBuyNow}
-                                disabled={product.stock === 0}
+                                disabled={!product.stock || product.stock <= 0}
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
-                                <FiPackage /> Mua ngay
+                                <FiPackage /> Buy Now
                             </motion.button>
                             <motion.button
                                 className={`btn-wishlist ${isInWishlist(product._id) ? 'active' : ''}`}
@@ -524,7 +524,7 @@ const ProductDetailPageUltra = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        Thông số kỹ thuật
+                        Specifications
                     </motion.button>
                     <motion.button
                         className={activeTab === 'description' ? 'active' : ''}
@@ -532,7 +532,7 @@ const ProductDetailPageUltra = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        Mô tả sản phẩm
+                        Product Description
                     </motion.button>
                     <motion.button
                         className={activeTab === 'reviews' ? 'active' : ''}
@@ -540,7 +540,7 @@ const ProductDetailPageUltra = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        Đánh giá ({product.reviews?.length || 0})
+                        Reviews ({product.reviews?.length || 0})
                     </motion.button>
                 </div>
 
@@ -608,7 +608,7 @@ const ProductDetailPageUltra = () => {
                             exit={{ opacity: 0, x: 20 }}
                             className="tab-content"
                         >
-                            <p>{product.description || 'Sản phẩm chính hãng, bảo hành toàn quốc. Liên hệ hotline 084.686.5650 để biết thêm chi tiết.'}</p>
+                            <p>{product.description || 'Authentic product, nationwide warranty. Contact hotline 084.686.5650 for more details.'}</p>
                             
                             {product.features && product.features.length > 0 && (
                                 <>
@@ -639,7 +639,7 @@ const ProductDetailPageUltra = () => {
                                         productId={product._id}
                                         onReviewSubmitted={() => {
                                             setShowReviewForm(false);
-                                            toast.success('Cảm ơn bạn đã đánh giá!');
+                                            toast.success('Thank you for your review!');
                                         }}
                                     />
                                 ) : (
@@ -649,12 +649,12 @@ const ProductDetailPageUltra = () => {
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                     >
-                                        Viết đánh giá
+                                        Write a Review
                                     </motion.button>
                                 )
                             ) : (
                                 <p className="login-prompt">
-                                    <Link to="/login">Đăng nhập</Link> để viết đánh giá
+                                    <Link to="/login">Login</Link> to write a review
                                 </p>
                             )}
                         </motion.div>
@@ -670,7 +670,7 @@ const ProductDetailPageUltra = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.2 }}
                 >
-                    <h2>Sản phẩm tương tự</h2>
+                    <h2>Similar Products</h2>
                     <div className="related-grid">
                         {relatedProducts.map((relProduct, idx) => (
                             <motion.div

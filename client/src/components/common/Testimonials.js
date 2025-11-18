@@ -7,63 +7,63 @@ const Testimonials = () => {
     const testimonials = [
         {
             id: 1,
-            name: 'Nguyễn Văn An',
-            role: 'Kỹ sư Phần mềm',
+            name: 'Nguyen Van An',
+            role: 'Software Engineer',
             avatar: '👨‍💻',
             rating: 5,
-            comment: 'Mình đã mua laptop Dell XPS 15 từ cửa hàng. Sản phẩm chất lượng, giá cả hợp lý. Nhân viên tư vấn nhiệt tình và chuyên nghiệp. Giao hàng nhanh chóng. Rất hài lòng!',
+            comment: 'I bought a Dell XPS 15 laptop from the store. Quality product, reasonable price. Staff are enthusiastic and professional. Fast delivery. Very satisfied!',
             product: 'Dell XPS 15',
-            date: '2 tuần trước'
+            date: '2 weeks ago'
         },
         {
             id: 2,
-            name: 'Trần Thị Bích',
+            name: 'Tran Thi Bich',
             role: 'Graphic Designer',
             avatar: '👩‍🎨',
             rating: 5,
-            comment: 'MacBook Pro M2 mua từ đây quá đỉnh! Màn hình đẹp, hiệu năng mượt mà, phục vụ công việc design rất tốt. Team support nhiệt tình, giải đáp mọi thắc mắc. Sẽ giới thiệu bạn bè!',
+            comment: 'MacBook Pro M2 purchased from here is amazing! Beautiful screen, smooth performance, serves design work very well. Support team is enthusiastic and answers all questions. Will recommend to friends!',
             product: 'MacBook Pro M2',
-            date: '3 tuần trước'
+            date: '3 weeks ago'
         },
         {
             id: 3,
-            name: 'Lê Minh Tuấn',
-            role: 'Sinh viên IT',
+            name: 'Le Minh Tuan',
+            role: 'IT Student',
             avatar: '👨‍🎓',
             rating: 5,
-            comment: 'Laptop gaming MSI mua cho học tập và giải trí. Cấu hình mạnh, chơi game mượt, giá sinh viên có thể chấp nhận được. Bảo hành tốt, có vấn đề gì hỗ trợ ngay. Recommend!',
+            comment: 'MSI gaming laptop purchased for study and entertainment. Strong configuration, smooth gaming, affordable price for students. Good warranty, immediate support for any issues. Recommend!',
             product: 'MSI Gaming GF63',
-            date: '1 tháng trước'
+            date: '1 month ago'
         },
         {
             id: 4,
-            name: 'Phạm Thu Hà',
+            name: 'Pham Thu Ha',
             role: 'Content Creator',
             avatar: '👩‍💼',
             rating: 5,
-            comment: 'HP Pavilion mua để làm content, edit video rất ngon. Pin trâu, thiết kế đẹp, giá lại còn có khuyến mãi. Nhân viên tư vấn chi tiết từng thông số. Trải nghiệm mua sắm tuyệt vời!',
+            comment: 'HP Pavilion purchased for content creation, video editing works great. Long battery life, beautiful design, also has promotional price. Staff explained every specification in detail. Wonderful shopping experience!',
             product: 'HP Pavilion 15',
-            date: '1 tháng trước'
+            date: '1 month ago'
         },
         {
             id: 5,
-            name: 'Hoàng Minh Khoa',
-            role: 'Doanh nhân',
+            name: 'Hoang Minh Khoa',
+            role: 'Entrepreneur',
             avatar: '👨‍💼',
             rating: 5,
-            comment: 'Lenovo ThinkPad dùng cho công việc kinh doanh rất bền bỉ. Bàn phím gõ đã tay, pin dùng cả ngày. Cửa hàng uy tín, sản phẩm chính hãng 100%. Hỗ trợ sau bán hàng tốt!',
+            comment: 'Lenovo ThinkPad used for business work is very durable. Great keyboard, all-day battery life. Reputable store, 100% genuine products. Good after-sales support!',
             product: 'Lenovo ThinkPad X1',
-            date: '5 tuần trước'
+            date: '5 weeks ago'
         },
         {
             id: 6,
-            name: 'Vũ Thị Lan',
+            name: 'Vu Thi Lan',
             role: 'Marketing Manager',
             avatar: '👩‍💻',
             rating: 5,
-            comment: 'Asus ZenBook mỏng nhẹ, thiết kế sang trọng, mang đi làm rất tiện. Hiệu năng ổn định cho công việc văn phòng và họp online. Giá tốt nhất thị trường. Giao hàng nhanh, đóng gói cẩn thận!',
+            comment: 'Asus ZenBook is thin, light, elegant design, very convenient for work. Stable performance for office work and online meetings. Best market price. Fast delivery, careful packaging!',
             product: 'Asus ZenBook 14',
-            date: '6 tuần trước'
+            date: '6 weeks ago'
         }
     ];
 
@@ -92,16 +92,16 @@ const Testimonials = () => {
                 <div className="testimonials-header">
                     <h2 className="testimonials-title">
                         <span className="title-icon">💬</span>
-                        Khách Hàng Nói Gì Về Chúng Tôi
+                        What Our Customers Say
                         <span className="title-icon">💬</span>
                     </h2>
                     <p className="testimonials-subtitle">
-                        Hơn 10,000+ khách hàng đã tin tưởng và lựa chọn
+                        Over 10,000+ customers have trusted and chosen us
                     </p>
                     <div className="overall-rating">
                         <div className="rating-stars">⭐⭐⭐⭐⭐</div>
                         <div className="rating-score">4.8/5</div>
-                        <div className="rating-count">(2,547 đánh giá)</div>
+                        <div className="rating-count">(2,547 reviews)</div>
                     </div>
                 </div>
 
@@ -163,15 +163,15 @@ const Testimonials = () => {
                     </div>
                     <div className="trust-badge">
                         <span className="badge-icon">✅</span>
-                        <span className="badge-text">100% Sản phẩm chính hãng</span>
+                        <span className="badge-text">100% Genuine Products</span>
                     </div>
                     <div className="trust-badge">
                         <span className="badge-icon">🚚</span>
-                        <span className="badge-text">Miễn phí vận chuyển</span>
+                        <span className="badge-text">Free Shipping</span>
                     </div>
                     <div className="trust-badge">
                         <span className="badge-icon">🛡️</span>
-                        <span className="badge-text">Bảo hành 12-36 tháng</span>
+                        <span className="badge-text">12-36 Months Warranty</span>
                     </div>
                 </div>
             </div>

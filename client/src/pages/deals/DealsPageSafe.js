@@ -63,7 +63,7 @@ const DealsPageSafe = () => {
                 <div className="deals-hero-content">
                     <h1 className="deals-title">🔥 SIÊU SALE KHỦNG</h1>
                     <p className="deals-subtitle">
-                        Giảm giá lên đến 50% - Mua ngay kẻo lỡ!
+                        Discounts up to 50% - Buy now before it's too late!
                     </p>
                     <div className="deals-stats">
                         <div className="stat-item">
@@ -114,7 +114,7 @@ const DealsPageSafe = () => {
                     <div className="trust-item">
                         <span className="trust-icon">🚚</span>
                         <h4>Miễn phí vận chuyển</h4>
-                        <p>Đơn hàng từ 10 triệu</p>
+                        <p>Orders over 10 million</p>
                     </div>
                     <div className="trust-item">
                         <span className="trust-icon">🔄</span>

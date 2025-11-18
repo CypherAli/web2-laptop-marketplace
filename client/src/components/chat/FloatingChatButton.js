@@ -52,7 +52,7 @@ const FloatingChatButton = () => {
                 {/* Tooltip */}
                 {showTooltip && !isOpen && (
                     <div className="chat-tooltip">
-                        💬 Cần hỗ trợ? Chat với chúng tôi!
+                        💬 Need help? Chat with us!
                     </div>
                 )}
 

@@ -353,7 +353,7 @@ const PersonalInfoEnhanced = ({ userData, onUpdate }) => {
                             </div>
                             <div className="form-group">
                                 <label>
-                                    <FiUser /> Tên đăng nhập
+                                    <FiUser /> Username
                                 </label>
                                 <input
                                     type="text"
@@ -668,7 +668,7 @@ const PersonalInfoEnhanced = ({ userData, onUpdate }) => {
 
                     {/* Notification Preferences */}
                     <div className="preference-group">
-                        <h5><FiBell /> Thông báo qua Email</h5>
+                        <h5><FiBell /> Email Notifications</h5>
                         <div className="preference-item">
                             <label>
                                 <input
@@ -676,7 +676,7 @@ const PersonalInfoEnhanced = ({ userData, onUpdate }) => {
                                     checked={preferences.notifications.email.orderUpdates}
                                     onChange={(e) => handleNotificationChange('email', null, 'orderUpdates', e.target.checked)}
                                 />
-                                Cập nhật đơn hàng
+                                Order updates
                             </label>
                         </div>
                         <div className="preference-item">
@@ -686,7 +686,7 @@ const PersonalInfoEnhanced = ({ userData, onUpdate }) => {
                                     checked={preferences.notifications.email.priceAlerts}
                                     onChange={(e) => handleNotificationChange('email', null, 'priceAlerts', e.target.checked)}
                                 />
-                                Thông báo giá
+                                Price alerts
                             </label>
                         </div>
                         <div className="preference-item">
@@ -696,7 +696,7 @@ const PersonalInfoEnhanced = ({ userData, onUpdate }) => {
                                     checked={preferences.notifications.email.promotions}
                                     onChange={(e) => handleNotificationChange('email', null, 'promotions', e.target.checked)}
                                 />
-                                Khuyến mãi và ưu đãi
+                                Promotions and deals
                             </label>
                         </div>
                         <div className="preference-item">
@@ -712,7 +712,7 @@ const PersonalInfoEnhanced = ({ userData, onUpdate }) => {
                     </div>
 
                     <div className="preference-group">
-                        <h5><FiBell /> Thông báo Push</h5>
+                        <h5><FiBell /> Push Notifications</h5>
                         <div className="preference-item">
                             <label>
                                 <input
@@ -720,7 +720,7 @@ const PersonalInfoEnhanced = ({ userData, onUpdate }) => {
                                     checked={preferences.notifications.push.orderUpdates}
                                     onChange={(e) => handleNotificationChange('push', null, 'orderUpdates', e.target.checked)}
                                 />
-                                Cập nhật đơn hàng
+                                Order updates
                             </label>
                         </div>
                         <div className="preference-item">
@@ -730,7 +730,7 @@ const PersonalInfoEnhanced = ({ userData, onUpdate }) => {
                                     checked={preferences.notifications.push.priceAlerts}
                                     onChange={(e) => handleNotificationChange('push', null, 'priceAlerts', e.target.checked)}
                                 />
-                                Thông báo giá
+                                Price alerts
                             </label>
                         </div>
                         <div className="preference-item">

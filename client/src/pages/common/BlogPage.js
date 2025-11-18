@@ -75,7 +75,7 @@ const BlogPage = () => {
                 <div className="blog-hero-content">
                     <h1 className="blog-title">📰 Tin Tức & Đánh Giá</h1>
                     <p className="blog-subtitle">
-                        Cập nhật tin tức công nghệ mới nhất, đánh giá chi tiết và hướng dẫn sử dụng
+                        Tin tức công nghệ mới nhất, đánh giá chi tiết và hướng dẫn sử dụng
                     </p>
                 </div>
             </div>
@@ -97,7 +97,13 @@ const BlogPage = () => {
                                 <span className="meta-item">📅 {blogPosts[0].date}</span>
                                 <span className="meta-item">⏱️ {blogPosts[0].readTime}</span>
                             </div>
-                            <button className="read-more-btn">Đọc thêm →</button>
+                            <button 
+                                className="read-more-btn"
+                                onClick={() => window.location.href = `/blog/${blogPosts[0].id}`}
+                                style={{cursor: 'pointer'}}
+                            >
+                                Đọc thêm →
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -140,7 +146,13 @@ const BlogPage = () => {
                                         </div>
                                         <span className="read-time">{post.readTime}</span>
                                     </div>
-                                    <button className="blog-card-btn">Đọc ngay →</button>
+                                    <button 
+                                        className="blog-card-btn"
+                                        onClick={() => window.location.href = `/blog/${post.id}`}
+                                        style={{cursor: 'pointer'}}
+                                    >
+                                        Đọc ngay →
+                                    </button>
                                 </div>
                             </article>
                         ))}
@@ -150,8 +162,8 @@ const BlogPage = () => {
                     <aside className="blog-sidebar">
                         {/* Newsletter */}
                         <div className="sidebar-widget newsletter-widget">
-                            <h4 className="widget-title">📬 Đăng ký nhận tin</h4>
-                            <p className="widget-text">Nhận thông báo về bài viết mới nhất</p>
+                            <h4 className="widget-title">📬 Subscribe to newsletter</h4>
+                            <p className="widget-text">Get notifications about latest articles</p>
                             <form className="newsletter-form">
                                 <input 
                                     type="email" 

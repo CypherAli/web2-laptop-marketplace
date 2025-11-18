@@ -25,7 +25,7 @@ const OrderDetailPage = () => {
             const res = await axios.get(`/orders/${orderId}`);
             setOrder(res.data);
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Không thể tải thông tin đơn hàng');
+            toast.error(error.response?.data?.message || 'Cannot load order information');
         } finally {
             setLoading(false);
         }
@@ -41,18 +41,18 @@ const OrderDetailPage = () => {
             toast.success('Đã hủy đơn hàng thành công');
             fetchOrderDetail();
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Không thể hủy đơn hàng');
+            toast.error(error.response?.data?.message || 'Cannot cancel order');
         }
     };
 
     const getStatusInfo = (status) => {
         const statusMap = {
-            'pending': { label: 'Chờ xác nhận', color: '#f59e0b', icon: '⏳' },
-            'confirmed': { label: 'Đã xác nhận', color: '#3b82f6', icon: '✅' },
-            'processing': { label: 'Đang xử lý', color: '#8b5cf6', icon: '📦' },
-            'shipped': { label: 'Đang giao hàng', color: '#06b6d4', icon: '🚚' },
-            'delivered': { label: 'Đã giao hàng', color: '#10b981', icon: '✔️' },
-            'cancelled': { label: 'Đã hủy', color: '#ef4444', icon: '❌' },
+            'pending': { label: 'Pending', color: '#f59e0b', icon: '⏳' },
+            'pending': { label: 'Pending', color: '#f59e0b', icon: '⏳' },
+            'processing': { label: 'Processing', color: '#3b82f6', icon: '📦' },
+            'shipped': { label: 'Shipping', color: '#8b5cf6', icon: '🚚' },
+            'delivered': { label: 'Delivered', color: '#10b981', icon: '✅' },
+            'cancelled': { label: 'Cancelled', color: '#ef4444', icon: '❌' },
             'refunded': { label: 'Đã hoàn tiền', color: '#6b7280', icon: '💰' }
         };
         return statusMap[status] || { label: status, color: '#6b7280', icon: '📋' };
@@ -73,7 +73,7 @@ const OrderDetailPage = () => {
             <div className="order-detail-page">
                 <div className="loading-container">
                     <div className="spinner"></div>
-                    <p>Đang tải thông tin đơn hàng...</p>
+                    <p>Loading order information...</p>
                 </div>
             </div>
         );
@@ -83,8 +83,8 @@ const OrderDetailPage = () => {
         return (
             <div className="order-detail-page">
                 <div className="error-container">
-                    <h2>Không tìm thấy đơn hàng</h2>
-                    <Link to="/orders" className="back-link">← Quay lại danh sách đơn hàng</Link>
+                    <h2>Order not found</h2>
+                    <Link to="/orders" className="back-link">← Back to orders list</Link>
                 </div>
             </div>
         );
@@ -103,7 +103,7 @@ const OrderDetailPage = () => {
                             ← Quay lại
                         </Link>
                         <div className="header-info">
-                            <h1>Đơn hàng #{order.orderNumber}</h1>
+                            <h1>Order #{order.orderNumber}</h1>
                             <p className="order-date">
                                 Đặt ngày: {new Date(order.createdAt).toLocaleString('vi-VN')}
                             </p>
@@ -119,7 +119,7 @@ const OrderDetailPage = () => {
                                 className="cancel-order-btn"
                                 onClick={handleCancelOrder}
                             >
-                                ❌ Hủy đơn hàng
+                                ❌ Cancel Order
                             </button>
                         )}
                     </div>
@@ -127,7 +127,7 @@ const OrderDetailPage = () => {
 
                 {/* Order Status Timeline */}
                 <div className="order-timeline">
-                    <h2>Trạng thái đơn hàng</h2>
+                    <h2>Order Status</h2>
                     <div className="timeline-list">
                         {order.statusHistory && order.statusHistory.length > 0 ? (
                             order.statusHistory.map((history, index) => {
@@ -148,7 +148,7 @@ const OrderDetailPage = () => {
                                 );
                             })
                         ) : (
-                            <p>Chưa có lịch sử cập nhật</p>
+                            <p>No update history yet</p>
                         )}
                     </div>
                 </div>
@@ -217,7 +217,7 @@ const OrderDetailPage = () => {
                             </div>
                             {order.discount > 0 && (
                                 <div className="summary-row discount">
-                                    <span>Giảm giá:</span>
+                                    <span>Discount:</span>
                                     <span>-{order.discount.toLocaleString()}đ</span>
                                 </div>
                             )}
@@ -236,7 +236,7 @@ const OrderDetailPage = () => {
 
                         {/* Shipping Address */}
                         <div className="order-section">
-                            <h2>Địa chỉ giao hàng</h2>
+                            <h2>Shipping Address</h2>
                             <div className="address-info">
                                 <p><strong>{order.shippingAddress.fullName}</strong></p>
                                 <p>📞 {order.shippingAddress.phone}</p>
@@ -259,7 +259,7 @@ const OrderDetailPage = () => {
                                     <p><strong>Mã vận đơn:</strong> {order.tracking.trackingNumber}</p>
                                     {order.tracking.trackingUrl && (
                                         <a href={order.tracking.trackingUrl} target="_blank" rel="noopener noreferrer" className="tracking-link">
-                                            Theo dõi đơn hàng →
+                                            Track order →
                                         </a>
                                     )}
                                     {order.tracking.estimatedDelivery && (

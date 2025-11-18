@@ -6,26 +6,26 @@ const HeroBanner = ({ onBrandClick }) => {
 
     const slides = [
         {
-            title: 'Laptop Gaming',
-            subtitle: 'Chiến Mọi Game Đỉnh Cao',
-            description: 'Giảm đến 30% - RTX 40 Series',
-            cta: 'Mua Ngay',
+            title: 'Gaming Laptops',
+            subtitle: 'Dominate Every Game',
+            description: 'Up to 30% Off - RTX 40 Series',
+            cta: 'Buy Now',
             image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=800&h=500&fit=crop',
             color: '#e74c3c'
         },
         {
-            title: 'Laptop Doanh Nghiệp',
-            subtitle: 'Làm Việc Hiệu Quả',
-            description: 'Mỏng nhẹ - Pin trâu - Bảo mật cao',
-            cta: 'Khám Phá',
+            title: 'Business Laptops',
+            subtitle: 'Work Efficiently',
+            description: 'Slim & Light - Long Battery - High Security',
+            cta: 'Explore',
             image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&h=500&fit=crop',
             color: '#3498db'
         },
         {
-            title: 'Ưu Đãi Hot',
-            subtitle: 'Trả Góp 0% Lãi Suất',
-            description: 'Miễn phí vận chuyển toàn quốc',
-            cta: 'Xem Ngay',
+            title: 'Hot Deals',
+            subtitle: '0% Interest Installment',
+            description: 'Free nationwide shipping',
+            cta: 'View Now',
             image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&h=500&fit=crop',
             color: '#f39c12'
         }
@@ -73,7 +73,7 @@ const HeroBanner = ({ onBrandClick }) => {
                                         <span className="badge-icon">⭐</span>
                                         <div className="badge-text">
                                             <strong>4.8/5</strong>
-                                            <small>15K+ đánh giá</small>
+                                            <small>15K+ reviews</small>
                                         </div>
                                     </div>
                                     <div className="badge-item">
@@ -87,7 +87,7 @@ const HeroBanner = ({ onBrandClick }) => {
                                         <span className="badge-icon">✓</span>
                                         <div className="badge-text">
                                             <strong>100%</strong>
-                                            <small>Chính hãng</small>
+                                            <small>Authentic</small>
                                         </div>
                                     </div>
                                 </div>
@@ -114,7 +114,7 @@ const HeroBanner = ({ onBrandClick }) => {
             {/* Brand Showcase - Official Partners */}
             <section className="brand-showcase">
                 <div className="brand-container">
-                    <h3 className="brand-title">🏢 Đối Tác Chính Hãng</h3>
+                    <h3 className="brand-title">🏢 Official Partners</h3>
                     <div className="brand-logos">
                         <div 
                             className="brand-logo" 
@@ -196,29 +196,29 @@ const HeroBanner = ({ onBrandClick }) => {
                     <div className="service-item">
                         <span className="service-icon">🚚</span>
                         <div className="service-text">
-                            <strong>Miễn phí vận chuyển</strong>
-                            <small>Toàn quốc từ 10 triệu</small>
+                            <strong>Free Shipping</strong>
+                            <small>Nationwide from 10 million</small>
                         </div>
                     </div>
                     <div className="service-item">
                         <span className="service-icon">🔄</span>
                         <div className="service-text">
-                            <strong>Đổi trả 15 ngày</strong>
-                            <small>Nếu có lỗi từ NSX</small>
+                            <strong>15-day Return</strong>
+                            <small>If manufacturer defect</small>
                         </div>
                     </div>
                     <div className="service-item">
                         <span className="service-icon">🛡️</span>
                         <div className="service-text">
-                            <strong>Bảo hành chính hãng</strong>
-                            <small>12-24 tháng</small>
+                            <strong>Official Warranty</strong>
+                            <small>12-24 months</small>
                         </div>
                     </div>
                     <div className="service-item">
                         <span className="service-icon">💳</span>
                         <div className="service-text">
-                            <strong>Trả góp 0%</strong>
-                            <small>Duyệt nhanh 30 phút</small>
+                            <strong>0% Installment</strong>
+                            <small>Quick approval in 30 min</small>
                         </div>
                     </div>
                 </div>

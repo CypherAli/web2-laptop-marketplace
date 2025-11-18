@@ -219,7 +219,7 @@ const ProductDetailPageV2 = () => {
                                         SALE {Math.round((1 - product.price / product.originalPrice) * 100)}%
                                     </div>
                                 )}
-                                {product.stock === 0 && (
+                                {(!product.stock || product.stock <= 0) && (
                                     <div style={{
                                         position: 'absolute',
                                         top: 0,
@@ -442,16 +442,16 @@ const ProductDetailPageV2 = () => {
                             {/* Stock Status */}
                             <div style={{
                                 padding: '15px',
-                                background: product.stock > 0 ? '#d4edda' : '#f8d7da',
+                                background: (product.stock && product.stock > 0) ? '#d4edda' : '#f8d7da',
                                 borderRadius: '8px',
                                 marginBottom: '25px'
                             }}>
                                 <span style={{
-                                    color: product.stock > 0 ? '#155724' : '#721c24',
+                                    color: (product.stock && product.stock > 0) ? '#155724' : '#721c24',
                                     fontWeight: 'bold',
                                     fontSize: '1rem'
                                 }}>
-                                    {product.stock > 0 ? `✓ Còn hàng (${product.stock} sản phẩm)` : '✗ Hết hàng'}
+                                    {(product.stock && product.stock > 0) ? `✓ Còn hàng (${product.stock} sản phẩm)` : '✗ Hết hàng'}
                                 </span>
                             </div>
 
@@ -517,7 +517,7 @@ const ProductDetailPageV2 = () => {
                             )}
 
                             {/* Quantity & Actions */}
-                            {product.stock > 0 && (
+                            {(product.stock && product.stock > 0) && (
                                 <>
                                     <div style={{
                                         display: 'flex',
@@ -622,7 +622,7 @@ const ProductDetailPageV2 = () => {
                                 </>
                             )}
 
-                            {product.stock === 0 && (
+                            {(!product.stock || product.stock <= 0) && (
                                 <button
                                     disabled
                                     style={{

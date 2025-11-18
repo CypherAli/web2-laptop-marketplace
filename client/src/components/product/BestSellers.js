@@ -26,25 +26,26 @@ const BestSellers = () => {
             const res = await axios.get('/products', {
                 params: {
                     sortBy: 'popular',
-                    limit: 5,
-                    inStock: true
+                    limit: 5
+                    // Removed inStock:true filter to show real-time stock status
                 }
             });
             
             // Add default values for missing fields
             const productsWithDefaults = (res.data.products || res.data).map(p => ({
                 ...p,
-                processor: p.processor || 'Đang cập nhật',
-                ram: p.ram || 'Đang cập nhật',
-                storage: p.storage || 'Đang cập nhật',
-                screen: p.screen || 'Đang cập nhật',
-                description: p.description || 'Sản phẩm chính hãng, bảo hành toàn quốc. Liên hệ hotline 084.686.5650 để biết thêm chi tiết.',
+                processor: p.processor || 'Updating...',
+                ram: p.ram || 'Updating...',
+                storage: p.storage || 'Updating...',
+                screen: p.screen || 'Updating...',
+                description: p.description || 'Authentic product, nationwide warranty. Contact hotline 084.686.5650 for more details.',
                 features: p.features && p.features.length > 0 ? p.features : [
-                    'Sản phẩm mới 100%, nguyên seal',
-                    'Bảo hành chính hãng',
-                    'Giao hàng toàn quốc',
-                    'Hỗ trợ trả góp 0% lãi suất'
-                ]
+                    'Brand new 100%, original seal',
+                    'Official nationwide warranty',
+                    'Nationwide delivery, flexible payment',
+                    '0% interest installment support'
+                ],
+                inStock: (p.stock && p.stock > 0)  // FIX: Check real stock availability safely
             }));
             
             setBestSellers(productsWithDefaults);
@@ -65,11 +66,11 @@ const BestSellers = () => {
         e.preventDefault();
         e.stopPropagation();
         addToCart(product);
-        toast.success(`Đã thêm ${product.name} vào giỏ hàng!`);
+        toast.success(`Added ${product.name} to cart!`);
     };
 
     if (loading) {
-        return <div className="section-loading">Đang tải...</div>;
+        return <div className="section-loading">Loading...</div>;
     }
 
     return (
@@ -78,11 +79,11 @@ const BestSellers = () => {
                 <div className="section-header">
                     <h2 className="section-title">
                         <span className="title-icon">⭐</span>
-                        Sản Phẩm Bán Chạy
+                        Best Sellers
                         <span className="title-icon">⭐</span>
                     </h2>
                     <p className="section-subtitle">
-                        Top laptop được khách hàng yêu thích và tin dùng nhất
+                        Top laptops most loved and trusted by customers
                     </p>
                 </div>
 
@@ -102,7 +103,7 @@ const BestSellers = () => {
                                     <button
                                         className={`bestseller-wishlist-btn ${isInWishlist(product._id) ? 'active' : ''}`}
                                         onClick={(e) => handleWishlistClick(e, product)}
-                                        title={isInWishlist(product._id) ? 'Xóa khỏi yêu thích' : 'Thêm vào yêu thích'}
+                                        title={isInWishlist(product._id) ? 'Remove from wishlist' : 'Add to wishlist'}
                                     >
                                         {isInWishlist(product._id) ? '❤️' : '🤍'}
                                     </button>
@@ -155,9 +156,9 @@ const BestSellers = () => {
                                     <button
                                         className="bestseller-add-to-cart"
                                         onClick={(e) => handleAddToCart(e, product)}
-                                        title="Thêm vào giỏ hàng"
+                                        title="Add to cart"
                                     >
-                                        <FiShoppingCart /> Thêm giỏ hàng
+                                        <FiShoppingCart /> Add to Cart
                                     </button>
                                 </div>
                             </div>
@@ -175,7 +176,7 @@ const BestSellers = () => {
                             }
                         }}
                     >
-                        Xem tất cả sản phẩm →
+                        View all products →
                     </button>
                 </div>
             </div>
@@ -187,7 +188,7 @@ const BestSellers = () => {
                     onClose={() => setSelectedProduct(null)}
                     onAddToCart={(product) => {
                         addToCart(product);
-                        toast.success(`Đã thêm ${product.name} vào giỏ hàng!`);
+                        toast.success(`Added ${product.name} to cart!`);
                     }}
                 />
             )}

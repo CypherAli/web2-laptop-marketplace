@@ -99,7 +99,7 @@ const DealsPage = () => {
             setLoading(false);
         } catch (err) {
             console.error('Error fetching deals:', err);
-            setError('Không thể tải danh sách khuyến mãi');
+            setError('Cannot load deals list');
             setLoading(false);
         }
     };
@@ -124,7 +124,7 @@ const DealsPage = () => {
             <div className="deals-page">
                 <div className="loading-container">
                     <div className="spinner"></div>
-                    <p>Đang tải khuyến mãi...</p>
+                    <p>Loading deals...</p>
                 </div>
             </div>
         );
@@ -176,7 +176,7 @@ const DealsPage = () => {
                 <div className="deals-hero-content">
                     <h1 className="deals-title">🔥 SIÊU SALE KHỦNG</h1>
                     <p className="deals-subtitle">
-                        Giảm giá lên đến 50% - Mua ngay kẻo lỡ!
+                        Discounts up to 50% - Buy now before it's too late!
                     </p>
                     <div className="deals-stats">
                         <div className="stat-item">
@@ -210,7 +210,7 @@ const DealsPage = () => {
                             className={`tab-btn ${activeCategory === cat ? 'active' : ''}`}
                             onClick={() => setActiveCategory(cat)}
                         >
-                            {cat === 'all' ? '🎯 Tất cả' : `💻 ${cat}`}
+                            {cat === 'all' ? '🎯 All' : `💻 ${cat}`}
                         </button>
                     ))}
                 </div>
@@ -221,7 +221,7 @@ const DealsPage = () => {
                 <div className="filter-container">
                     <div className="filter-info">
                         <span className="result-count">
-                            <strong>{filteredProducts.length}</strong> sản phẩm khuyến mãi
+                            <strong>{filteredProducts.length}</strong> products on sale
                         </span>
                     </div>
                     <div className="filter-actions">
@@ -229,7 +229,7 @@ const DealsPage = () => {
                             className={`filter-btn ${sortBy === 'discount' ? 'active' : ''}`}
                             onClick={() => setSortBy('discount')}
                         >
-                            🔥 Giảm giá cao
+                            🔥 High discount
                         </button>
                         <button 
                             className={`filter-btn ${sortBy === 'price-low' ? 'active' : ''}`}
@@ -258,7 +258,7 @@ const DealsPage = () => {
                 <div className="flash-deals-section">
                     <div className="section-header">
                         <h2 className="section-title">⚡ FLASH DEALS HOT NHẤT</h2>
-                        <p className="section-subtitle">Giảm giá cực sốc - Số lượng có hạn</p>
+                        <p className="section-subtitle">Huge discounts - Limited quantity</p>
                     </div>
                     <div className="flash-deals-grid">
                         {filteredProducts.slice(0, 3).map(product => (
@@ -300,7 +300,7 @@ const DealsPage = () => {
                                             </span>
                                         </div>
                                         <div className="flash-savings">
-                                            💰 Tiết kiệm {formatPrice(product.originalPrice - product.price)}
+                                            💰 Save {formatPrice(product.originalPrice - product.price)}
                                         </div>
                                     </div>
 
@@ -337,13 +337,13 @@ const DealsPage = () => {
             {/* Products Grid */}
             <div className="deals-content">
                 <div className="section-header">
-                    <h2 className="section-title">📦 TẤT CẢ DEALS</h2>
+                    <h2 className="section-title">📦 ALL DEALS</h2>
                 </div>
                 
                 {filteredProducts.length === 0 ? (
                     <div className="no-deals">
                         <p className="no-deals-icon">😔</p>
-                        <h3>Không tìm thấy sản phẩm khuyến mãi</h3>
+                        <h3>No promotional products found</h3>
                         <p>Vui lòng thử lại với bộ lọc khác</p>
                         <button 
                             className="back-home-btn"
@@ -352,7 +352,7 @@ const DealsPage = () => {
                                 setSortBy('discount');
                             }}
                         >
-                            🔄 Xem tất cả
+                            🔄 View all
                         </button>
                     </div>
                 ) : (
@@ -421,7 +421,7 @@ const DealsPage = () => {
                                             onClick={() => handleAddToCart(product)}
                                             disabled={!product.inStock}
                                         >
-                                            {product.inStock ? '🛒 Thêm vào giỏ' : '⛔ Hết hàng'}
+                                            {product.inStock ? '🛒 Add to cart' : '⛔ Out of stock'}
                                         </button>
                                     </div>
 
@@ -443,7 +443,7 @@ const DealsPage = () => {
                     <div className="trust-item">
                         <span className="trust-icon">🚚</span>
                         <h4>Miễn phí vận chuyển</h4>
-                        <p>Đơn hàng từ 10 triệu</p>
+                        <p>Orders over 10 million</p>
                     </div>
                     <div className="trust-item">
                         <span className="trust-icon">🔄</span>

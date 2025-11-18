@@ -26,7 +26,7 @@ const OrderHistory = () => {
             setOrders(Array.isArray(ordersData) ? ordersData : []);
         } catch (error) {
             console.error('Error fetching orders:', error);
-            toast.error('Không thể tải đơn hàng');
+            toast.error('Cannot load orders');
             setOrders([]);
         } finally {
             setLoading(false);
@@ -40,16 +40,16 @@ const OrderHistory = () => {
     }, []);
 
     const handleCancelOrder = async (orderId) => {
-        if (!window.confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
+        if (!window.confirm('Are you sure you want to cancel this order?')) {
             return;
         }
 
         try {
             await axios.put(`/orders/${orderId}/cancel`);
-            toast.success('Đã hủy đơn hàng');
+            toast.success('Order cancelled');
             fetchOrders(); // Refresh orders
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Không thể hủy đơn hàng');
+            toast.error(error.response?.data?.message || 'Cannot cancel order');
         }
     };
 
@@ -110,7 +110,7 @@ const OrderHistory = () => {
         return (
             <div className="order-history-loading">
                 <div className="spinner"></div>
-                <p>Đang tải đơn hàng...</p>
+                <p>Loading orders...</p>
             </div>
         );
     }
@@ -119,10 +119,10 @@ const OrderHistory = () => {
         <div className="order-history-tab">
             <div className="order-header">
                 <h2>
-                    <FiPackage /> Đơn hàng của tôi
+                    <FiPackage /> My Orders
                 </h2>
-                <p className="order-count">
-                    Tổng {orders.length} đơn hàng
+                <p className="orders-count">
+                    Total {orders.length} orders
                 </p>
             </div>
 
@@ -132,7 +132,7 @@ const OrderHistory = () => {
                     className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
                     onClick={() => setActiveFilter('all')}
                 >
-                    Tất cả ({orders.length})
+                    All ({orders.length})
                 </button>
                 <button 
                     className={`filter-btn ${activeFilter === 'pending' ? 'active' : ''}`}
@@ -170,11 +170,11 @@ const OrderHistory = () => {
             {filteredOrders.length === 0 ? (
                 <div className="no-orders">
                     <FiPackage size={64} />
-                    <h3>Chưa có đơn hàng nào</h3>
+                    <h3>No orders yet</h3>
                     <p>
                         {activeFilter === 'all' 
-                            ? 'Bạn chưa có đơn hàng nào. Hãy bắt đầu mua sắm!' 
-                            : `Không có đơn hàng ${getStatusInfo(activeFilter).label.toLowerCase()}`
+                            ? 'You don\'t have any orders. Start shopping!' 
+                            : `No ${getStatusInfo(activeFilter).label.toLowerCase()} orders`
                         }
                     </p>
                     <button 
@@ -192,7 +192,7 @@ const OrderHistory = () => {
                             <div key={order._id} className="order-card">
                                 <div className="order-card-header">
                                     <div className="order-id-section">
-                                        <span className="order-label">Mã đơn hàng:</span>
+                                        <span className="order-label">Order Code:</span>
                                         <span className="order-id">#{order.orderNumber || order._id.slice(-8).toUpperCase()}</span>
                                         {order.paymentMethod && (
                                             <span className="payment-method-badge">
@@ -213,8 +213,8 @@ const OrderHistory = () => {
                                         </div>
                                         {order.paymentStatus && (
                                             <span className={`payment-status ${order.paymentStatus}`}>
-                                                {order.paymentStatus === 'paid' ? '✅ Đã thanh toán' : 
-                                                 order.paymentStatus === 'unpaid' ? '⏳ Chưa thanh toán' : 
+                                                {order.paymentStatus === 'paid' ? '✅ Paid' : 
+                                                 order.paymentStatus === 'unpaid' ? '⏳ Unpaid' : 
                                                  order.paymentStatus}
                                             </span>
                                         )}

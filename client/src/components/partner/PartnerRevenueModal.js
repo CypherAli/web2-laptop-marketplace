@@ -351,7 +351,7 @@ const PartnerRevenueModal = ({ partnerId, onClose }) => {
                                                 <td className="sold-count">
                                                     <strong>{product.soldCount}</strong>
                                                 </td>
-                                                <td className={product.stock === 0 ? 'out-of-stock' : ''}>
+                                                <td className={(!product.stock || product.stock <= 0) ? 'out-of-stock' : ''}>
                                                     {product.stock}
                                                 </td>
                                                 <td>

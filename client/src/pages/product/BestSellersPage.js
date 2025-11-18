@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from '../../api/axiosConfig';
 import CartContext from '../../context/CartContext';
 import WishlistContext from '../../context/WishlistContext';
+import { useToast } from '../../components/common/Toast';
 import { PLACEHOLDER_IMAGES } from '../../utils/placeholder';
 import './BestSellersPage.css';
 
@@ -12,6 +13,7 @@ const BestSellersPage = () => {
     const [error, setError] = useState(null);
     const { addToCart } = useContext(CartContext);
     const { toggleWishlist, isInWishlist } = useContext(WishlistContext);
+    const toast = useToast();
 
     useEffect(() => {
         fetchBestSellers();
@@ -38,7 +40,7 @@ const BestSellersPage = () => {
             setLoading(false);
         } catch (err) {
             console.error('Error fetching best sellers:', err);
-            setError('Không thể tải danh sách sản phẩm bán chạy');
+            setError('Cannot load best sellers list');
             setLoading(false);
         }
     };
@@ -51,8 +53,15 @@ const BestSellersPage = () => {
     };
 
     const handleAddToCart = (product) => {
-        addToCart(product);
-        alert(`Đã thêm ${product.name} vào giỏ hàng!`);
+        console.log('🛒 Adding to cart:', product);
+        try {
+            addToCart(product);
+            toast.success(`✅ Added ${product.name} to cart!`);
+            console.log('✅ Successfully added to cart');
+        } catch (error) {
+            console.error('❌ Error adding to cart:', error);
+            toast.error('Failed to add to cart');
+        }
     };
 
     const getRankBadge = (index) => {
@@ -67,7 +76,7 @@ const BestSellersPage = () => {
             <div className="bestsellers-page">
                 <div className="loading-container">
                     <div className="spinner"></div>
-                    <p>Đang tải sản phẩm bán chạy...</p>
+                    <p>Loading best sellers...</p>
                 </div>
             </div>
         );
@@ -88,14 +97,14 @@ const BestSellersPage = () => {
             {/* Hero Banner */}
             <div className="bestsellers-hero">
                 <div className="bestsellers-hero-content">
-                    <h1 className="bestsellers-title">⭐ Top Sản Phẩm Bán Chạy</h1>
+                    <h1 className="bestsellers-title">⭐ Top Best Sellers</h1>
                     <p className="bestsellers-subtitle">
-                        Được tin dùng bởi hàng nghìn khách hàng
+                        Trusted by thousands of customers
                     </p>
                     <div className="bestsellers-stats">
                         <div className="stat-item">
                             <span className="stat-number">{products.length}</span>
-                            <span className="stat-label">Sản phẩm bán chạy</span>
+                            <span className="stat-label">Best Sellers</span>
                         </div>
                         <div className="stat-item">
                             <span className="stat-number">
@@ -105,7 +114,7 @@ const BestSellersPage = () => {
                         </div>
                         <div className="stat-item">
                             <span className="stat-number">4.8★</span>
-                            <span className="stat-label">Đánh giá trung bình</span>
+                            <span className="stat-label">Average Rating</span>
                         </div>
                     </div>
                 </div>
@@ -114,27 +123,27 @@ const BestSellersPage = () => {
             {/* Why Choose Best Sellers */}
             <div className="why-bestsellers">
                 <div className="why-content">
-                    <h2>🏆 Tại sao nên chọn sản phẩm bán chạy?</h2>
+                    <h2>🏆 Why choose best sellers?</h2>
                     <div className="why-grid">
                         <div className="why-item">
                             <span className="why-icon">✓</span>
-                            <h4>Được kiểm chứng</h4>
-                            <p>Hàng nghìn người đã mua và tin dùng</p>
+                            <h4>Verified quality</h4>
+                            <p>Thousands have purchased and trusted</p>
                         </div>
                         <div className="why-item">
                             <span className="why-icon">⭐</span>
-                            <h4>Đánh giá cao</h4>
-                            <p>Review tích cực từ khách hàng thực</p>
+                            <h4>Highly rated</h4>
+                            <p>Positive reviews from real customers</p>
                         </div>
                         <div className="why-item">
                             <span className="why-icon">💎</span>
-                            <h4>Chất lượng đảm bảo</h4>
-                            <p>Sản phẩm được lựa chọn kỹ lưỡng</p>
+                            <h4>Guaranteed quality</h4>
+                            <p>Products carefully selected</p>
                         </div>
                         <div className="why-item">
                             <span className="why-icon">🚀</span>
-                            <h4>Xu hướng hot</h4>
-                            <p>Theo kịp công nghệ mới nhất</p>
+                            <h4>Hot trends</h4>
+                            <p>Keep up with latest technology</p>
                         </div>
                     </div>
                 </div>
@@ -145,10 +154,10 @@ const BestSellersPage = () => {
                 {products.length === 0 ? (
                     <div className="no-bestsellers">
                         <p className="no-bestsellers-icon">📦</p>
-                        <h3>Chưa có sản phẩm bán chạy</h3>
-                        <p>Vui lòng quay lại sau</p>
+                        <h3>No best sellers yet</h3>
+                        <p>Please come back later</p>
                         <Link to="/" className="back-home-btn">
-                            🏠 Về trang chủ
+                            🏠 Back to Home
                         </Link>
                     </div>
                 ) : (
@@ -222,15 +231,26 @@ const BestSellersPage = () => {
 
                                         <div className="product-actions">
                                             <button 
+                                                type="button"
                                                 className="add-to-cart-btn"
-                                                onClick={() => handleAddToCart(product)}
-                                                disabled={!product.inStock}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    console.log('🔥 Button clicked!', product.name);
+                                                    handleAddToCart(product);
+                                                }}
+                                                style={{ 
+                                                    pointerEvents: 'auto', 
+                                                    cursor: 'pointer',
+                                                    position: 'relative',
+                                                    zIndex: 999
+                                                }}
                                             >
-                                                {product.inStock ? '🛒 Thêm vào giỏ' : '⛔ Hết hàng'}
+                                                🛒 Add to Cart
                                             </button>
                                         </div>
 
-                                        {product.inStock && product.stock < 10 && (
+                                        {product.stock && product.stock < 10 && (
                                             <div className="stock-warning">
                                                 ⚠️ Chỉ còn {product.stock} sản phẩm
                                             </div>

@@ -14,7 +14,7 @@ const ProfileOverview = ({ userData, onRefresh }) => {
                     <div className="stat-icon">📦</div>
                     <div className="stat-info">
                         <h3>{stats.totalOrders || 0}</h3>
-                        <p>Đơn hàng</p>
+                        <p>Orders</p>
                     </div>
                 </div>
                 <div className="stat-card">
@@ -42,7 +42,7 @@ const ProfileOverview = ({ userData, onRefresh }) => {
 
             <div className="overview-sections">
                 <div className="section-card">
-                    <h3>Thông tin tài khoản</h3>
+                    <h3>Account Information</h3>
                     <div className="info-list">
                         <div className="info-item">
                             <span className="label">Họ tên:</span>
@@ -54,7 +54,7 @@ const ProfileOverview = ({ userData, onRefresh }) => {
                         </div>
                         <div className="info-item">
                             <span className="label">Số điện thoại:</span>
-                            <span className="value">{userData.phone || 'Chưa cập nhật'}</span>
+                            <span className="value">{userData.phone || 'Not updated'}</span>
                         </div>
                         <div className="info-item">
                             <span className="label">Hạng thành viên:</span>

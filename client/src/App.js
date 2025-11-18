@@ -20,6 +20,7 @@ import ProductDetailPageUltra from './pages/product/ProductDetailPageUltra';
 import DealsPageNew from './pages/deals/DealsPageNew';
 import BestSellersPage from './pages/product/BestSellersPage';
 import BlogPage from './pages/common/BlogPage';
+import BlogDetailPage from './pages/common/BlogDetailPage';
 import AboutPage from './pages/common/AboutPage';
 import ContactPage from './pages/company/ContactPage';
 import CompanyAboutPage from './pages/company/CompanyAboutPage';
@@ -61,6 +62,7 @@ function App() {
         <Route path="/deals" element={<DealsPageNew />} />
         <Route path="/best-sellers" element={<BestSellersPage />} />
         <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:id" element={<BlogDetailPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -110,7 +112,7 @@ function App() {
         {/* Catch-all 404 */}
         <Route path="*" element={
           <div style={{ padding: '50px', textAlign: 'center' }}>
-            <h1>404 - Trang không tồn tại</h1>
+            <h1>404 - Page Not Found</h1>
             <p>URL: {window.location.pathname}</p>
             <button onClick={() => window.location.href = '/'} style={{
               marginTop: '20px',
@@ -122,7 +124,7 @@ function App() {
               border: 'none',
               borderRadius: '5px'
             }}>
-              Về trang chủ
+              Go to Home
             </button>
           </div>
         } />

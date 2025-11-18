@@ -118,9 +118,9 @@ const NotificationBell = () => {
         const diffDays = Math.floor(diffMs / 86400000);
 
         if (diffMins < 1) return 'Vừa xong';
-        if (diffMins < 60) return `${diffMins} phút trước`;
-        if (diffHours < 24) return `${diffHours} giờ trước`;
-        return `${diffDays} ngày trước`;
+        if (diffMins < 60) return `${diffMins} min ago`;
+        if (diffHours < 24) return `${diffHours} hr ago`;
+        return `${diffDays} days ago`;
     };
 
     if (!user) return null;
@@ -130,7 +130,7 @@ const NotificationBell = () => {
             <button 
                 className="notification-bell-btn"
                 onClick={handleBellClick}
-                aria-label="Thông báo"
+                aria-label="Notifications"
             >
                 <span className="bell-icon">🔔</span>
                 {unreadCount > 0 && (
@@ -141,7 +141,7 @@ const NotificationBell = () => {
             {showDropdown && (
                 <div className="notification-dropdown">
                     <div className="notification-header">
-                        <h3>Thông báo</h3>
+                        <h3>Notifications</h3>
                         <Link 
                             to="/profile?tab=notifications" 
                             className="view-all-link"
@@ -180,7 +180,7 @@ const NotificationBell = () => {
                         ) : (
                             <div className="notification-empty">
                                 <span className="empty-icon">🔕</span>
-                                <p>Không có thông báo mới</p>
+                                <p>No new notifications</p>
                             </div>
                         )}
                     </div>
@@ -192,7 +192,7 @@ const NotificationBell = () => {
                                 className="view-all-btn"
                                 onClick={() => setShowDropdown(false)}
                             >
-                                Xem tất cả thông báo →
+                                View all notifications →
                             </Link>
                         </div>
                     )}

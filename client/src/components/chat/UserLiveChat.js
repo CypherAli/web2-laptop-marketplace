@@ -162,7 +162,7 @@ const UserLiveChat = () => {
             >
                 {isOpen ? <FiX /> : <FiMessageCircle />}
                 {!isOpen && (
-                    <span className="chat-notification">Chat hỗ trợ</span>
+                    <span className="chat-notification">Support Chat</span>
                 )}
             </motion.button>
 

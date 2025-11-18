@@ -18,12 +18,12 @@ const ResetPasswordPage = () => {
         e.preventDefault();
         
         if (newPassword !== confirmPassword) {
-            toast.error('Mật khẩu không khớp!');
+            toast.error('Passwords do not match!');
             return;
         }
 
         if (newPassword.length < 6) {
-            toast.error('Mật khẩu phải có ít nhất 6 ký tự');
+            toast.error('Password must be at least 6 characters');
             return;
         }
 
@@ -36,10 +36,10 @@ const ResetPasswordPage = () => {
                 newPassword
             });
             
-            toast.success(response.data.message || 'Đặt lại mật khẩu thành công!');
+            toast.success(response.data.message || 'Password reset successful!');
             setTimeout(() => navigate('/login'), 2000);
         } catch (err) {
-            const errorMsg = err.response?.data?.message || 'Không thể đặt lại mật khẩu. Vui lòng thử lại.';
+            const errorMsg = err.response?.data?.message || 'Could not reset password. Please try again.';
             toast.error(errorMsg);
         } finally {
             setLoading(false);
@@ -52,9 +52,9 @@ const ResetPasswordPage = () => {
                 <div className="auth-card">
                     <div className="auth-card-header">
                         <div className="auth-icon">🔑</div>
-                        <h1>Đặt Lại Mật Khẩu</h1>
+                        <h1>Reset Password</h1>
                         <p className="auth-subtitle">
-                            Nhập mã xác nhận và mật khẩu mới
+                            Enter verification code and new password
                         </p>
                     </div>
 
@@ -73,47 +73,38 @@ const ResetPasswordPage = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>🔢 Mã xác nhận</label>
+                            <label>🔢 Verification Code</label>
                             <input 
                                 type="text" 
                                 value={resetCode} 
                                 onChange={(e) => setResetCode(e.target.value)} 
-                                placeholder="Nhập mã 6 chữ số"
+                                placeholder="Enter 6-digit code"
                                 required 
                                 disabled={loading}
                                 className="form-input"
                                 maxLength="6"
                             />
                             <small className="form-hint">
-                                Mã xác nhận đã được gửi đến email của bạn
+                                Verification code has been sent to your email
                             </small>
                         </div>
 
                         <div className="form-group">
-                            <label>🔒 Mật khẩu mới</label>
-                            <div className="password-input-wrapper">
-                                <input 
-                                    type={showPassword ? "text" : "password"}
-                                    value={newPassword} 
-                                    onChange={(e) => setNewPassword(e.target.value)} 
-                                    placeholder="••••••••"
-                                    required 
-                                    disabled={loading}
-                                    className="form-input"
-                                    minLength="6"
-                                />
-                                <button 
-                                    type="button"
-                                    className="password-toggle"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                >
-                                    {showPassword ? '👁️' : '👁️‍🗨️'}
-                                </button>
-                            </div>
+                            <label>🔒 New Password</label>
+                            <input 
+                                type={showPassword ? "text" : "password"}
+                                value={newPassword} 
+                                onChange={(e) => setNewPassword(e.target.value)} 
+                                placeholder="••••••••"
+                                required 
+                                disabled={loading}
+                                className="form-input"
+                                minLength="6"
+                            />
                         </div>
 
                         <div className="form-group">
-                            <label>🔒 Xác nhận mật khẩu</label>
+                            <label>🔒 Confirm New Password</label>
                             <input 
                                 type={showPassword ? "text" : "password"}
                                 value={confirmPassword} 
@@ -125,6 +116,17 @@ const ResetPasswordPage = () => {
                             />
                         </div>
 
+                        <div className="form-group">
+                            <label className="checkbox-container">
+                                <input 
+                                    type="checkbox"
+                                    checked={showPassword}
+                                    onChange={(e) => setShowPassword(e.target.checked)}
+                                />
+                                <span>Show password</span>
+                            </label>
+                        </div>
+
                         <button 
                             type="submit" 
                             className="auth-submit-btn"
@@ -133,24 +135,23 @@ const ResetPasswordPage = () => {
                             {loading ? (
                                 <>
                                     <span className="spinner-small"></span>
-                                    Đang xử lý...
+                                    Processing...
                                 </>
                             ) : (
                                 <>
-                                    <span>Đặt lại mật khẩu</span>
+                                    <span>Reset Password</span>
                                     <span>→</span>
                                 </>
                             )}
                         </button>
 
                         <div className="auth-footer">
-                            <Link to="/forgot-password" className="auth-link">
-                                ← Gửi lại mã
-                            </Link>
-                            <span className="divider">•</span>
-                            <Link to="/login" className="auth-link">
-                                Quay lại đăng nhập
-                            </Link>
+                            <button className="btn-text" onClick={() => navigate('/forgot-password')}>
+                                ← Resend code
+                            </button>
+                            <button className="btn-text" onClick={() => navigate('/login')}>
+                                Back to login
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -158,15 +159,15 @@ const ResetPasswordPage = () => {
                 <div className="auth-features">
                     <div className="feature-item">
                         <span className="feature-icon">🔒</span>
-                        <span>Mã hóa cao cấp</span>
+                        <span>Advanced encryption</span>
                     </div>
                     <div className="feature-item">
                         <span className="feature-icon">⏱️</span>
-                        <span>Mã có hiệu lực 15 phút</span>
+                        <span>Code valid for 15 minutes</span>
                     </div>
                     <div className="feature-item">
                         <span className="feature-icon">✅</span>
-                        <span>An toàn tuyệt đối</span>
+                        <span>Completely secure</span>
                     </div>
                 </div>
             </div>

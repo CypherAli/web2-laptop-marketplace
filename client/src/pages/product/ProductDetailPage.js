@@ -61,11 +61,11 @@ const ProductDetailPage = () => {
             console.error("❌ Error message:", err.message);
             
             if (err.response?.status === 404) {
-                setError("Sản phẩm không tồn tại hoặc đã bị xóa.");
+                setError("Product does not exist or has been deleted.");
             } else if (err.response?.status === 500) {
                 setError("Lỗi server. Vui lòng thử lại sau.");
             } else {
-                setError("Không thể tải thông tin sản phẩm. Vui lòng kiểm tra kết nối.");
+                setError("Cannot load product information. Please check your connection.");
             }
         } finally {
             setLoading(false);
@@ -89,9 +89,9 @@ const ProductDetailPage = () => {
             for (let i = 0; i < quantity; i++) {
                 addToCart(product);
             }
-            toast.success(`✅ Đã thêm ${quantity}x ${product.name} vào giỏ hàng!`);
+            toast.success(`✅ Added ${quantity}x ${product.name} to cart!`);
         } else {
-            toast.error('❌ Sản phẩm đã hết hàng!');
+            toast.error('❌ Product is out of stock!');
         }
     };
 
@@ -117,7 +117,7 @@ const ProductDetailPage = () => {
         return (
             <div className="loading-container" style={{ paddingTop: '150px', paddingBottom: '100px', textAlign: 'center', minHeight: '100vh' }}>
                 <div className="spinner"></div>
-                <h2>Đang tải thông tin sản phẩm...</h2>
+                <h2>Loading product information...</h2>
                 <p>Product ID: {id}</p>
             </div>
         );
@@ -149,9 +149,9 @@ const ProductDetailPage = () => {
                 {/* Image Gallery */}
                 <div className="image-section">
                     <div className="main-image">
-                        {product.stock === 0 && (
+                        {(!product.stock || product.stock <= 0) && (
                             <div className="sold-out-overlay">
-                                <span>SOLD OUT</span>
+                                <span>HẾT HÀNG</span>
                             </div>
                         )}
                         {product.originalPrice && product.originalPrice > product.price && (
@@ -211,13 +211,13 @@ const ProductDetailPage = () => {
                     </div>
 
                     <div className="stock-info">
-                        {product.stock > 0 ? (
+                        {(product.stock && product.stock > 0) ? (
                             <span className="in-stock">
-                                ✓ In Stock ({product.stock} available)
+                                ✓ Còn hàng ({product.stock} sản phẩm)
                             </span>
                         ) : (
                             <span className="out-of-stock">
-                                ✗ Out of Stock
+                                ✗ Hết hàng
                             </span>
                         )}
                     </div>
@@ -299,7 +299,7 @@ const ProductDetailPage = () => {
                         </div>
                     )}
 
-                    {product.stock === 0 && (
+                    {(!product.stock || product.stock <= 0) && (
                         <button className="notify-btn" disabled>
                             🔔 Thông báo khi có hàng
                         </button>
@@ -406,7 +406,7 @@ const ProductDetailPage = () => {
                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
                             >
-                                {relatedProduct.stock === 0 && (
+                                {(!relatedProduct.stock || relatedProduct.stock <= 0) && (
                                     <span className="sold-out-badge-small">SOLD OUT</span>
                                 )}
                                 {relatedProduct.originalPrice && relatedProduct.originalPrice > relatedProduct.price && (

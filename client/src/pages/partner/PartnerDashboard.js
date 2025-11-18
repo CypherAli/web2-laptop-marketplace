@@ -194,7 +194,7 @@ const PartnerDashboard = () => {
                     }}
                     onClick={() => setActiveTab('overview')}
                 >
-                    <FiBarChart2 /> Tổng quan
+                    <FiBarChart2 /> Overview
                 </button>
                 <button 
                     className="btn-new-product"

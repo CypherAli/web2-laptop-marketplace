@@ -78,6 +78,20 @@ io.on('connection', (socket) => {
         io.emit('user:online', userId);
     });
     
+    // Partner joins with authentication
+    socket.on('partner:join', (partnerId) => {
+        activeUsers.set(partnerId, socket.id);
+        socket.userId = partnerId;
+        socket.userRole = 'partner';
+        socket.join(`user:${partnerId}`); // Join user room to receive messages
+        console.log(`✅ Partner ${partnerId} joined and ready to receive messages`);
+        console.log(`   Socket ID: ${socket.id}`);
+        console.log(`   Active users count: ${activeUsers.size}`);
+        
+        // Broadcast online status
+        io.emit('user:online', partnerId);
+    });
+    
     // Join chat room
     socket.on('chat:join', ({ userId, partnerId }) => {
         const ids = [userId, partnerId].sort();
@@ -145,13 +159,20 @@ io.on('connection', (socket) => {
             
             const savedChat = await newChat.save();
             
-            // Emit to chat room ONLY ONCE
+            // Emit to chat room and individual users
             const ids = [senderId, receiverId].sort();
             const chatRoomId = `${ids[0]}_${ids[1]}`;
             
+            // Send to chatRoom (for users already in conversation)
             io.to(chatRoomId).emit('chat:message', savedChat);
             
-            console.log(`💬 Message sent in room ${chatRoomId} - ID: ${savedChat._id}`);
+            // Also send directly to receiver's user room (so they get notification)
+            io.to(`user:${receiverId}`).emit('chat:message', savedChat);
+            
+            console.log(`💬 Message sent: ${senderId} -> ${receiverId}`);
+            console.log(`   ChatRoom: ${chatRoomId}`);
+            console.log(`   Receiver room: user:${receiverId}`);
+            console.log(`   Message saved: ${savedChat._id}`);
         } catch (error) {
             console.error('Socket chat:send error:', error);
             socket.emit('error', { message: 'Lỗi khi gửi tin nhắn' });

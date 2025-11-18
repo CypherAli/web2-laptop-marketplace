@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiMessageCircle, FiX, FiSend, FiMinus, FiMaximize2, FiUsers } from 'react-icons/fi';
 import AuthContext from '../../context/AuthContext';
+import io from 'socket.io-client';
 import './PartnerChatWidget.css';
 
 const PartnerChatWidget = () => {
@@ -14,7 +15,76 @@ const PartnerChatWidget = () => {
     const [messages, setMessages] = useState([]);
     const [partners, setPartners] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [socket, setSocket] = useState(null);
+    const [isConnected, setIsConnected] = useState(false);
     const messagesEndRef = useRef(null);
+
+    // Socket.IO setup - Only connect when widget is opened
+    useEffect(() => {
+        if (!user || !isOpen) return; // Only connect when chat is opened
+        
+        const userId = user._id || user.id;
+        if (!userId) return;
+
+        // Initialize Socket.IO
+        const newSocket = io(process.env.REACT_APP_SERVER_URL || 'http://localhost:5000', {
+            transports: ['polling', 'websocket'],
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionAttempts: 5,
+        });
+        
+        setSocket(newSocket);
+
+        newSocket.on('connect', () => {
+            console.log('✅ Client connected to chat');
+            setIsConnected(true);
+            newSocket.emit('user:join', userId);
+        });
+
+        newSocket.on('disconnect', () => {
+            console.log('❌ Disconnected');
+            setIsConnected(false);
+        });
+
+        newSocket.on('chat:message', (message) => {
+            console.log('📩 Received message:', message);
+            
+            const userId = user._id || user.id;
+            
+            // Only add if it's for current conversation
+            if (selectedPartner && 
+                ((message.senderId === userId && message.receiverId === selectedPartner._id) ||
+                 (message.senderId === selectedPartner._id && message.receiverId === userId))) {
+                
+                setMessages(prev => {
+                    // Check if message already exists (prevent duplicates)
+                    const exists = prev.some(m => 
+                        m._id === message._id || 
+                        (m.message === message.message && 
+                         m.senderId === message.senderId && 
+                         Math.abs(new Date(m.createdAt) - new Date(message.createdAt)) < 2000)
+                    );
+                    
+                    if (exists) {
+                        console.log('⚠️ Duplicate message detected, skipping');
+                        // If it's a temp message, replace with real one
+                        return prev.map(m => 
+                            m.isTemp && m.message === message.message && m.senderId === message.senderId
+                                ? { ...message, isTemp: false }
+                                : m
+                        );
+                    }
+                    
+                    return [...prev, message];
+                });
+            }
+        });
+
+        return () => {
+            newSocket.disconnect();
+        };
+    }, [user, selectedPartner, isOpen]); // Add isOpen dependency
 
     useEffect(() => {
         if (isOpen && partners.length === 0) {
@@ -89,9 +159,21 @@ const PartnerChatWidget = () => {
         setSelectedPartner(partner);
         setShowPartnerList(false);
         fetchMessages(partner._id);
+        
+        // Join chat room via socket
+        if (socket?.connected) {
+            const userId = user._id || user.id;
+            socket.emit('chat:join', { userId, partnerId: partner._id });
+        }
     };
 
     const handleBackToList = () => {
+        // Leave current chat room
+        if (socket?.connected && selectedPartner) {
+            const userId = user._id || user.id;
+            socket.emit('chat:leave', { userId, partnerId: selectedPartner._id });
+        }
+        
         setShowPartnerList(true);
         setSelectedPartner(null);
         setMessages([]);
@@ -104,56 +186,73 @@ const PartnerChatWidget = () => {
 
         const userId = user._id || user.id;
         
-        const newMessage = {
-            _id: Date.now().toString(),
-            message: messageInput,
+        const tempId = `temp_${Date.now()}`;
+        const messageData = {
+            _id: tempId,
+            message: messageInput.trim(),
             senderId: userId,
+            senderName: user.name || user.username || 'User',
             receiverId: selectedPartner._id,
+            receiverName: selectedPartner.name || selectedPartner.businessName || 'Partner',
             createdAt: new Date(),
             isTemp: true
         };
 
-        setMessages(prev => [...prev, newMessage]);
-        const messageText = messageInput;
+        // Add to UI immediately for instant feedback
+        setMessages(prev => [...prev, messageData]);
         setMessageInput('');
 
         try {
-            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-            
-            const payload = {
-                senderId: userId,
-                senderName: user.name || user.username || 'User',
-                receiverId: selectedPartner._id,
-                receiverName: selectedPartner.name || selectedPartner.businessName || 'Partner',
-                message: messageText
-            };
-            
-            console.log('📤 User object:', user);
-            console.log('📤 Sending message:', payload);
-            
-            const response = await fetch(`${apiUrl}/chat/send`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify(payload)
-            });
+            // Send via Socket.IO (server will save to DB and emit to receiver)
+            if (socket?.connected) {
+                console.log('📤 Sending via socket:', messageData.message);
+                socket.emit('chat:send', messageData);
+                
+                // Mark as sent after a short delay
+                setTimeout(() => {
+                    setMessages(prev => 
+                        prev.map(msg => 
+                            msg._id === tempId ? { ...msg, isTemp: false } : msg
+                        )
+                    );
+                }, 500);
+            } else {
+                // Fallback to API if socket not connected
+                const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+                
+                const payload = {
+                    senderId: userId,
+                    senderName: user.name || user.username || 'User',
+                    receiverId: selectedPartner._id,
+                    receiverName: selectedPartner.name || selectedPartner.businessName || 'Partner',
+                    message: messageData.message
+                };
+                
+                console.log('📤 Sending via API (fallback):', payload);
+                
+                const response = await fetch(`${apiUrl}/chat/send`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(payload)
+                });
 
-            console.log('📥 Response status:', response.status);
-            const data = await response.json();
-            console.log('📥 Response data:', data);
-            
-            if (data.success) {
-                setMessages(prev => 
-                    prev.map(msg => 
-                        msg._id === newMessage._id ? { ...data.chat, isTemp: false } : msg
-                    )
-                );
+                const data = await response.json();
+                
+                if (data.success) {
+                    setMessages(prev => 
+                        prev.map(msg => 
+                            msg._id === tempId ? { ...data.chat, isTemp: false } : msg
+                        )
+                    );
+                }
             }
         } catch (error) {
             console.error('Error sending message:', error);
-            setMessages(prev => prev.filter(msg => msg._id !== newMessage._id));
+            // Remove temp message if failed
+            setMessages(prev => prev.filter(msg => msg._id !== tempId));
         }
     };
 

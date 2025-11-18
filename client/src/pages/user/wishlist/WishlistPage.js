@@ -12,13 +12,13 @@ const WishlistPage = () => {
 
     const handleAddToCart = (product) => {
         addToCart(product);
-        alert(`${product.name} đã được thêm vào giỏ hàng!`);
+        alert(`${product.name} has been added to cart!`);
     };
 
     const handleMoveToCart = (product) => {
         addToCart(product);
         removeFromWishlist(product._id);
-        alert(`${product.name} đã được chuyển vào giỏ hàng!`);
+        alert(`${product.name} has been moved to cart!`);
     };
 
     if (wishlist.length === 0) {
@@ -26,10 +26,10 @@ const WishlistPage = () => {
             <div className="wishlist-page">
                 <div className="wishlist-empty">
                     <div className="empty-icon">❤️</div>
-                    <h2>Danh sách yêu thích trống</h2>
-                    <p>Hãy thêm những sản phẩm bạn yêu thích để xem lại sau!</p>
+                    <h2>Your wishlist is empty</h2>
+                    <p>Add products you love to view them later!</p>
                     <button className="btn-shop" onClick={() => navigate('/')}>
-                        Khám phá sản phẩm
+                        Explore Products
                     </button>
                 </div>
             </div>
@@ -42,12 +42,12 @@ const WishlistPage = () => {
                 <div className="header-left">
                     <h1>
                         <span className="heart-icon">❤️</span>
-                        Danh sách yêu thích
+                        My Wishlist
                     </h1>
-                    <span className="wishlist-count">{wishlist.length} sản phẩm</span>
+                    <span className="wishlist-count">{wishlist.length} items</span>
                 </div>
                 <button className="btn-clear-all" onClick={clearWishlist}>
-                    🗑️ Xóa tất cả
+                    🗑️ Delete all
                 </button>
             </div>
 
@@ -57,7 +57,7 @@ const WishlistPage = () => {
                         <button
                             className="btn-remove-item"
                             onClick={() => removeFromWishlist(product._id)}
-                            title="Xóa khỏi wishlist"
+                            title="Remove from wishlist"
                         >
                             ✕
                         </button>
@@ -68,7 +68,7 @@ const WishlistPage = () => {
                                 alt={product.name}
                                 className="wishlist-image"
                             />
-                            {product.stock === 0 && (
+                            {(!product.stock || product.stock <= 0) && (
                                 <div className="out-of-stock-overlay">
                                     <span>Hết hàng</span>
                                 </div>
@@ -86,7 +86,7 @@ const WishlistPage = () => {
                             </div>
 
                             <div className="wishlist-stock">
-                                {product.stock > 0 ? (
+                                {(product.stock && product.stock > 0) ? (
                                     <span className="in-stock">
                                         ✓ Còn {product.stock} sản phẩm
                                     </span>
@@ -101,16 +101,15 @@ const WishlistPage = () => {
                                 <button
                                     className="btn-move-to-cart"
                                     onClick={() => handleMoveToCart(product)}
-                                    disabled={product.stock === 0}
+                                    disabled={!product.stock || product.stock <= 0}
                                 >
-                                    🛒 Chuyển vào giỏ
+                                    🛒 Thêm vào giỏ
                                 </button>
                                 <button
-                                    className="btn-add-to-cart"
-                                    onClick={() => handleAddToCart(product)}
-                                    disabled={product.stock === 0}
+                                    className="btn-remove"
+                                    onClick={() => removeFromWishlist(product._id)}
                                 >
-                                    + Thêm vào giỏ
+                                    🗑️ Xóa
                                 </button>
                             </div>
                         </div>

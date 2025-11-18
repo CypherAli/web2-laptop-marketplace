@@ -34,7 +34,7 @@ const CheckoutPage = () => {
             const res = await axios.get('/cart');
             setCartItems(res.data.items || []);
         } catch (err) {
-            toast.error('Không thể tải giỏ hàng');
+            toast.error('Cannot load cart');
         } finally {
             setLoading(false);
         }
@@ -43,7 +43,7 @@ const CheckoutPage = () => {
     // Load cart on mount
     React.useEffect(() => {
         if (!user) {
-            toast.error('Vui lòng đăng nhập để thanh toán');
+            toast.error('Please login to checkout');
             navigate('/login');
             return;
         }
@@ -74,19 +74,19 @@ const CheckoutPage = () => {
 
     const validateForm = () => {
         if (!shippingInfo.fullName.trim()) {
-            toast.error('Vui lòng nhập họ tên');
+            toast.error('Please enter full name');
             return false;
         }
         if (!shippingInfo.phone.trim()) {
-            toast.error('Vui lòng nhập số điện thoại');
+            toast.error('Please enter phone number');
             return false;
         }
         if (!shippingInfo.address.trim()) {
-            toast.error('Vui lòng nhập địa chỉ');
+            toast.error('Please enter address');
             return false;
         }
         if (!shippingInfo.city.trim()) {
-            toast.error('Vui lòng chọn Tỉnh/Thành phố');
+            toast.error('Please select Province/City');
             return false;
         }
         return true;
@@ -131,11 +131,11 @@ const CheckoutPage = () => {
             // Clear cart after successful order
             await axios.delete('/cart/clear/all');
             
-            toast.success('Đặt hàng thành công!');
+            toast.success('Order placed successfully!');
             navigate(`/orders`);
         } catch (err) {
             console.error('Order submission failed', err);
-            const errorMsg = err.response?.data?.message || 'Đặt hàng thất bại. Vui lòng thử lại.';
+            const errorMsg = err.response?.data?.message || 'Order failed. Please try again.';
             toast.error(errorMsg);
         } finally {
             setSubmitting(false);
@@ -146,7 +146,7 @@ const CheckoutPage = () => {
         return (
             <div className="loading-container">
                 <div className="spinner"></div>
-                <h2>Đang tải thông tin...</h2>
+                <h2>Loading information...</h2>
             </div>
         );
     }
@@ -156,9 +156,9 @@ const CheckoutPage = () => {
             <div className="empty-checkout">
                 <div className="empty-icon">🛒</div>
                 <h2>Giỏ hàng trống</h2>
-                <p>Vui lòng thêm sản phẩm vào giỏ hàng trước khi thanh toán</p>
+                <p>Please add products to cart before checkout</p>
                 <button onClick={() => navigate('/')} className="btn-shop">
-                    Tiếp tục mua sắm
+                    Continue Shopping
                 </button>
             </div>
         );
@@ -169,7 +169,7 @@ const CheckoutPage = () => {
             <div className="checkout-container">
                 <h1 className="checkout-title">
                     <span className="title-icon">💳</span>
-                    Thanh Toán
+                    Checkout
                 </h1>
 
                 <form onSubmit={handleSubmitOrder} className="checkout-form">
@@ -178,18 +178,18 @@ const CheckoutPage = () => {
                         <div className="checkout-section">
                             <h2 className="section-title">
                                 <span className="section-icon">📍</span>
-                                Thông tin giao hàng
+                                Shipping Information
                             </h2>
 
                             <div className="form-grid">
                                 <div className="form-group full-width">
-                                    <label>Họ và tên <span className="required">*</span></label>
+                                    <label>Full Name <span className="required">*</span></label>
                                     <input
                                         type="text"
                                         name="fullName"
                                         value={shippingInfo.fullName}
                                         onChange={handleInputChange}
-                                        placeholder="Nguyễn Văn A"
+                                        placeholder="John Doe"
                                         required
                                     />
                                 </div>
@@ -206,7 +206,7 @@ const CheckoutPage = () => {
                                 </div>
 
                                 <div className="form-group">
-                                    <label>Số điện thoại <span className="required">*</span></label>
+                                    <label>Phone Number <span className="required">*</span></label>
                                     <input
                                         type="tel"
                                         name="phone"
@@ -218,64 +218,64 @@ const CheckoutPage = () => {
                                 </div>
 
                                 <div className="form-group full-width">
-                                    <label>Địa chỉ <span className="required">*</span></label>
+                                    <label>Address <span className="required">*</span></label>
                                     <input
                                         type="text"
                                         name="address"
                                         value={shippingInfo.address}
                                         onChange={handleInputChange}
-                                        placeholder="Số nhà, tên đường"
+                                        placeholder="House number, street name"
                                         required
                                     />
                                 </div>
 
                                 <div className="form-group">
-                                    <label>Phường/Xã</label>
+                                    <label>Ward</label>
                                     <input
                                         type="text"
                                         name="ward"
                                         value={shippingInfo.ward}
                                         onChange={handleInputChange}
-                                        placeholder="Phường 1"
+                                        placeholder="Ward 1"
                                     />
                                 </div>
 
                                 <div className="form-group">
-                                    <label>Quận/Huyện</label>
+                                    <label>District</label>
                                     <input
                                         type="text"
                                         name="district"
                                         value={shippingInfo.district}
                                         onChange={handleInputChange}
-                                        placeholder="Quận 1"
+                                        placeholder="District 1"
                                     />
                                 </div>
 
                                 <div className="form-group">
-                                    <label>Tỉnh/Thành phố <span className="required">*</span></label>
+                                    <label>Province/City <span className="required">*</span></label>
                                     <select
                                         name="city"
                                         value={shippingInfo.city}
                                         onChange={handleInputChange}
                                         required
                                     >
-                                        <option value="">Chọn Tỉnh/Thành phố</option>
-                                        <option value="Hà Nội">Hà Nội</option>
-                                        <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
-                                        <option value="Đà Nẵng">Đà Nẵng</option>
-                                        <option value="Hải Phòng">Hải Phòng</option>
-                                        <option value="Cần Thơ">Cần Thơ</option>
-                                        <option value="Khác">Khác</option>
+                                        <option value="">Select Province/City</option>
+                                        <option value="Hà Nội">Hanoi</option>
+                                        <option value="TP. Hồ Chí Minh">Ho Chi Minh City</option>
+                                        <option value="Đà Nẵng">Da Nang</option>
+                                        <option value="Hải Phòng">Hai Phong</option>
+                                        <option value="Cần Thơ">Can Tho</option>
+                                        <option value="Khác">Other</option>
                                     </select>
                                 </div>
 
                                 <div className="form-group full-width">
-                                    <label>Ghi chú (tùy chọn)</label>
+                                    <label>Notes (optional)</label>
                                     <textarea
                                         name="notes"
                                         value={shippingInfo.notes}
                                         onChange={handleInputChange}
-                                        placeholder="Ghi chú thêm về đơn hàng (tùy chọn)"
+                                        placeholder="Additional notes about the order (optional)"
                                         rows="3"
                                     />
                                 </div>
@@ -286,7 +286,7 @@ const CheckoutPage = () => {
                         <div className="checkout-section">
                             <h2 className="section-title">
                                 <span className="section-icon">💰</span>
-                                Phương thức thanh toán
+                                Payment Method
                             </h2>
 
                             <div className="payment-methods">
@@ -301,8 +301,8 @@ const CheckoutPage = () => {
                                     <div className="payment-content">
                                         <span className="payment-icon">💵</span>
                                         <div>
-                                            <strong>Thanh toán khi nhận hàng (COD)</strong>
-                                            <p>Thanh toán bằng tiền mặt khi nhận hàng</p>
+                                            <strong>Cash on Delivery (COD)</strong>
+                                            <p>Pay with cash upon receiving goods</p>
                                         </div>
                                     </div>
                                 </label>
@@ -318,8 +318,8 @@ const CheckoutPage = () => {
                                     <div className="payment-content">
                                         <span className="payment-icon">🏦</span>
                                         <div>
-                                            <strong>Chuyển khoản ngân hàng</strong>
-                                            <p>Chuyển khoản qua Internet Banking</p>
+                                            <strong>Bank Transfer</strong>
+                                            <p>Transfer via Internet Banking</p>
                                         </div>
                                     </div>
                                 </label>
@@ -335,8 +335,8 @@ const CheckoutPage = () => {
                                     <div className="payment-content">
                                         <span className="payment-icon">📱</span>
                                         <div>
-                                            <strong>Ví MoMo</strong>
-                                            <p>Thanh toán qua ví điện tử MoMo</p>
+                                            <strong>MoMo Wallet</strong>
+                                            <p>Pay via MoMo e-wallet</p>
                                         </div>
                                     </div>
                                 </label>
@@ -353,7 +353,7 @@ const CheckoutPage = () => {
                                         <span className="payment-icon">💙</span>
                                         <div>
                                             <strong>ZaloPay</strong>
-                                            <p>Thanh toán qua ví điện tử ZaloPay</p>
+                                            <p>Pay via ZaloPay e-wallet</p>
                                         </div>
                                     </div>
                                 </label>
@@ -366,7 +366,7 @@ const CheckoutPage = () => {
                         <div className="order-summary">
                             <h2 className="summary-title">
                                 <span>📦</span>
-                                Đơn hàng của bạn
+                                Your Order
                             </h2>
 
                             <div className="summary-items">
@@ -389,20 +389,20 @@ const CheckoutPage = () => {
 
                             <div className="summary-calculations">
                                 <div className="calc-row">
-                                    <span>Tạm tính:</span>
+                                    <span>Subtotal:</span>
                                     <span>{calculateSubtotal().toLocaleString()} ₫</span>
                                 </div>
                                 <div className="calc-row">
-                                    <span>Phí vận chuyển:</span>
-                                    <span>{calculateShipping() === 0 ? 'Miễn phí' : `${calculateShipping().toLocaleString()} ₫`}</span>
+                                    <span>Shipping fee:</span>
+                                    <span>{calculateShipping() === 0 ? 'Free' : `${calculateShipping().toLocaleString()} ₫`}</span>
                                 </div>
                                 {calculateShipping() === 0 && (
                                     <div className="free-shipping-note">
-                                        🎉 Miễn phí vận chuyển cho đơn hàng từ 10.000.000 ₫
+                                        🎉 Free shipping for orders over 10,000,000 ₫
                                     </div>
                                 )}
                                 <div className="calc-row total">
-                                    <span>Tổng cộng:</span>
+                                    <span>Total:</span>
                                     <span className="total-amount">{calculateTotal().toLocaleString()} ₫</span>
                                 </div>
                             </div>
@@ -415,18 +415,18 @@ const CheckoutPage = () => {
                                 {submitting ? (
                                     <>
                                         <span className="spinner-small"></span>
-                                        Đang xử lý...
+                                        Processing...
                                     </>
                                 ) : (
                                     <>
-                                        <span>Đặt hàng</span>
+                                        <span>Place Order</span>
                                         <span>→</span>
                                     </>
                                 )}
                             </button>
 
                             <div className="checkout-note">
-                                <p>🔒 Thông tin của bạn được bảo mật</p>
+                                <p>🔒 Your information is secure</p>
                                 <p>📞 Hotline: 1900 xxxx</p>
                             </div>
                         </div>

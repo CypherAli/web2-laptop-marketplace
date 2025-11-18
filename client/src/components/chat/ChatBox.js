@@ -7,9 +7,9 @@ const ChatBox = () => {
     const [messages, setMessages] = useState([
         {
             id: 1,
-            text: 'Xin chào! Tôi là trợ lý ảo của Laptop Store. Tôi có thể giúp gì cho bạn?',
+            text: 'Hello! I am the virtual assistant of Laptop Store. How can I help you?',
             sender: 'bot',
-            time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+            time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
         }
     ]);
     const [inputMessage, setInputMessage] = useState('');
@@ -24,29 +24,29 @@ const ChatBox = () => {
     }, [messages]);
 
     const quickReplies = [
-        'Tư vấn sản phẩm',
-        'Chính sách bảo hành',
-        'Hướng dẫn mua hàng',
-        'Liên hệ tư vấn viên'
+        'Product Consultation',
+        'Warranty Policy',
+        'Shopping Guide',
+        'Contact Advisor'
     ];
 
     const autoReply = (userMessage) => {
         const lowerMessage = userMessage.toLowerCase();
         
-        if (lowerMessage.includes('tư vấn') || lowerMessage.includes('sản phẩm')) {
-            return 'Chúng tôi có nhiều dòng laptop phù hợp với nhu cầu của bạn. Bạn muốn tìm laptop cho mục đích gì? (Gaming, Văn phòng, Đồ họa...)';
-        } else if (lowerMessage.includes('bảo hành')) {
-            return 'Tất cả sản phẩm tại store đều được bảo hành chính hãng 12-36 tháng. Bạn cần thông tin cụ thể về sản phẩm nào?';
-        } else if (lowerMessage.includes('mua hàng') || lowerMessage.includes('đặt hàng')) {
-            return 'Bạn có thể đặt hàng trực tiếp trên website, hoặc liên hệ hotline: 084.686.5650 để được hỗ trợ nhanh nhất!';
-        } else if (lowerMessage.includes('giá') || lowerMessage.includes('khuyến mãi')) {
-            return 'Chúng tôi đang có nhiều chương trình khuyến mãi hấp dẫn! Vui lòng xem mục "Khuyến mãi Hot" để biết chi tiết.';
-        } else if (lowerMessage.includes('liên hệ') || lowerMessage.includes('phone') || lowerMessage.includes('sđt')) {
-            return 'Bạn có thể liên hệ với chúng tôi:\n📞 Hotline: 084.686.5650\n📧 Email: trinhviethoangawm@gmail.com\n📍 Địa chỉ: Hà Nội, Việt Nam';
-        } else if (lowerMessage.includes('địa chỉ') || lowerMessage.includes('nội')) {
-            return 'Cửa hàng chúng tôi tại Hà Nội. Liên hệ hotline 084.686.5650 để biết địa chỉ cụ thể gần bạn nhất!';
+        if (lowerMessage.includes('product') || lowerMessage.includes('consultation')) {
+            return 'We have many laptop models suitable for your needs. What purpose do you need a laptop for? (Gaming, Office, Graphics...)';
+        } else if (lowerMessage.includes('warranty')) {
+            return 'All products in our store have official warranty for 12-36 months. Which product do you need specific information about?';
+        } else if (lowerMessage.includes('shopping') || lowerMessage.includes('order')) {
+            return 'You can order directly on the website, or contact hotline: 084.686.5650 for fastest support!';
+        } else if (lowerMessage.includes('price') || lowerMessage.includes('deal')) {
+            return 'We have many attractive promotions! Please check the "Hot Deals" section for details.';
+        } else if (lowerMessage.includes('contact') || lowerMessage.includes('phone')) {
+            return 'You can contact us:\n📞 Hotline: 084.686.5650\n📧 Email: trinhviethoangawm@gmail.com\n📍 Address: Hanoi, Vietnam';
+        } else if (lowerMessage.includes('address') || lowerMessage.includes('location')) {
+            return 'Our store is located in Hanoi. Contact hotline 084.686.5650 to know the nearest address!';
         } else {
-            return 'Cảm ơn bạn đã liên hệ! Để được tư vấn chi tiết hơn, vui lòng liên hệ:\n📞 Hotline: 084.686.5650\n📧 Email: trinhviethoangawm@gmail.com';
+            return 'Thank you for contacting us! For more detailed consultation, please contact:\n📞 Hotline: 084.686.5650\n📧 Email: trinhviethoangawm@gmail.com';
         }
     };
 
@@ -56,7 +56,7 @@ const ChatBox = () => {
                 id: messages.length + 1,
                 text: inputMessage,
                 sender: 'user',
-                time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+                time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
             };
             setMessages([...messages, newMessage]);
             setInputMessage('');
@@ -67,7 +67,7 @@ const ChatBox = () => {
                     id: messages.length + 2,
                     text: autoReply(inputMessage),
                     sender: 'bot',
-                    time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+                    time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
                 };
                 setMessages(prev => [...prev, botReply]);
             }, 1000);
@@ -79,7 +79,7 @@ const ChatBox = () => {
             id: messages.length + 1,
             text: reply,
             sender: 'user',
-            time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+            time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
         };
         setMessages([...messages, newMessage]);
 
@@ -88,7 +88,7 @@ const ChatBox = () => {
                 id: messages.length + 2,
                 text: autoReply(reply),
                 sender: 'bot',
-                time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+                time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
             };
             setMessages(prev => [...prev, botReply]);
         }, 1000);
@@ -110,7 +110,7 @@ const ChatBox = () => {
                 aria-label="Open chat"
             >
                 <FiMessageCircle />
-                <span className="chat-badge">Hỗ trợ</span>
+                <span className="chat-badge">Support</span>
             </button>
 
             {/* Chat Box */}
@@ -123,10 +123,10 @@ const ChatBox = () => {
                                 <FiUser />
                             </div>
                             <div className="chat-header-text">
-                                <h3>Hỗ trợ khách hàng</h3>
+                                <h3>Customer Support</h3>
                                 <p className="chat-status">
                                     <span className="status-dot"></span>
-                                    Đang hoạt động
+                                    Online
                                 </p>
                             </div>
                         </div>
@@ -175,7 +175,7 @@ const ChatBox = () => {
                         <input
                             type="text"
                             className="chat-input"
-                            placeholder="Nhập tin nhắn..."
+                            placeholder="Type a message..."
                             value={inputMessage}
                             onChange={(e) => setInputMessage(e.target.value)}
                             onKeyPress={handleKeyPress}

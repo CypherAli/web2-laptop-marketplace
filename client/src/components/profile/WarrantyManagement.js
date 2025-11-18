@@ -107,7 +107,7 @@ const WarrantyManagement = () => {
                     <FiShield /> Quản lý bảo hành
                 </h2>
                 <p className="warranty-description">
-                    Theo dõi tình trạng bảo hành của các sản phẩm đã mua
+                    Track warranty status of purchased products
                 </p>
             </div>
 
@@ -117,25 +117,25 @@ const WarrantyManagement = () => {
                     className={`tab-btn ${activeTab === 'all' ? 'active' : ''}`}
                     onClick={() => setActiveTab('all')}
                 >
-                    Tất cả ({warranties.length})
+                    All ({warranties.length})
                 </button>
                 <button 
                     className={`tab-btn ${activeTab === 'active' ? 'active' : ''}`}
                     onClick={() => setActiveTab('active')}
                 >
-                    Đang bảo hành ({warranties.filter(w => getWarrantyStatus(w.deliveredDate, w.warrantyPeriod).status === 'active').length})
+                    Active ({warranties.filter(w => getWarrantyStatus(w.deliveredDate, w.warrantyPeriod).status === 'active').length})
                 </button>
                 <button 
                     className={`tab-btn ${activeTab === 'expiring' ? 'active' : ''}`}
                     onClick={() => setActiveTab('expiring')}
                 >
-                    Sắp hết hạn ({warranties.filter(w => getWarrantyStatus(w.deliveredDate, w.warrantyPeriod).status === 'expiring').length})
+                    Expiring Soon ({warranties.filter(w => getWarrantyStatus(w.deliveredDate, w.warrantyPeriod).status === 'expiring').length})
                 </button>
                 <button 
                     className={`tab-btn ${activeTab === 'expired' ? 'active' : ''}`}
                     onClick={() => setActiveTab('expired')}
                 >
-                    Hết hạn ({warranties.filter(w => getWarrantyStatus(w.deliveredDate, w.warrantyPeriod).status === 'expired').length})
+                    Expired ({warranties.filter(w => getWarrantyStatus(w.deliveredDate, w.warrantyPeriod).status === 'expired').length})
                 </button>
             </div>
 
@@ -143,11 +143,11 @@ const WarrantyManagement = () => {
             {filteredWarranties.length === 0 ? (
                 <div className="no-warranties">
                     <FiShield size={64} />
-                    <h3>Không có sản phẩm nào</h3>
+                    <h3>No products found</h3>
                     <p>
                         {activeTab === 'all' 
-                            ? 'Bạn chưa có sản phẩm nào trong bảo hành' 
-                            : `Không có sản phẩm ${activeTab === 'active' ? 'đang bảo hành' : activeTab === 'expiring' ? 'sắp hết hạn' : 'hết hạn'}`
+                            ? 'You have no products under warranty' 
+                            : `No products ${activeTab === 'active' ? 'under warranty' : activeTab === 'expiring' ? 'expiring soon' : 'expired'}`
                         }
                     </p>
                 </div>
@@ -176,7 +176,7 @@ const WarrantyManagement = () => {
                                                 <p className="product-brand">{warranty.productBrand}</p>
                                             )}
                                             <p className="order-info">
-                                                Đơn hàng: #{warranty.orderNumber || warranty.orderId.slice(-8).toUpperCase()}
+                                                Order: #{warranty.orderNumber || warranty.orderId.slice(-8).toUpperCase()}
                                             </p>
                                         </div>
                                     </div>
@@ -232,11 +232,11 @@ const WarrantyManagement = () => {
                                         className="btn-view-warranty"
                                         onClick={() => setSelectedWarranty(warranty)}
                                     >
-                                        <FiFileText /> Xem chi tiết
+                                        <FiFileText /> View Details
                                     </button>
                                     {statusInfo.status !== 'expired' && (
                                         <button className="btn-request-repair">
-                                            <FiTool /> Yêu cầu bảo hành
+                                            <FiTool /> Request Warranty
                                         </button>
                                     )}
                                 </div>
@@ -251,7 +251,7 @@ const WarrantyManagement = () => {
                 <div className="modal-overlay" onClick={() => setSelectedWarranty(null)}>
                     <div className="warranty-detail-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
-                            <h2><FiShield /> Chi tiết bảo hành</h2>
+                            <h2><FiShield /> Warranty Details</h2>
                             <button className="btn-close" onClick={() => setSelectedWarranty(null)}>✕</button>
                         </div>
                         <div className="modal-body">
@@ -268,15 +268,15 @@ const WarrantyManagement = () => {
 
                                 <div className="warranty-details-grid">
                                     <div className="detail-item">
-                                        <span className="label">Mã đơn hàng:</span>
+                                        <span className="label">Order Code:</span>
                                         <span className="value">#{selectedWarranty.orderNumber || selectedWarranty.orderId.slice(-8).toUpperCase()}</span>
                                     </div>
                                     <div className="detail-item">
-                                        <span className="label">Ngày mua:</span>
+                                        <span className="label">Purchase Date:</span>
                                         <span className="value">{formatDate(selectedWarranty.orderDate)}</span>
                                     </div>
                                     <div className="detail-item">
-                                        <span className="label">Ngày nhận hàng:</span>
+                                        <span className="label">Delivery Date:</span>
                                         <span className="value">{formatDate(selectedWarranty.deliveredDate)}</span>
                                     </div>
                                     <div className="detail-item">
@@ -314,34 +314,34 @@ const WarrantyManagement = () => {
 
             {/* Warranty Guide */}
             <div className="warranty-guide">
-                <h3><FiFileText /> Hướng dẫn bảo hành</h3>
+                <h3><FiFileText /> Warranty Guide</h3>
                 <div className="guide-content">
                     <div className="guide-step">
                         <span className="step-number">1</span>
                         <div>
-                            <h4>Kiểm tra tình trạng bảo hành</h4>
-                            <p>Xem thời gian bảo hành còn lại của sản phẩm</p>
+                            <h4>Check Warranty Status</h4>
+                            <p>View remaining warranty time for your product</p>
                         </div>
                     </div>
                     <div className="guide-step">
                         <span className="step-number">2</span>
                         <div>
-                            <h4>Gửi yêu cầu bảo hành</h4>
-                            <p>Mô tả chi tiết vấn đề và đính kèm hình ảnh nếu có</p>
+                            <h4>Submit Warranty Request</h4>
+                            <p>Describe the issue in detail and attach photos if needed</p>
                         </div>
                     </div>
                     <div className="guide-step">
                         <span className="step-number">3</span>
                         <div>
-                            <h4>Chờ xác nhận</h4>
-                            <p>Chúng tôi sẽ liên hệ trong vòng 24h</p>
+                            <h4>Wait for Confirmation</h4>
+                            <p>We will contact you within 24 hours</p>
                         </div>
                     </div>
                     <div className="guide-step">
                         <span className="step-number">4</span>
                         <div>
-                            <h4>Gửi sản phẩm hoặc nhận tại nhà</h4>
-                            <p>Tùy chọn gửi sản phẩm hoặc kỹ thuật viên đến tận nơi</p>
+                            <h4>Send Product or Home Service</h4>
+                            <p>Choose to send product or have technician visit your location</p>
                         </div>
                     </div>
                 </div>

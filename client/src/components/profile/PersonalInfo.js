@@ -183,7 +183,7 @@ const PersonalInfo = ({ userData, onUpdate }) => {
 
                 <div className="form-row">
                     <div className="form-group">
-                        <label>Tên đăng nhập</label>
+                        <label>Username</label>
                         <input
                             type="text"
                             name="username"

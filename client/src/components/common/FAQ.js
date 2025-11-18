@@ -42,16 +42,16 @@ const FAQ = ({ faqs, initialShowCount = 4 }) => {
             answer: 'Giao hàng nhanh trong 2-4 giờ (nội thành) hoặc 1-3 ngày (tỉnh khác). Miễn phí ship cho đơn trên 5 triệu.'
         },
         {
-            question: '↩️ Chính sách đổi trả như thế nào?',
+            question: '↩️ What is the return policy?',
             answer: 'Đổi trả miễn phí trong 15 ngày đối với lỗi từ nhà sản xuất. Yêu cầu sản phẩm còn nguyên vẹn.'
         },
         {
             question: '🛡️ Bảo hành được thực hiện như thế nào?',
-            answer: 'Bảo hành chính hãng 12-36 tháng. Hỗ trợ bảo hành tại hãng hoặc tại cửa hàng của chúng tôi.'
+            answer: 'Official warranty 12-36 months. Warranty support at manufacturer or our store.'
         },
         {
-            question: '💳 Có hỗ trợ trả góp 0% không?',
-            answer: 'Có, chúng tôi hỗ trợ trả góp 0% qua thẻ tín dụng cho đơn hàng từ 3 triệu, kỳ hạn 3-12 tháng.'
+            question: '💳 Do you support 0% installment?',
+            answer: 'Yes, we support 0% installment via credit card for orders from 3 million, 3-12 month terms.',
         },
         {
             question: '📦 Tôi có thể kiểm tra hàng trước khi nhận không?',
@@ -62,8 +62,8 @@ const FAQ = ({ faqs, initialShowCount = 4 }) => {
             answer: 'Theo dõi mục "Khuyến mãi Hot" hoặc fanpage của chúng tôi để nhận thông tin ưu đãi mới nhất.'
         },
         {
-            question: '📞 Tôi có thể liên hệ hỗ trợ qua đâu?',
-            answer: 'Liên hệ hỗ trợ 24/7 qua Hotline 084.686.5650, Email, hoặc Live Chat trực tiếp trên website.'
+            question: '📞 How can I contact support?',
+            answer: '24/7 support via Hotline 084.686.5650, Email, or Live Chat directly on the website.',
         },
         {
             question: '🔒 Thông tin cá nhân của tôi có được bảo mật không?',

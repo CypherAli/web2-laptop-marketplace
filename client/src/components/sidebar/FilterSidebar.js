@@ -103,7 +103,7 @@ const FilterSidebar = ({
                 <div className="filter-header-new">
                     <h3>
                         <FiSearch className="header-icon" />
-                        TÌM KIẾM & LỌC
+                        SEARCH & FILTER
                     </h3>
                     {activeFiltersCount > 0 && (
                         <span className="active-filters-badge-new">
@@ -118,7 +118,7 @@ const FilterSidebar = ({
                         <FiSearch className="search-icon" />
                         <input 
                             type="text" 
-                            placeholder="Tìm kiếm laptop..."
+                            placeholder="Search laptops..."
                             value={tempFilters.search}
                             onChange={(e) => handleTempFilterChange('search', e.target.value)}
                             onKeyPress={handleKeyPress}
@@ -143,7 +143,7 @@ const FilterSidebar = ({
                     >
                         <div className="header-left">
                             <MdBrandingWatermark className="section-icon" />
-                            <span>THƯƠNG HIỆU</span>
+                            <span>BRAND</span>
                         </div>
                         <FiChevronDown className={`chevron-icon ${expandedSections.brand ? 'expanded' : ''}`} />
                     </div>
@@ -269,7 +269,7 @@ const FilterSidebar = ({
                     >
                         <div className="header-left">
                             <MdMoney className="section-icon" />
-                            <span>KHOẢNG GIÁ</span>
+                            <span>PRICE RANGE</span>
                         </div>
                         <FiChevronDown className={`chevron-icon ${expandedSections.price ? 'expanded' : ''}`} />
                     </div>
@@ -277,7 +277,7 @@ const FilterSidebar = ({
                         <div className="filter-price-container">
                             <div className="price-inputs-new">
                                 <div className="price-input-wrapper">
-                                    <label>TỪ</label>
+                                    <label>FROM</label>
                                     <input 
                                         type="text" 
                                         placeholder="7,000,000đ"
@@ -290,9 +290,10 @@ const FilterSidebar = ({
                                     />
                                 </div>
                                 <div className="price-input-wrapper">
+                                    <label>TO</label>
                                     <input 
                                         type="text" 
-                                        placeholder="Chọn tiêu chí"
+                                        placeholder="Select criteria"
                                         value={tempFilters.maxPrice ? `${parseInt(tempFilters.maxPrice).toLocaleString()}đ` : ''}
                                         onChange={(e) => {
                                             const value = e.target.value.replace(/[^\d]/g, '');
@@ -316,7 +317,7 @@ const FilterSidebar = ({
                             onChange={(e) => handleTempFilterChange('inStock', e.target.checked)}
                         />
                         <MdHome className="checkbox-icon-new" />
-                        <span>Chỉ hiển thị sản phẩm còn hàng</span>
+                        <span>Only show in-stock products</span>
                     </label>
                 </div>
 
@@ -328,7 +329,7 @@ const FilterSidebar = ({
                     >
                         <div className="header-left">
                             <MdSort className="section-icon" />
-                            <span>SẮP XẾP</span>
+                            <span>SORT BY</span>
                         </div>
                         <FiChevronDown className={`chevron-icon ${expandedSections.sort ? 'expanded' : ''}`} />
                     </div>
@@ -338,10 +339,10 @@ const FilterSidebar = ({
                             onChange={(e) => handleTempFilterChange('sortBy', e.target.value)}
                             className="sort-select-new"
                         >
-                            <option value="">Mới nhất</option>
-                            <option value="price_asc">Giá: Thấp đến Cao</option>
-                            <option value="price_desc">Giá: Cao đến Thấp</option>
-                            <option value="popularity">Phổ biến nhất</option>
+                            <option value="">Newest</option>
+                            <option value="price_asc">Price: Low to High</option>
+                            <option value="price_desc">Price: High to Low</option>
+                            <option value="popularity">Most Popular</option>
                         </select>
                     )}
                 </div>
@@ -354,14 +355,14 @@ const FilterSidebar = ({
                     className="apply-btn-new"
                     onClick={handleApplyFilters}
                 >
-                    <FiCheck /> ÁP DỤNG
+                    <FiCheck /> APPLY
                 </button>
 
                 <button 
                     className="clear-btn-new"
                     onClick={handleClearFilters}
                 >
-                    <FiX /> XÓA LỌC
+                    <FiX /> CLEAR
                 </button>
             </div>
         </aside>

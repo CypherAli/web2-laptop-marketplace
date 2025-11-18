@@ -45,7 +45,7 @@ const AddressManagement = () => {
         try {
             if (editingId) {
                 await axios.put(`/user/addresses/${editingId}`, formData);
-                toast.success('Cập nhật địa chỉ thành công!');
+                toast.success('Address updated successfully!');
             } else {
                 await axios.post('/user/addresses', formData);
                 toast.success('Thêm địa chỉ thành công!');
@@ -66,7 +66,7 @@ const AddressManagement = () => {
             toast.success('Xóa địa chỉ thành công!');
             fetchAddresses();
         } catch (error) {
-            toast.error('Không thể xóa địa chỉ!');
+            toast.error('Cannot delete address!');
         }
     };
 
@@ -102,7 +102,7 @@ const AddressManagement = () => {
                 className="btn-primary mb-3" 
                 onClick={() => setShowForm(!showForm)}
             >
-                {showForm ? 'Hủy' : '+ Thêm địa chỉ mới'}
+                {showForm ? 'Cancel' : '+ Add new address'}
             </button>
 
             {showForm && (
@@ -204,7 +204,7 @@ const AddressManagement = () => {
                     </div>
 
                     <button type="submit" className="btn-primary">
-                        {editingId ? 'Cập nhật' : 'Thêm địa chỉ'}
+                        {editingId ? 'Update' : 'Add address'}
                     </button>
                 </form>
             )}
@@ -221,7 +221,7 @@ const AddressManagement = () => {
                             <p>{addr.address?.street}, {addr.address?.ward}, {addr.address?.district}, {addr.address?.city}</p>
                             <div className="address-actions">
                                 <button onClick={() => handleEdit(addr)}>Sửa</button>
-                                <button onClick={() => handleDelete(addr._id)}>Xóa</button>
+                                <button onClick={() => handleDelete(addr._id)}>Delete</button>
                             </div>
                         </div>
                     ))

@@ -553,7 +553,7 @@ const AdminDashboard = () => {
                 {/* ORDERS TAB */}
                 {activeTab === 'orders' && (
                     <div className="management-tab">
-                        <h2>Quản lý đơn hàng</h2>
+                        <h2>Order Management</h2>
                         <div className="table-container">
                             <table className="admin-table">
                                 <thead>
@@ -580,9 +580,9 @@ const AdminDashboard = () => {
                                                 >
                                                     <option value="pending">Chờ xử lý</option>
                                                     <option value="confirmed">Đã xác nhận</option>
-                                                    <option value="processing">Đang xử lý</option>
-                                                    <option value="shipped">Đang giao</option>
-                                                    <option value="delivered">Đã giao</option>
+                                                    <option value="processing">Processing</option>
+                                                    <option value="shipped">Shipping</option>
+                                                    <option value="delivered">Delivered</option>
                                                     <option value="cancelled">Đã hủy</option>
                                                 </select>
                                             </td>

@@ -23,21 +23,21 @@ const RegisterPage = () => {
         setError('');
 
         if (password !== confirmPassword) {
-            const errorMsg = 'Mật khẩu không khớp!';
+            const errorMsg = 'Passwords do not match!';
             setError(errorMsg);
             toast.error(errorMsg);
             return;
         }
 
         if (password.length < 6) {
-            const errorMsg = 'Mật khẩu phải có ít nhất 6 ký tự.';
+            const errorMsg = 'Password must be at least 6 characters.';
             setError(errorMsg);
             toast.error(errorMsg);
             return;
         }
 
         if (role === 'partner' && !shopName.trim()) {
-            const errorMsg = 'Vui lòng nhập tên shop của bạn.';
+            const errorMsg = 'Please enter your shop name.';
             setError(errorMsg);
             toast.error(errorMsg);
             return;
@@ -51,10 +51,10 @@ const RegisterPage = () => {
                 userData.shopName = shopName;
             }
             await register(userData.username, userData.email, userData.password, userData.role, userData.shopName);
-            toast.success('Đăng ký thành công! Vui lòng đăng nhập.');
+            toast.success('Registration successful! Please login.');
             setTimeout(() => navigate('/login'), 1500);
         } catch (err) {
-            const errorMsg = 'Đăng ký thất bại. Email hoặc username có thể đã tồn tại.';
+            const errorMsg = 'Registration failed. Email or username may already exist.';
             setError(errorMsg);
             toast.error(errorMsg);
         } finally {
@@ -69,7 +69,7 @@ const RegisterPage = () => {
                     <div className="auth-brand">
                         <div className="brand-icon">💻</div>
                         <h1>Laptop Store</h1>
-                        <p>Tham gia ngay hôm nay!</p>
+                        <p>Join us today!</p>
                     </div>
                     <div className="auth-illustration">
                         <div className="floating-laptop">
@@ -84,8 +84,8 @@ const RegisterPage = () => {
                 <div className="auth-right">
                     <div className="auth-form-wrapper">
                         <div className="auth-header">
-                            <h2>Đăng Ký</h2>
-                            <p>Tạo tài khoản mới để bắt đầu mua sắm hoặc bán hàng.</p>
+                            <h2>Register</h2>
+                            <p>Create a new account to start shopping or selling.</p>
                         </div>
 
                         {error && (
@@ -97,7 +97,7 @@ const RegisterPage = () => {
 
                         <form onSubmit={handleSubmit} className="auth-form">
                             <div className="form-group">
-                                <label>Bạn là:</label>
+                                <label>You are:</label>
                                 <div className="register-role-select">
                                     <div 
                                         className={`role-option ${role === 'client' ? 'selected' : ''}`}
@@ -111,7 +111,7 @@ const RegisterPage = () => {
                                             onChange={(e) => setRole(e.target.value)}
                                         />
                                         <div className="role-icon">👤</div>
-                                        <div className="role-name">Khách hàng</div>
+                                        <div className="role-name">Customer</div>
                                     </div>
                                     <div 
                                         className={`role-option ${role === 'partner' ? 'selected' : ''}`}
@@ -125,13 +125,13 @@ const RegisterPage = () => {
                                             onChange={(e) => setRole(e.target.value)}
                                         />
                                         <div className="role-icon">🏪</div>
-                                        <div className="role-name">Đối tác bán</div>
+                                        <div className="role-name">Partner Seller</div>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="form-group">
-                                <label>👤 Tên người dùng</label>
+                                <label>👤 Username</label>
                                 <input 
                                     type="text" 
                                     value={username} 
@@ -158,7 +158,7 @@ const RegisterPage = () => {
 
                             {role === 'partner' && (
                                 <div className="form-group">
-                                    <label>🏪 Tên Shop</label>
+                                    <label>🏪 Shop Name</label>
                                     <input 
                                         type="text" 
                                         value={shopName} 
@@ -172,7 +172,7 @@ const RegisterPage = () => {
                             )}
 
                             <div className="form-group">
-                                <label>🔒 Mật khẩu</label>
+                                <label>🔒 Password</label>
                                 <div className="password-input-wrapper">
                                     <input 
                                         type={showPassword ? "text" : "password"}
@@ -194,7 +194,7 @@ const RegisterPage = () => {
                             </div>
 
                             <div className="form-group">
-                                <label>🔒 Xác nhận mật khẩu</label>
+                                <label>🔒 Confirm Password</label>
                                 <input 
                                     type={showPassword ? "text" : "password"}
                                     value={confirmPassword} 
@@ -214,11 +214,11 @@ const RegisterPage = () => {
                                 {loading ? (
                                     <>
                                         <span className="spinner-small"></span>
-                                        Đang đăng ký...
+                                        Registering...
                                     </>
                                 ) : (
                                     <>
-                                        <span>Đăng Ký</span>
+                                        <span>Register</span>
                                         <span>→</span>
                                     </>
                                 )}
@@ -226,13 +226,13 @@ const RegisterPage = () => {
                         </form>
 
                         <div className="auth-divider">
-                            <span>Hoặc</span>
+                            <span>Or</span>
                         </div>
 
                         <div className="auth-footer">
                             <p>
-                                Đã có tài khoản? 
-                                <Link to="/login" className="auth-link">Đăng nhập ngay</Link>
+                                Already have an account? 
+                                <Link to="/login" className="auth-link">Login now</Link>
                             </p>
                         </div>
                     </div>

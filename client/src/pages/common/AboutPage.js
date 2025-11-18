@@ -8,9 +8,9 @@ const AboutPage = () => {
             {/* Hero Section */}
             <div className="about-hero">
                 <div className="about-hero-content">
-                    <h1 className="about-title">🌐 Về Chúng Tôi</h1>
+                    <h1 className="about-title">🌐 About Us</h1>
                     <p className="about-subtitle">
-                        Hệ thống bán lẻ laptop uy tín hàng đầu Việt Nam
+                        Vietnam's Leading Trusted Laptop Retail System
                     </p>
                 </div>
             </div>
@@ -19,15 +19,15 @@ const AboutPage = () => {
             <div className="company-story">
                 <div className="story-container">
                     <div className="story-content">
-                        <h2>📖 Câu Chuyện Của Chúng Tôi</h2>
+                        <h2>📖 Our Story</h2>
                         <p>
-                            <strong>Laptop Store</strong> được thành lập vào năm 2015 với sứ mệnh mang đến cho khách hàng 
-                            Việt Nam những sản phẩm laptop chính hãng, chất lượng cao với giá cả hợp lý nhất.
+                            <strong>Laptop Store</strong> was founded in 2015 with a mission to bring 
+                            Vietnamese customers genuine, high-quality laptop products at the most reasonable prices.
                         </p>
                         <p>
-                            Qua 10 năm phát triển, chúng tôi đã trở thành một trong những đơn vị hàng đầu 
-                            trong lĩnh vực phân phối laptop tại Việt Nam với hơn <strong>50 cửa hàng</strong> trên 
-                            toàn quốc và hơn <strong>500,000 khách hàng</strong> tin dùng.
+                            Over 10 years of development, we have become one of the leading 
+                            laptop distributors in Vietnam with more than <strong>50 stores</strong> nationwide 
+                            and over <strong>500,000 trusted customers</strong>.
                         </p>
                     </div>
                     <div className="story-image">
@@ -41,26 +41,26 @@ const AboutPage = () => {
                 <div className="mv-container">
                     <div className="mv-item mission">
                         <div className="mv-icon">🎯</div>
-                        <h3>Sứ Mệnh</h3>
+                        <h3>Mission</h3>
                         <p>
-                            Cung cấp các sản phẩm công nghệ chất lượng cao, dịch vụ tận tâm, 
-                            giúp khách hàng nâng cao năng suất làm việc và chất lượng cuộc sống.
+                            Provide high-quality technology products and dedicated service, 
+                            helping customers improve work productivity and quality of life.
                         </p>
                     </div>
                     <div className="mv-item vision">
                         <div className="mv-icon">🚀</div>
-                        <h3>Tầm Nhìn</h3>
+                        <h3>Vision</h3>
                         <p>
-                            Trở thành hệ thống bán lẻ laptop số 1 Việt Nam, được khách hàng 
-                            tin tưởng và lựa chọn hàng đầu khi mua sắm công nghệ.
+                            Become Vietnam's #1 laptop retail system, trusted 
+                            and chosen by customers as their top choice for technology shopping.
                         </p>
                     </div>
                     <div className="mv-item values">
                         <div className="mv-icon">💎</div>
-                        <h3>Giá Trị Cốt Lõi</h3>
+                        <h3>Core Values</h3>
                         <p>
-                            Chân thành - Chuyên nghiệp - Chất lượng - Cam kết. 
-                            Luôn đặt lợi ích khách hàng lên hàng đầu.
+                            Integrity - Professionalism - Quality - Commitment. 
+                            Always putting customer interests first.
                         </p>
                     </div>
                 </div>
@@ -69,37 +69,37 @@ const AboutPage = () => {
             {/* Core Values */}
             <div className="core-values">
                 <div className="values-container">
-                    <h2>⭐ Giá Trị Cốt Lõi</h2>
+                    <h2>⭐ Core Values</h2>
                     <div className="values-grid">
                         <div className="value-item">
                             <span className="value-icon">✓</span>
-                            <h4>Chính hãng 100%</h4>
-                            <p>Cam kết mọi sản phẩm đều chính hãng, có VAT đầy đủ</p>
+                            <h4>100% Genuine</h4>
+                            <p>All products are genuine with full VAT</p>
                         </div>
                         <div className="value-item">
                             <span className="value-icon">🛡️</span>
-                            <h4>Bảo hành uy tín</h4>
-                            <p>Bảo hành chính hãng tại các trung tâm ủy quyền</p>
+                            <h4>Trusted Warranty</h4>
+                            <p>Official warranty at authorized service centers</p>
                         </div>
                         <div className="value-item">
                             <span className="value-icon">💰</span>
-                            <h4>Giá tốt nhất</h4>
-                            <p>Cam kết giá cạnh tranh, hoàn tiền nếu có nơi rẻ hơn</p>
+                            <h4>Best Price</h4>
+                            <p>Competitive pricing, refund if found cheaper elsewhere</p>
                         </div>
                         <div className="value-item">
                             <span className="value-icon">🚚</span>
-                            <h4>Giao hàng nhanh</h4>
-                            <p>Giao hàng trong 2-4 giờ nội thành, 1-3 ngày toàn quốc</p>
+                            <h4>Fast Delivery</h4>
+                            <p>Delivery in 2-4 hours in city, 1-3 days nationwide</p>
                         </div>
                         <div className="value-item">
                             <span className="value-icon">👨‍💼</span>
-                            <h4>Tư vấn chuyên nghiệp</h4>
-                            <p>Đội ngũ am hiểu sâu về sản phẩm, tư vấn nhiệt tình</p>
+                            <h4>Professional Consultation</h4>
+                            <p>Knowledgeable team with enthusiastic advice</p>
                         </div>
                         <div className="value-item">
                             <span className="value-icon">🔄</span>
-                            <h4>Đổi trả linh hoạt</h4>
-                            <p>Đổi trả trong 15 ngày nếu có lỗi từ nhà sản xuất</p>
+                            <h4>Flexible Returns</h4>
+                            <p>15-day return for manufacturer defects</p>
                         </div>
                     </div>
                 </div>
@@ -110,19 +110,19 @@ const AboutPage = () => {
                 <div className="stats-container">
                     <div className="stat-box">
                         <div className="stat-number">10+</div>
-                        <div className="stat-label">Năm kinh nghiệm</div>
+                        <div className="stat-label">Years of Experience</div>
                     </div>
                     <div className="stat-box">
                         <div className="stat-number">50+</div>
-                        <div className="stat-label">Cửa hàng toàn quốc</div>
+                        <div className="stat-label">Stores Nationwide</div>
                     </div>
                     <div className="stat-box">
                         <div className="stat-number">500K+</div>
-                        <div className="stat-label">Khách hàng tin dùng</div>
+                        <div className="stat-label">Trusted Customers</div>
                     </div>
                     <div className="stat-box">
                         <div className="stat-number">4.8★</div>
-                        <div className="stat-label">Đánh giá trung bình</div>
+                        <div className="stat-label">Average Rating</div>
                     </div>
                 </div>
             </div>
@@ -130,31 +130,31 @@ const AboutPage = () => {
             {/* Team */}
             <div className="team-section">
                 <div className="team-container">
-                    <h2>👥 Đội Ngũ Lãnh Đạo</h2>
+                    <h2>👥 Leadership Team</h2>
                     <div className="team-grid">
                         <div className="team-member">
                             <div className="member-avatar">
                                 <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300" alt="CEO" />
                             </div>
-                            <h4>Nguyễn Văn A</h4>
+                            <h4>Nguyen Van A</h4>
                             <p className="member-title">CEO & Founder</p>
-                            <p className="member-desc">15 năm kinh nghiệm trong ngành công nghệ</p>
+                            <p className="member-desc">15 years of experience in the technology industry</p>
                         </div>
                         <div className="team-member">
                             <div className="member-avatar">
                                 <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300" alt="CTO" />
                             </div>
-                            <h4>Trần Thị B</h4>
+                            <h4>Tran Thi B</h4>
                             <p className="member-title">CTO</p>
-                            <p className="member-desc">Chuyên gia công nghệ với 12 năm kinh nghiệm</p>
+                            <p className="member-desc">Technology expert with 12 years of experience</p>
                         </div>
                         <div className="team-member">
                             <div className="member-avatar">
                                 <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300" alt="COO" />
                             </div>
-                            <h4>Lê Văn C</h4>
+                            <h4>Le Van C</h4>
                             <p className="member-title">COO</p>
-                            <p className="member-desc">Chuyên gia vận hành và logistics</p>
+                            <p className="member-desc">Operations and logistics expert</p>
                         </div>
                     </div>
                 </div>
@@ -163,8 +163,8 @@ const AboutPage = () => {
             {/* Partners */}
             <div className="partners-section">
                 <div className="partners-container">
-                    <h2>🤝 Đối Tác Chiến Lược</h2>
-                    <p className="partners-subtitle">Chúng tôi tự hào là đối tác chính thức của các thương hiệu hàng đầu</p>
+                    <h2>🤝 Strategic Partners</h2>
+                    <p className="partners-subtitle">We are proud to be official partners of leading brands</p>
                     <div className="partners-grid">
                         <div className="partner-logo">Dell</div>
                         <div className="partner-logo">HP</div>
@@ -181,14 +181,14 @@ const AboutPage = () => {
             {/* CTA */}
             <div className="about-cta">
                 <div className="cta-content">
-                    <h2>Sẵn sàng mua sắm cùng chúng tôi?</h2>
-                    <p>Khám phá hàng trăm mẫu laptop chính hãng với giá tốt nhất</p>
+                    <h2>Ready to shop with us?</h2>
+                    <p>Discover hundreds of genuine laptop models at the best prices</p>
                     <div className="cta-actions">
                         <Link to="/" className="cta-btn primary">
-                            🛍️ Xem sản phẩm
+                            🛍️ View Products
                         </Link>
                         <Link to="/contact" className="cta-btn secondary">
-                            📧 Liên hệ ngay
+                            📧 Contact Now
                         </Link>
                     </div>
                 </div>

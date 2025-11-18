@@ -57,7 +57,7 @@ class ErrorBoundary extends React.Component {
                                 🔄 Tải lại trang
                             </button>
                             <button onClick={this.handleGoHome} className="btn-home">
-                                🏠 Về trang chủ
+                                🏠 Back to Home
                             </button>
                         </div>
                     </div>

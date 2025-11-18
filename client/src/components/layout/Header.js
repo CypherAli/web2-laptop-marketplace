@@ -33,12 +33,12 @@ const Header = () => {
             <div className="top-bar">
                 <div className="top-bar-container">
                     <div className="top-bar-left">
-                        <span className="trust-signal">🚚 Miễn phí vận chuyển toàn quốc từ 10 triệu</span>
-                        <span className="trust-signal">🔄 Đổi trả 15 ngày nếu có lỗi từ NSX</span>
-                        <span className="trust-signal">🛡️ Bảo hành chính hãng 12-24 tháng</span>
+                        <span className="trust-signal">🚚 Free shipping nationwide from 10 million VND</span>
+                        <span className="trust-signal">🔄 15-day return if manufacturer defect</span>
+                        <span className="trust-signal">🛡️ Official warranty 12-24 months</span>
                     </div>
                     <div className="top-bar-right">
-                        <span className="promo-text">💳 Trả góp 0% - Duyệt nhanh 30 phút</span>
+                        <span className="promo-text">💳 0% Installment - Fast approval in 30 minutes</span>
                     </div>
                 </div>
             </div>
@@ -61,7 +61,7 @@ const Header = () => {
                         <a href="tel:0848565650" className="hotline-prominent">
                             <span className="hotline-icon">📞</span>
                             <div className="hotline-info">
-                                <span className="hotline-label">Tư vấn miễn phí</span>
+                                <span className="hotline-label">Free Consultation</span>
                                 <span className="hotline-number">084.856.5650</span>
                             </div>
                         </a>
@@ -72,7 +72,7 @@ const Header = () => {
                         <form className="header-search" onSubmit={handleSearch}>
                             <input 
                                 type="text" 
-                                placeholder="Tìm kiếm laptop, phụ kiện..."
+                                placeholder="Search laptops, accessories..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="header-search-input"
@@ -90,7 +90,7 @@ const Header = () => {
                                 
                                 <Link to="/wishlist" className="icon-link">
                                     <span className="icon">❤️</span>
-                                    <span className="icon-label">Yêu thích</span>
+                                    <span className="icon-label">Wishlist</span>
                                     {wishlist.length > 0 && (
                                         <span className="icon-badge">{wishlist.length}</span>
                                     )}
@@ -100,7 +100,7 @@ const Header = () => {
                                     onClick={() => setIsCartSidebarOpen(true)}
                                 >
                                     <span className="icon">🛒</span>
-                                    <span className="icon-label">Giỏ hàng</span>
+                                    <span className="icon-label">Cart</span>
                                     {getCartCount() > 0 && (
                                         <span className="icon-badge cart-badge">{getCartCount()}</span>
                                     )}
@@ -115,10 +115,10 @@ const Header = () => {
                                     </button>
                                     <div className="user-dropdown">
                                         <Link to="/profile" className="dropdown-item">
-                                            👤 Hồ sơ của tôi
+                                            👤 My Profile
                                         </Link>
                                         <Link to="/orders" className="dropdown-item">
-                                            📦 Đơn hàng của tôi
+                                            📦 My Orders
                                         </Link>
                                         {user && user.role === 'admin' && (
                                             <Link to="/admin" className="dropdown-item">
@@ -127,11 +127,11 @@ const Header = () => {
                                         )}
                                         {user && (user.role === 'admin' || user.role === 'partner') && (
                                             <Link to="/manager" className="dropdown-item">
-                                                📊 Quản lý sản phẩm
+                                                📊 Product Management
                                             </Link>
                                         )}
                                         <button onClick={handleLogout} className="dropdown-item logout-item">
-                                            🚪 Đăng xuất
+                                            🚪 Logout
                                         </button>
                                     </div>
                                 </div>
@@ -140,7 +140,7 @@ const Header = () => {
                             <>
                                 <Link to="/wishlist" className="icon-link">
                                     <span className="icon">❤️</span>
-                                    <span className="icon-label">Yêu thích</span>
+                                    <span className="icon-label">Wishlist</span>
                                     {wishlist.length > 0 && (
                                         <span className="icon-badge">{wishlist.length}</span>
                                     )}
@@ -150,18 +150,18 @@ const Header = () => {
                                     onClick={() => setIsCartSidebarOpen(true)}
                                 >
                                     <span className="icon">🛒</span>
-                                    <span className="icon-label">Giỏ hàng</span>
+                                    <span className="icon-label">Cart</span>
                                     {getCartCount() > 0 && (
                                         <span className="icon-badge cart-badge">{getCartCount()}</span>
                                     )}
                                 </button>
                                 <Link to="/login" className="nav-link login-link">
                                     <span className="link-icon">🔑</span>
-                                    Đăng nhập
+                                    Login
                                 </Link>
                                 <Link to="/register" className="nav-link register-link">
                                     <span className="link-icon">✨</span>
-                                    Đăng ký
+                                    Register
                                 </Link>
                             </>
                         )}
@@ -173,7 +173,7 @@ const Header = () => {
             <div className="main-nav">
                 <div className="main-nav-container">
                     <Link to="/" className="nav-menu-item">
-                        🏠 Trang chủ
+                        🏠 Home
                     </Link>
                     <Link to="/#products" className="nav-menu-item" onClick={(e) => {
                         if (window.location.pathname === '/') {
@@ -184,22 +184,22 @@ const Header = () => {
                             }
                         }
                     }}>
-                        💻 Sản phẩm
+                        💻 Products
                     </Link>
                     <Link to="/deals" className="nav-menu-item hot-item">
-                        🔥 Khuyến mãi Hot
+                        🔥 Hot Deals
                     </Link>
                     <Link to="/best-sellers" className="nav-menu-item">
-                        ⭐ Bán chạy
+                        ⭐ Best Sellers
                     </Link>
                     <Link to="/blog" className="nav-menu-item">
-                        📰 Tin tức & Đánh giá
+                        📰 News & Reviews
                     </Link>
                     <Link to="/about" className="nav-menu-item">
-                        ℹ️ Giới thiệu
+                        ℹ️ About Us
                     </Link>
                     <Link to="/contact" className="nav-menu-item">
-                        📧 Liên hệ
+                        📧 Contact
                     </Link>
                 </div>
             </div>

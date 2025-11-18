@@ -140,7 +140,7 @@ const AnimatedProductCard = ({
                     </motion.div>
                 )}
 
-                {product.stock === 0 && (
+                {(!product.stock || product.stock <= 0) && (
                     <motion.div 
                         className="animated-sold-out-badge"
                         variants={badgeVariants}
@@ -235,11 +235,13 @@ const AnimatedProductCard = ({
 
                 {/* Footer */}
                 <div className="animated-product-footer">
-                    <span className="animated-stock-status">
-                        {product.stock > 0 ? `Còn ${product.stock} sản phẩm` : 'Hết hàng'}
+                    <span className="animated-stock-status" style={{
+                        color: (product.stock && product.stock > 0) ? '#10b981' : '#e74c3c'
+                    }}>
+                        {(product.stock && product.stock > 0) ? `Còn ${product.stock} sản phẩm` : 'Hết hàng'}
                     </span>
 
-                    {product.stock > 0 ? (
+                    {(product.stock && product.stock > 0) ? (
                         <motion.button
                             className="animated-add-btn"
                             onClick={() => onAddToCart(product)}

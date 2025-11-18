@@ -343,6 +343,9 @@
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.3s;
+    position: relative;
+    z-index: 5;
+    pointer-events: auto;
 }
 
 .add-to-cart-btn:hover:not(:disabled) {

@@ -119,6 +119,12 @@ const ImageModal = ({ isOpen, onClose, images, initialIndex = 0, product }) => {
                             <div className="product-specs">
                                 <h4>Thông số kỹ thuật</h4>
                                 <div className="spec-grid">
+                                    {product?.brand && (
+                                        <div className="spec-item">
+                                            <span className="spec-label">Thương hiệu:</span>
+                                            <span className="spec-value">{product.brand}</span>
+                                        </div>
+                                    )}
                                     {product?.processor && (
                                         <div className="spec-item">
                                             <span className="spec-label">CPU:</span>
@@ -143,8 +149,36 @@ const ImageModal = ({ isOpen, onClose, images, initialIndex = 0, product }) => {
                                             <span className="spec-value">{product.screen}</span>
                                         </div>
                                     )}
+                                    {product?.graphics && (
+                                        <div className="spec-item">
+                                            <span className="spec-label">Card đồ họa:</span>
+                                            <span className="spec-value">{product.graphics}</span>
+                                        </div>
+                                    )}
+                                    {product?.category && (
+                                        <div className="spec-item">
+                                            <span className="spec-label">Danh mục:</span>
+                                            <span className="spec-value">{product.category}</span>
+                                        </div>
+                                    )}
+                                    {product?.stock !== undefined && (
+                                        <div className="spec-item">
+                                            <span className="spec-label">Tình trạng:</span>
+                                            <span className="spec-value" style={{ color: product.stock > 0 ? '#28a745' : '#dc3545' }}>
+                                                {product.stock > 0 ? `Còn ${product.stock} sản phẩm` : 'Hết hàng'}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
+
+                            {/* Description */}
+                            {product?.description && (
+                                <div className="product-description">
+                                    <h4>Mô tả sản phẩm</h4>
+                                    <p>{product.description}</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
