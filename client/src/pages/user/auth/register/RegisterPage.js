@@ -65,11 +65,11 @@ const RegisterPage = () => {
     return (
         <div className="auth-page">
             <div className="auth-container">
-                <div className="auth-left">
+                <div className="auth-left" data-role={role}>
                     <div className="auth-brand">
                         <div className="brand-icon">💻</div>
                         <h1>Laptop Store</h1>
-                        <p>Join us today!</p>
+                        <p>{role === 'partner' ? 'Start Selling Today!' : 'Join us today!'}</p>
                     </div>
                     <div className="auth-illustration">
                         <div className="floating-laptop">
@@ -101,6 +101,7 @@ const RegisterPage = () => {
                                 <div className="register-role-select">
                                     <div 
                                         className={`role-option ${role === 'client' ? 'selected' : ''}`}
+                                        data-role="client"
                                         onClick={() => setRole('client')}
                                     >
                                         <input 
@@ -115,6 +116,7 @@ const RegisterPage = () => {
                                     </div>
                                     <div 
                                         className={`role-option ${role === 'partner' ? 'selected' : ''}`}
+                                        data-role="partner"
                                         onClick={() => setRole('partner')}
                                     >
                                         <input 

@@ -1,8 +1,9 @@
-import React, { useState, useContext, useMemo } from 'react';
+import React, { useState, useContext, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
     FiChevronLeft, FiChevronRight 
 } from 'react-icons/fi';
+import { useLocation } from 'react-router-dom';
 import CartContext from '../../context/CartContext';
 import WishlistContext from '../../context/WishlistContext';
 import { useToast } from '../../components/common/Toast';
@@ -21,6 +22,7 @@ import useProducts from '../../hooks/useProducts';
 import './HomePage.professional.css';
 
 const HomePage = () => {
+    const location = useLocation();
     const [selectedProduct, setSelectedProduct] = useState(null); // For Quick View modal
     
     // Temporary filters - chỉ lưu trong UI, chưa apply
@@ -65,6 +67,28 @@ const HomePage = () => {
     const brands = BRANDS.filter(b => b !== 'All');
     const ramOptions = RAM_OPTIONS.filter(r => r !== 'All');
     const processorOptions = PROCESSOR_OPTIONS.filter(p => p !== 'All');
+
+    // Handle URL search query parameter - only set temp filter, don't apply yet
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const searchQuery = searchParams.get('search');
+        
+        if (searchQuery) {
+            setTempFilters(prev => ({ ...prev, search: searchQuery }));
+            
+            // Auto-apply search when coming from header
+            updateFilter('search', searchQuery);
+            
+            // Scroll to products
+            setTimeout(() => {
+                const productsSection = document.getElementById('products-section');
+                if (productsSection) {
+                    productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 500);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location.search]);
 
     // Calculate active filters count
     const activeFiltersCount = useMemo(() => {

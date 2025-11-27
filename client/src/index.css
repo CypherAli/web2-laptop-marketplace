@@ -124,8 +124,8 @@ body {
 
 /* ==================== MAIN HEADER ==================== */
 .main-header {
-    background: linear-gradient(135deg, #6c4de6 0%, #5a3ec9 100%);
-    box-shadow: 0 4px 12px rgba(108, 77, 230, 0.2);
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     position: sticky;
     top: 0;
     z-index: 1000;

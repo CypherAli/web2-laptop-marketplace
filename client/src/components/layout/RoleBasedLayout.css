@@ -236,15 +236,15 @@
 .theme-client .navbar,
 .theme-partner .navbar,
 .theme-admin .navbar {
-    background: var(--primary-gradient) !important;
-    box-shadow: var(--shadow-md);
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* ========== FOOTER CUSTOMIZATION ========== */
 .theme-client footer,
 .theme-partner footer,
 .theme-admin footer {
-    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
 }
 
 /* ========== RESPONSIVE ========== */

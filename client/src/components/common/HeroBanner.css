@@ -27,7 +27,27 @@
     opacity: 0;
     visibility: hidden;
     transition: all 0.6s ease;
-    background: linear-gradient(135deg, var(--accent-color, #6c4de6) 0%, rgba(108, 77, 230, 0.8) 100%);
+    background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe);
+    background-size: 600% 600%;
+    animation: gradientShift 20s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    25% {
+        background-position: 50% 100%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    75% {
+        background-position: 50% 0%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .hero-slide.active {
