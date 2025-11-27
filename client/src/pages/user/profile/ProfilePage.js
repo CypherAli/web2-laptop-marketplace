@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from '../../../api/axiosConfig';
 import AuthContext from '../../../context/AuthContext';
+import { getAvatarUrl } from '../../../utils/imageHelpers';
 import './ProfilePage.css';
 
 // Tab components
@@ -18,7 +19,7 @@ import NotificationCenter from '../../../components/profile/NotificationCenter';
 import SettingsPreferences from '../../../components/profile/SettingsPreferences';
 
 const ProfilePage = () => {
-    const { user } = useContext(AuthContext);
+    const { user, userDetails } = useContext(AuthContext);
     const [activeTab, setActiveTab] = useState('overview');
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -44,12 +45,26 @@ const ProfilePage = () => {
         fetchUnreadCount();
     }, []);
 
+    // Update userData when userDetails changes (after profile update)
+    useEffect(() => {
+        if (userDetails) {
+            setUserData(prevData => ({
+                ...prevData,
+                ...userDetails
+            }));
+        }
+    }, [userDetails]);
+
     const fetchUserData = async () => {
         try {
             const response = await axios.get('/user/profile');
             setUserData(response.data);
         } catch (error) {
             console.error('Fetch user error:', error);
+            // Fallback to userDetails if API fails
+            if (userDetails) {
+                setUserData(userDetails);
+            }
         } finally {
             setLoading(false);
         }
@@ -111,16 +126,20 @@ const ProfilePage = () => {
                 <aside className="profile-sidebar">
                     <div className="profile-header">
                         <div className="profile-avatar">
-                            {userData?.profilePicture ? (
-                                <img src={userData.profilePicture} alt={userData.name} />
-                            ) : (
-                                <div className="avatar-placeholder">
-                                    {userData?.name?.charAt(0).toUpperCase() || user?.name?.charAt(0).toUpperCase() || 'U'}
-                                </div>
-                            )}
+                            {(() => {
+                                const avatarPath = userData?.avatar || userDetails?.avatar;
+                                const avatarUrl = getAvatarUrl(avatarPath);
+                                return avatarUrl ? (
+                                    <img src={avatarUrl} alt={userData?.name || user?.username} />
+                                ) : (
+                                    <div className="avatar-placeholder">
+                                        {userData?.name?.charAt(0).toUpperCase() || user?.username?.charAt(0).toUpperCase() || 'U'}
+                                    </div>
+                                );
+                            })()}
                         </div>
-                        <h2>{userData?.name || user?.name || 'User'}</h2>
-                        <p className="profile-email">{userData?.email || user?.email}</p>
+                        <h2>{userData?.name || userDetails?.name || user?.username || 'User'}</h2>
+                        <p className="profile-email">{userData?.email || userDetails?.email || user?.email}</p>
                         <div className="membership-badge">
                             <span className={`badge-${userData?.membershipTier || 'bronze'}`}>
                                 {(userData?.membershipTier || 'bronze').toUpperCase()}

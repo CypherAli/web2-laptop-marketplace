@@ -7,6 +7,10 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('token'));
+    const [userDetails, setUserDetails] = useState(() => {
+        const saved = localStorage.getItem('userDetails');
+        return saved ? JSON.parse(saved) : null;
+    });
 
     useEffect(() => {
         if (token) {
@@ -19,23 +23,48 @@ export const AuthProvider = ({ children }) => {
                     console.warn("Token has expired");
                     setUser(null);
                     setToken(null);
+                    setUserDetails(null);
                     localStorage.removeItem('token');
+                    localStorage.removeItem('userDetails');
                     return;
                 }
                 
                 setUser(decodedUser);
                 localStorage.setItem('token', token);
+                
+                // Fetch fresh user details if not already loaded
+                if (!userDetails) {
+                    fetchUserDetails();
+                }
             } catch (error) {
                 console.error("Invalid token:", error);
                 setUser(null);
                 setToken(null);
+                setUserDetails(null);
                 localStorage.removeItem('token');
+                localStorage.removeItem('userDetails');
             }
         } else {
             setUser(null);
+            setUserDetails(null);
             localStorage.removeItem('token');
+            localStorage.removeItem('userDetails');
         }
     }, [token]);
+
+    const fetchUserDetails = async () => {
+        try {
+            const res = await axios.get('/user/profile');
+            if (res.data) {
+                setUserDetails(res.data);
+                localStorage.setItem('userDetails', JSON.stringify(res.data));
+                console.log('✅ User details fetched from server:', res.data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch user details:', error);
+            // Keep using cached userDetails if fetch fails
+        }
+    };
 
     const login = async (email, password) => {
         try {
@@ -48,6 +77,14 @@ export const AuthProvider = ({ children }) => {
             }
             
             setToken(res.data.token);
+            
+            // Save user details to state and localStorage
+            if (res.data.user) {
+                setUserDetails(res.data.user);
+                localStorage.setItem('userDetails', JSON.stringify(res.data.user));
+                console.log('✅ User details saved:', res.data.user);
+            }
+            
             return res.data; // Return response for component to handle
         } catch (err) {
             console.error('Login failed', err);
@@ -70,10 +107,17 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         setToken(null);
+        setUserDetails(null);
+        localStorage.removeItem('userDetails');
+    };
+
+    const updateUser = (userData) => {
+        setUserDetails(userData);
+        localStorage.setItem('userDetails', JSON.stringify(userData));
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, login, logout, register }}>
+        <AuthContext.Provider value={{ user, userDetails, token, login, logout, register, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

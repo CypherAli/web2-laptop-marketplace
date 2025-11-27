@@ -5,9 +5,10 @@ import CartContext from '../../context/CartContext';
 import WishlistContext from '../../context/WishlistContext';
 import CartSidebar from '../cart/CartSidebar';
 import NotificationBell from '../notification/NotificationBell';
+import { getAvatarUrl } from '../../utils/imageHelpers';
 
 const Header = () => {
-    const { user, logout } = useContext(AuthContext);
+    const { user, userDetails, logout } = useContext(AuthContext);
     const { getCartCount } = useContext(CartContext);
     const { wishlist } = useContext(WishlistContext);
     const navigate = useNavigate();
@@ -109,8 +110,16 @@ const Header = () => {
                                 {/* User Dropdown */}
                                 <div className="user-menu">
                                     <button className="user-menu-btn">
-                                        <span className="user-icon">�</span>
-                                        <span className="user-name">{user.username}</span>
+                                        {(() => {
+                                            const avatarPath = userDetails?.avatar || user?.avatar;
+                                            const avatarUrl = getAvatarUrl(avatarPath);
+                                            return avatarUrl ? (
+                                                <img src={avatarUrl} alt={user?.username} className="user-avatar-small" />
+                                            ) : (
+                                                <span className="user-icon">👤</span>
+                                            );
+                                        })()}
+                                        <span className="user-name">{userDetails?.username || user?.username}</span>
                                         <span className="dropdown-arrow">▼</span>
                                     </button>
                                     <div className="user-dropdown">

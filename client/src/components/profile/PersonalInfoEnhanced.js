@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from '../../api/axiosConfig';
 import AuthContext from '../../context/AuthContext';
 import { useToast } from '../common/Toast';
+import { getAvatarUrl } from '../../utils/imageHelpers';
 import { 
     FiUser, FiMail, FiPhone, FiMapPin, FiCalendar, 
     FiLock, FiSave, FiCamera, FiPlus, FiTrash2,
@@ -10,7 +11,7 @@ import {
 import './ProfileEnhanced.css';
 
 const PersonalInfoEnhanced = ({ userData, onUpdate }) => {
-    const { user } = useContext(AuthContext);
+    const { user, userDetails, updateUser } = useContext(AuthContext);
     const toast = useToast();
     const [activeTab, setActiveTab] = useState('personal'); // personal, addresses, preferences
     
@@ -73,20 +74,21 @@ const PersonalInfoEnhanced = ({ userData, onUpdate }) => {
         if (userData) {
             setFormData({
                 name: userData.name || '',
-                username: userData.username || user?.username || '',
-                email: userData.email || user?.email || '',
+                username: userData.username || userDetails?.username || user?.username || '',
+                email: userData.email || userDetails?.email || user?.email || '',
                 phone: userData.phone || '',
                 address: userData.address || '',
                 dateOfBirth: userData.dateOfBirth ? userData.dateOfBirth.split('T')[0] : '',
                 gender: userData.gender || ''
             });
-            setAvatarPreview(userData.avatar || user?.avatar || null);
+            const avatarPath = userData.avatar || userDetails?.avatar || user?.avatar || null;
+            setAvatarPreview(getAvatarUrl(avatarPath));
             setAddresses(userData.addresses || []);
             if (userData.preferences) {
                 setPreferences(userData.preferences);
             }
         }
-    }, [userData, user]);
+    }, [userData, user, userDetails]);
 
     const handleChange = (e) => {
         setFormData({
@@ -163,6 +165,16 @@ const PersonalInfoEnhanced = ({ userData, onUpdate }) => {
 
             if (response.data.success) {
                 toast.success('Cập nhật thông tin thành công!');
+                
+                // Update user in context
+                if (response.data.user) {
+                    updateUser(response.data.user);
+                    // Update avatar preview
+                    if (response.data.user.avatar) {
+                        setAvatarPreview(getAvatarUrl(response.data.user.avatar));
+                    }
+                }
+                
                 if (onUpdate) {
                     onUpdate(response.data.user);
                 }

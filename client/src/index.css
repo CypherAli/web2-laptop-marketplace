@@ -286,6 +286,14 @@ body {
     background: rgba(255, 255, 255, 0.25);
 }
 
+.user-avatar-small {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
 .user-icon {
     font-size: 1.2rem;
 }

@@ -2,10 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from '../../api/axiosConfig';
 import AuthContext from '../../context/AuthContext';
 import { useToast } from '../common/Toast';
+import { getAvatarUrl } from '../../utils/imageHelpers';
 import './ProfileTabs.css';
 
 const PersonalInfo = ({ userData, onUpdate }) => {
-    const { user } = useContext(AuthContext);
+    const { user, userDetails, updateUser } = useContext(AuthContext);
     const toast = useToast();
     
     const [formData, setFormData] = useState({
@@ -31,16 +32,17 @@ const PersonalInfo = ({ userData, onUpdate }) => {
         if (userData) {
             setFormData({
                 name: userData.name || '',
-                username: userData.username || user?.username || '',
-                email: userData.email || user?.email || '',
+                username: userData.username || userDetails?.username || user?.username || '',
+                email: userData.email || userDetails?.email || user?.email || '',
                 phone: userData.phone || '',
                 address: userData.address || '',
                 dateOfBirth: userData.dateOfBirth ? userData.dateOfBirth.split('T')[0] : '',
                 gender: userData.gender || ''
             });
-            setAvatarPreview(userData.avatar || user?.avatar || null);
+            const avatarPath = userData.avatar || userDetails?.avatar || user?.avatar || null;
+            setAvatarPreview(getAvatarUrl(avatarPath));
         }
-    }, [userData, user]);
+    }, [userData, user, userDetails]);
 
     const handleChange = (e) => {
         setFormData({
@@ -112,13 +114,22 @@ const PersonalInfo = ({ userData, onUpdate }) => {
                 formDataToSend.append('newPassword', passwordData.newPassword);
             }
 
-            await axios.put('/auth/profile', formDataToSend, {
+            const response = await axios.put('/auth/profile', formDataToSend, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
             
             toast.success('Cập nhật thông tin thành công!');
+            
+            // Update user in context
+            if (response.data.user) {
+                updateUser(response.data.user);
+                // Update avatar preview
+                if (response.data.user.avatar) {
+                    setAvatarPreview(getAvatarUrl(response.data.user.avatar));
+                }
+            }
             
             // Reset password fields
             setPasswordData({

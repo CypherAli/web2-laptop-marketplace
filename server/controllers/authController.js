@@ -127,7 +127,26 @@ exports.updateProfile = async (req, res) => {
         }
         if (req.file) user.avatar = "/uploads/avatars/" + req.file.filename;
         await user.save();
-        res.json({ message: "Cập nhật hồ sơ thành công!", user: { id: user._id, name: user.name, username: user.username, email: user.email, phone: user.phone, address: user.address, role: user.role, shopName: user.shopName, avatar: user.avatar } });
+        
+        console.log('✅ Profile updated successfully');
+        console.log('   User ID:', user._id);
+        console.log('   Avatar:', user.avatar);
+        
+        res.json({ 
+            success: true,
+            message: "Cập nhật hồ sơ thành công!", 
+            user: { 
+                id: user._id, 
+                name: user.name, 
+                username: user.username, 
+                email: user.email, 
+                phone: user.phone, 
+                address: user.address, 
+                role: user.role, 
+                shopName: user.shopName, 
+                avatar: user.avatar 
+            } 
+        });
     } catch (err) {
         res.status(500).json({ message: "Lỗi server", error: err.message });
     }
