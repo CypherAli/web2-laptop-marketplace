@@ -7,11 +7,19 @@
 
 /* Hero Section */
 .bestsellers-hero {
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-    padding: 140px 20px 60px; /* Increased top padding to avoid header */
+    background: linear-gradient(-45deg, #fa709a, #fee140, #ffa751, #ff6b9d);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    padding: 140px 20px 60px;
     text-align: center;
     color: white;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .bestsellers-hero-content {

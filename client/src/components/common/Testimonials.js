@@ -7,9 +7,8 @@ const Testimonials = () => {
     const testimonials = [
         {
             id: 1,
-            name: 'Nguyen Van An',
+            name: 'Trịnh Việt Hoàng',
             role: 'Software Engineer',
-            avatar: '👨‍💻',
             rating: 5,
             comment: 'I bought a Dell XPS 15 laptop from the store. Quality product, reasonable price. Staff are enthusiastic and professional. Fast delivery. Very satisfied!',
             product: 'Dell XPS 15',
@@ -17,9 +16,8 @@ const Testimonials = () => {
         },
         {
             id: 2,
-            name: 'Tran Thi Bich',
+            name: 'Trịnh Việt Hoàng',
             role: 'Graphic Designer',
-            avatar: '👩‍🎨',
             rating: 5,
             comment: 'MacBook Pro M2 purchased from here is amazing! Beautiful screen, smooth performance, serves design work very well. Support team is enthusiastic and answers all questions. Will recommend to friends!',
             product: 'MacBook Pro M2',
@@ -27,9 +25,8 @@ const Testimonials = () => {
         },
         {
             id: 3,
-            name: 'Le Minh Tuan',
+            name: 'Trịnh Việt Hoàng',
             role: 'IT Student',
-            avatar: '👨‍🎓',
             rating: 5,
             comment: 'MSI gaming laptop purchased for study and entertainment. Strong configuration, smooth gaming, affordable price for students. Good warranty, immediate support for any issues. Recommend!',
             product: 'MSI Gaming GF63',
@@ -37,9 +34,8 @@ const Testimonials = () => {
         },
         {
             id: 4,
-            name: 'Pham Thu Ha',
+            name: 'Trịnh Việt Hoàng',
             role: 'Content Creator',
-            avatar: '👩‍💼',
             rating: 5,
             comment: 'HP Pavilion purchased for content creation, video editing works great. Long battery life, beautiful design, also has promotional price. Staff explained every specification in detail. Wonderful shopping experience!',
             product: 'HP Pavilion 15',
@@ -47,9 +43,8 @@ const Testimonials = () => {
         },
         {
             id: 5,
-            name: 'Hoang Minh Khoa',
+            name: 'Trịnh Việt Hoàng',
             role: 'Entrepreneur',
-            avatar: '👨‍💼',
             rating: 5,
             comment: 'Lenovo ThinkPad used for business work is very durable. Great keyboard, all-day battery life. Reputable store, 100% genuine products. Good after-sales support!',
             product: 'Lenovo ThinkPad X1',
@@ -57,9 +52,8 @@ const Testimonials = () => {
         },
         {
             id: 6,
-            name: 'Vu Thi Lan',
+            name: 'Trịnh Việt Hoàng',
             role: 'Marketing Manager',
-            avatar: '👩‍💻',
             rating: 5,
             comment: 'Asus ZenBook is thin, light, elegant design, very convenient for work. Stable performance for office work and online meetings. Best market price. Fast delivery, careful packaging!',
             product: 'Asus ZenBook 14',

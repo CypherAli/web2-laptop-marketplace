@@ -183,24 +183,20 @@ const CompanyAboutPage = () => {
                     <div className="team-grid">
                         {[
                             { 
-                                name: 'Nguyễn Văn A', 
-                                position: 'CEO & Founder', 
-                                image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=300&fit=crop&q=80' 
+                                name: 'Trịnh Việt Hoàng', 
+                                position: 'CEO & Founder'
                             },
                             { 
-                                name: 'Trần Thị B', 
-                                position: 'CFO', 
-                                image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop&q=80' 
+                                name: 'Trịnh Việt Hoàng', 
+                                position: 'CFO'
                             },
                             { 
-                                name: 'Lê Văn C', 
-                                position: 'CTO', 
-                                image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&h=300&fit=crop&q=80' 
+                                name: 'Trịnh Việt Hoàng', 
+                                position: 'CTO'
                             },
                             { 
-                                name: 'Phạm Thị D', 
-                                position: 'CMO', 
-                                image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&h=300&fit=crop&q=80' 
+                                name: 'Trịnh Việt Hoàng', 
+                                position: 'CMO'
                             }
                         ].map((member, index) => (
                             <motion.div 
@@ -212,9 +208,6 @@ const CompanyAboutPage = () => {
                                 transition={{ delay: index * 0.1, duration: 0.5 }}
                                 whileHover={{ y: -10 }}
                             >
-                                <div className="team-avatar">
-                                    <img src={member.image} alt={member.name} />
-                                </div>
                                 <h4>{member.name}</h4>
                                 <p>{member.position}</p>
                             </motion.div>

@@ -133,26 +133,17 @@ const AboutPage = () => {
                     <h2>👥 Leadership Team</h2>
                     <div className="team-grid">
                         <div className="team-member">
-                            <div className="member-avatar">
-                                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300" alt="CEO" />
-                            </div>
-                            <h4>Nguyen Van A</h4>
+                            <h4>Trịnh Việt Hoàng</h4>
                             <p className="member-title">CEO & Founder</p>
                             <p className="member-desc">15 years of experience in the technology industry</p>
                         </div>
                         <div className="team-member">
-                            <div className="member-avatar">
-                                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300" alt="CTO" />
-                            </div>
-                            <h4>Tran Thi B</h4>
+                            <h4>Trịnh Việt Hoàng</h4>
                             <p className="member-title">CTO</p>
                             <p className="member-desc">Technology expert with 12 years of experience</p>
                         </div>
                         <div className="team-member">
-                            <div className="member-avatar">
-                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300" alt="COO" />
-                            </div>
-                            <h4>Le Van C</h4>
+                            <h4>Trịnh Việt Hoàng</h4>
                             <p className="member-title">COO</p>
                             <p className="member-desc">Operations and logistics expert</p>
                         </div>
