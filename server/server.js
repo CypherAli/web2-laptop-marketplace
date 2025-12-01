@@ -6,11 +6,11 @@ const socketIO = require('socket.io');
 require('dotenv').config();
 const connectDB = require('./config/db');
 
-// Kết nối Database
-connectDB();
-
 const app = express();
 const server = http.createServer(app);
+
+// Kết nối Database (async)
+connectDB();
 
 // Socket.IO setup
 const io = socketIO(server, {
