@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef, useContext, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     FiMessageCircle, FiX, FiSend, FiMinimize2, FiUser, FiClock 
@@ -27,6 +27,34 @@ const PartnerLiveChat = () => {
 
     // Get partner ID safely
     const partnerId = user?._id || user?.id;
+
+    // Define loadCustomers as useCallback to stabilize reference
+    const loadCustomers = useCallback(async () => {
+        // Check if partnerId is valid
+        if (!partnerId) {
+            console.log('⚠️ Cannot load customers: partnerId is undefined');
+            console.log('   User object:', user);
+            return;
+        }
+
+        console.log('📋 Loading customers for partner:', partnerId);
+
+        try {
+            const response = await fetch(
+                `http://localhost:5000/api/chat/partner/${partnerId}/customers`
+            );
+            const data = await response.json();
+            
+            console.log('📥 Customers response:', data);
+            
+            if (data.success && data.customers) {
+                setCustomers(data.customers);
+                console.log('✅ Loaded', data.customers.length, 'customers');
+            }
+        } catch (error) {
+            console.error('❌ Error loading customers:', error);
+        }
+    }, [partnerId, user]);
 
     useEffect(() => {
         // Check if partner is logged in and has valid ID
@@ -102,7 +130,7 @@ const PartnerLiveChat = () => {
         return () => {
             newSocket.disconnect();
         };
-    }, [partnerId, selectedCustomer, user]); // Add user as dependency
+    }, [partnerId, selectedCustomer, user, loadCustomers]); // Add loadCustomers dependency
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -112,35 +140,7 @@ const PartnerLiveChat = () => {
         if (isOpen) {
             loadCustomers();
         }
-        // eslint-disable-next-line
-    }, [isOpen]);
-
-    const loadCustomers = async () => {
-        // Check if partnerId is valid
-        if (!partnerId) {
-            console.log('⚠️ Cannot load customers: partnerId is undefined');
-            console.log('   User object:', user);
-            return;
-        }
-
-        console.log('📋 Loading customers for partner:', partnerId);
-
-        try {
-            const response = await fetch(
-                `http://localhost:5000/api/chat/partner/${partnerId}/customers`
-            );
-            const data = await response.json();
-            
-            console.log('📥 Customers response:', data);
-            
-            if (data.success && data.customers) {
-                setCustomers(data.customers);
-                console.log('✅ Loaded', data.customers.length, 'customers');
-            }
-        } catch (error) {
-            console.error('❌ Error loading customers:', error);
-        }
-    };
+    }, [isOpen, loadCustomers]);
 
     const loadChatHistory = async (customerId) => {
         try {

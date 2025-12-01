@@ -40,8 +40,57 @@ exports.createConversation = async (req, res) => {
         const userId = req.user.id;
         const { targetUserId, subject, type } = req.body;
         
+        // Get target user info to determine conversation type
+        const targetUser = await User.findById(targetUserId);
+        if (!targetUser) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Không tìm thấy người dùng' 
+            });
+        }
+        
         // Determine conversation type based on user roles
-        const conversationType = req.user.role === 'partner' ? 'partner_admin' : 'user_admin';
+        let conversationType;
+        let participants;
+        
+        if (req.user.role === 'client' && targetUser.role === 'partner') {
+            // User chat with partner
+            conversationType = 'user_partner';
+            participants = [
+                { user: userId, role: 'client' },
+                { user: targetUserId, role: 'partner' }
+            ];
+        } else if (req.user.role === 'partner' && targetUser.role === 'admin') {
+            // Partner chat with admin
+            conversationType = 'partner_admin';
+            participants = [
+                { user: userId, role: 'partner' },
+                { user: targetUserId, role: 'admin' }
+            ];
+        } else if (req.user.role === 'client' && targetUser.role === 'admin') {
+            // User chat with admin
+            conversationType = 'user_admin';
+            participants = [
+                { user: userId, role: 'client' },
+                { user: targetUserId, role: 'admin' }
+            ];
+        } else if (req.user.role === 'admin') {
+            // Admin can chat with anyone
+            if (targetUser.role === 'partner') {
+                conversationType = 'partner_admin';
+            } else {
+                conversationType = 'user_admin';
+            }
+            participants = [
+                { user: userId, role: 'admin' },
+                { user: targetUserId, role: targetUser.role }
+            ];
+        } else {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Không thể tạo cuộc hội thoại với người dùng này' 
+            });
+        }
         
         // Check if conversation already exists
         let conversation = await Conversation.findOne({
@@ -51,6 +100,7 @@ exports.createConversation = async (req, res) => {
         });
         
         if (conversation) {
+            await conversation.populate('participants.user', 'username email role avatar shopName');
             return res.json({
                 success: true,
                 conversation,
@@ -60,10 +110,7 @@ exports.createConversation = async (req, res) => {
         
         // Create new conversation
         conversation = await Conversation.create({
-            participants: [
-                { user: userId, role: req.user.role },
-                { user: targetUserId, role: 'admin' }
-            ],
+            participants,
             type: conversationType,
             subject: subject || 'Hỗ trợ khách hàng',
             unreadCount: new Map()

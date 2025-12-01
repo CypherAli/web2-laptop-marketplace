@@ -43,6 +43,7 @@ const ProfilePage = () => {
     useEffect(() => {
         fetchUserData();
         fetchUnreadCount();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Update userData when userDetails changes (after profile update)

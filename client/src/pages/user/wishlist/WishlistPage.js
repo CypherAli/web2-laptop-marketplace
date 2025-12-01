@@ -10,6 +10,7 @@ const WishlistPage = () => {
     const { addToCart } = useContext(CartContext);
     const navigate = useNavigate();
 
+    // eslint-disable-next-line no-unused-vars
     const handleAddToCart = (product) => {
         addToCart(product);
         alert(`${product.name} has been added to cart!`);

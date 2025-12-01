@@ -17,7 +17,7 @@ const ConversationSchema = new mongoose.Schema({
     // Type of conversation
     type: {
         type: String,
-        enum: ['user_admin', 'partner_admin'],
+        enum: ['user_admin', 'partner_admin', 'user_partner'],
         required: true
     },
     

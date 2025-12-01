@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from '../../../../api/axiosConfig';
 import { useToast } from '../../../../components/common/Toast';
 import '../styles/AuthPages.css';

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiMapPin, FiClock, FiDollarSign, FiUsers, FiSend } from 'react-icons/fi';
+import { FiMapPin, FiClock, FiDollarSign, FiSend } from 'react-icons/fi';
 import './CareersPage.css';
 
 const CareersPage = () => {
+    // eslint-disable-next-line no-unused-vars
     const [formData, setFormData] = useState({
         name: '',
         email: '',

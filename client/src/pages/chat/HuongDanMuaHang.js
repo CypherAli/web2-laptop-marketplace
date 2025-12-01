@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FiPackage, FiCreditCard, FiTruck, FiShield, FiArrowRight } from 'react-icons/fi';
+import { FiPackage } from 'react-icons/fi';
 import '../notification/PolicyPages.css';
 
 const HuongDanMuaHang = () => {

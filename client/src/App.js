@@ -13,6 +13,7 @@ import AuthContext from './context/AuthContext';
 // Chat Widgets - Different for each role
 import PartnerChatWidget from './components/chat/PartnerChatWidget';
 import PartnerLiveChat from './components/chat/PartnerLiveChat';
+import AdminChatWidget from './components/chat/AdminChatWidget';
 
 // Import ALL pages directly - NO LAZY LOADING for maximum stability
 import HomePage from './pages/home/HomePage';
@@ -134,6 +135,8 @@ function App() {
       {/* Chat Widget - Different for each role */}
       {user?.role === 'partner' ? (
         <PartnerLiveChat />
+      ) : user?.role === 'admin' ? (
+        <AdminChatWidget />
       ) : (
         <PartnerChatWidget />
       )}

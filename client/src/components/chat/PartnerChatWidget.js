@@ -16,7 +16,6 @@ const PartnerChatWidget = () => {
     const [partners, setPartners] = useState([]);
     const [loading, setLoading] = useState(false);
     const [socket, setSocket] = useState(null);
-    const [isConnected, setIsConnected] = useState(false);
     const messagesEndRef = useRef(null);
 
     // Socket.IO setup - Only connect when widget is opened
@@ -36,18 +35,14 @@ const PartnerChatWidget = () => {
         
         setSocket(newSocket);
 
-        newSocket.on('connect', () => {
-            console.log('✅ Client connected to chat');
-            setIsConnected(true);
-            newSocket.emit('user:join', userId);
-        });
+    newSocket.on('connect', () => {
+        console.log('✅ Client connected to chat');
+        newSocket.emit('user:join', userId);
+    });
 
-        newSocket.on('disconnect', () => {
-            console.log('❌ Disconnected');
-            setIsConnected(false);
-        });
-
-        newSocket.on('chat:message', (message) => {
+    newSocket.on('disconnect', () => {
+        console.log('❌ Disconnected');
+    });        newSocket.on('chat:message', (message) => {
             console.log('📩 Received message:', message);
             
             const userId = user._id || user.id;

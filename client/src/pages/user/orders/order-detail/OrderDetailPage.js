@@ -48,7 +48,6 @@ const OrderDetailPage = () => {
     const getStatusInfo = (status) => {
         const statusMap = {
             'pending': { label: 'Pending', color: '#f59e0b', icon: '⏳' },
-            'pending': { label: 'Pending', color: '#f59e0b', icon: '⏳' },
             'processing': { label: 'Processing', color: '#3b82f6', icon: '📦' },
             'shipped': { label: 'Shipping', color: '#8b5cf6', icon: '🚚' },
             'delivered': { label: 'Delivered', color: '#10b981', icon: '✅' },
