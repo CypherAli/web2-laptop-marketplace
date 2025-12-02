@@ -39,9 +39,13 @@ exports.createOrder = async (req, res) => {
 
             const itemTotal = product.price * item.quantity;
             
+            // Get seller info
+            const seller = await User.findById(product.createdBy).select('username shopName');
+            
             orderItems.push({
                 product: product._id,
-                seller: product.seller,
+                seller: product.createdBy, // Partner who owns this product
+                sellerName: seller?.shopName || seller?.username || 'Unknown Shop',
                 name: product.name,
                 brand: product.brand,
                 price: product.price,
@@ -49,10 +53,16 @@ exports.createOrder = async (req, res) => {
                 quantity: item.quantity,
                 imageUrl: product.imageUrl,
                 specifications: {
-                    processor: product.processor,
-                    ram: product.ram,
-                    storage: product.storage
-                }
+                    processor: product.specifications?.processor,
+                    ram: product.specifications?.ram,
+                    storage: product.specifications?.storage
+                },
+                status: 'confirmed',
+                statusHistory: [{
+                    status: 'confirmed',
+                    note: 'Đơn hàng được tạo',
+                    timestamp: new Date()
+                }]
             });
 
             subtotal += itemTotal;
@@ -69,7 +79,7 @@ exports.createOrder = async (req, res) => {
         // Calculate total
         const totalAmount = subtotal + shippingFee;
 
-        // Create order
+        // Create order - Auto confirmed if stock available
         const order = new Order({
             user: req.user.id,
             items: orderItems,
@@ -79,7 +89,7 @@ exports.createOrder = async (req, res) => {
             shippingAddress,
             paymentMethod: paymentMethod || 'cod',
             customerNotes: customerNotes || notes,
-            status: 'pending',
+            status: 'confirmed', // Auto-confirmed since stock is validated
             paymentStatus: paymentMethod === 'cod' ? 'unpaid' : 'pending'
         });
 
@@ -110,29 +120,45 @@ exports.createOrder = async (req, res) => {
                 user: req.user.id,
                 type: 'order_confirmed',
                 title: '✅ Đặt hàng thành công!',
-                message: `Đơn hàng #${order.orderNumber} đã được tạo thành công. Tổng tiền: ${order.totalAmount.toLocaleString()}đ`,
+                message: `Đơn hàng #${order.orderNumber} đã được xác nhận và đang chờ cửa hàng xử lý. Tổng tiền: ${order.totalAmount.toLocaleString()}đ`,
                 relatedOrder: order._id,
                 actionUrl: `/orders/${order._id}`,
                 actionText: 'Xem đơn hàng',
                 priority: 'high'
             });
 
-            // 2. Notifications for admin and partner
-            const adminsAndPartners = await User.find({ 
-                role: { $in: ['admin', 'partner'] },
+            // 2. Notifications for relevant partners (sellers of products in order)
+            const sellerIds = [...new Set(orderItems.map(item => item.seller?.toString()).filter(Boolean))];
+            
+            for (const sellerId of sellerIds) {
+                await Notification.createNotification({
+                    user: sellerId,
+                    type: 'new_order',
+                    title: '🛒 Đơn hàng mới!',
+                    message: `Có đơn hàng mới #${order.orderNumber} chứa sản phẩm của shop bạn. Giá trị: ${order.totalAmount.toLocaleString()}đ`,
+                    relatedOrder: order._id,
+                    actionUrl: `/partner/orders/${order._id}`,
+                    actionText: 'Xử lý đơn hàng',
+                    priority: 'high'
+                });
+            }
+
+            // 3. Notification for admin (monitoring only)
+            const admins = await User.find({ 
+                role: 'admin',
                 isActive: true
             }).select('_id');
 
-            for (const staff of adminsAndPartners) {
+            for (const admin of admins) {
                 await Notification.createNotification({
-                    user: staff._id,
+                    user: admin._id,
                     type: 'new_order',
-                    title: '🛒 Đơn hàng mới!',
-                    message: `Có đơn hàng mới #${order.orderNumber} từ khách hàng. Giá trị: ${order.totalAmount.toLocaleString()}đ`,
+                    title: '📊 Đơn hàng mới',
+                    message: `Đơn hàng #${order.orderNumber} - ${order.totalAmount.toLocaleString()}đ`,
                     relatedOrder: order._id,
-                    actionUrl: `/dashboard/orders/${order._id}`,
-                    actionText: 'Xử lý đơn hàng',
-                    priority: 'high'
+                    actionUrl: `/admin/orders/${order._id}`,
+                    actionText: 'Xem chi tiết',
+                    priority: 'medium'
                 });
             }
 
@@ -142,13 +168,22 @@ exports.createOrder = async (req, res) => {
                 // To customer
                 io.to(`user:${req.user.id}`).emit('notification:new', {
                     type: 'order_confirmed',
-                    message: `Đơn hàng #${order.orderNumber} đã được tạo thành công`,
+                    message: `Đơn hàng #${order.orderNumber} đã được xác nhận`,
                     orderId: order._id
                 });
 
-                // To admins/partners
-                for (const staff of adminsAndPartners) {
-                    io.to(`user:${staff._id}`).emit('notification:new', {
+                // To relevant partners
+                for (const sellerId of sellerIds) {
+                    io.to(`user:${sellerId}`).emit('notification:new', {
+                        type: 'new_order',
+                        message: `Đơn hàng mới #${order.orderNumber}`,
+                        orderId: order._id
+                    });
+                }
+
+                // To admins
+                for (const admin of admins) {
+                    io.to(`user:${admin._id}`).emit('notification:new', {
                         type: 'new_order',
                         message: `Đơn hàng mới #${order.orderNumber}`,
                         orderId: order._id
@@ -243,7 +278,7 @@ exports.getOrderById = async (req, res) => {
             });
         }
 
-        // Check if user owns this order or is partner/admin
+        // Check if user owns this order or is authorized to view it
         const orderUserId = order.user._id.toString();
         const requestUserId = req.user.id.toString();
         
@@ -252,11 +287,34 @@ exports.getOrderById = async (req, res) => {
         console.log('   Request user ID:', requestUserId);
         console.log('   User role:', req.user.role);
         console.log('   Match:', orderUserId === requestUserId);
-        console.log('   Is staff:', ['partner', 'admin'].includes(req.user.role));
         
-        if (orderUserId !== requestUserId && 
-            !['partner', 'admin'].includes(req.user.role)) {
-            console.log('   ❌ ACCESS DENIED - User does not own order and is not staff');
+        // Authorization logic:
+        // 1. Customer can only view their own orders
+        // 2. Partner can only view orders containing THEIR products
+        // 3. Admin can view all orders
+        
+        if (req.user.role === 'admin') {
+            // Admin can view all orders
+            console.log('   ✅ ACCESS GRANTED - Admin');
+        } else if (orderUserId === requestUserId) {
+            // User owns this order
+            console.log('   ✅ ACCESS GRANTED - Order owner');
+        } else if (req.user.role === 'partner') {
+            // Partner can only view if they have items in this order
+            const hasPartnerItems = order.items.some(
+                item => item.seller && item.seller._id.toString() === requestUserId
+            );
+            if (!hasPartnerItems) {
+                console.log('   ❌ ACCESS DENIED - Partner has no items in this order');
+                return res.status(403).json({ 
+                    success: false,
+                    message: 'Bạn không có quyền xem đơn hàng này' 
+                });
+            }
+            console.log('   ✅ ACCESS GRANTED - Partner has items in order');
+        } else {
+            // Regular user trying to view someone else's order
+            console.log('   ❌ ACCESS DENIED - User does not own order');
             return res.status(403).json({ 
                 success: false,
                 message: 'Bạn không có quyền xem đơn hàng này' 
@@ -349,8 +407,22 @@ exports.updateOrderStatus = async (req, res) => {
             });
         }
 
-        console.log('   📦 Current order status:', order.status);
+        console.log('   📌 Current order status:', order.status);
         console.log('   🔄 Changing to:', status);
+
+        // Special handling for cancellation - restore stock
+        if (status === 'cancelled' && order.status !== 'cancelled') {
+            console.log('   🚫 Cancelling order - restoring stock...');
+            for (const item of order.items) {
+                const product = await Product.findById(item.product);
+                if (product) {
+                    product.stock += item.quantity;
+                    product.sold = Math.max(0, (product.sold || 0) - item.quantity);
+                    await product.save();
+                    console.log(`   ✅ Restored ${item.quantity} units of ${product.name}`);
+                }
+            }
+        }
 
         // Update status
         const oldStatus = order.status;
@@ -453,15 +525,32 @@ exports.updateOrderStatus = async (req, res) => {
                 });
             }
 
-            // 2. Notify admins and partners about order progress
+            // 2. Notify admins and relevant partners (only those who have items in this order)
             if (staffNotif) {
-                const adminsAndPartners = await User.find({ 
-                    role: { $in: ['admin', 'partner'] },
+                // Get unique seller IDs from order items
+                const sellerIds = [...new Set(
+                    order.items
+                        .filter(item => item.seller)
+                        .map(item => item.seller.toString())
+                )];
+
+                // Notify all admins
+                const admins = await User.find({ 
+                    role: 'admin',
                     isActive: true,
                     _id: { $ne: req.user.id } // Don't notify the staff who made the update
                 }).select('_id');
 
-                for (const staff of adminsAndPartners) {
+                // Notify only relevant partners (those who have products in this order)
+                const relevantPartners = await User.find({
+                    _id: { $in: sellerIds, $ne: req.user.id },
+                    role: 'partner',
+                    isActive: true
+                }).select('_id');
+
+                const staffToNotify = [...admins, ...relevantPartners];
+
+                for (const staff of staffToNotify) {
                     await Notification.createNotification({
                         user: staff._id,
                         type: `order_status_update`,
@@ -556,22 +645,39 @@ exports.cancelOrder = async (req, res) => {
             return res.status(403).json({ message: 'Access denied' });
         }
 
-        // Can only cancel pending orders
-        if (order.status !== 'pending') {
+        // Can only cancel confirmed/pending orders (not processing/shipped/delivered)
+        const cancelableStatuses = ['pending', 'confirmed'];
+        if (!cancelableStatuses.includes(order.status)) {
             return res.status(400).json({ 
-                message: 'Can only cancel pending orders. Please contact support.' 
+                message: `Chỉ có thể hủy đơn ở trạng thái: ${cancelableStatuses.join(', ')}. Đơn hiện tại: ${order.status}` 
             });
         }
 
-        // Restore stock
+        // Check payment status - if paid, need to refund
+        if (order.paymentStatus === 'paid') {
+            return res.status(400).json({
+                message: 'Đơn hàng đã thanh toán. Vui lòng liên hệ hỗ trợ để hoàn tiền.'
+            });
+        }
+
+        // Restore stock for all items
         for (const item of order.items) {
-            await Product.findByIdAndUpdate(
-                item.product,
-                { $inc: { stock: item.quantity } }
-            );
+            const product = await Product.findById(item.product);
+            if (product) {
+                product.stock += item.quantity;
+                product.sold = Math.max(0, (product.sold || 0) - item.quantity);
+                await product.save();
+                console.log(`✅ Restored ${item.quantity} units of ${product.name}. New stock: ${product.stock}`);
+            }
         }
 
         order.status = 'cancelled';
+        order.statusHistory.push({
+            status: 'cancelled',
+            note: 'Hủy bởi khách hàng',
+            updatedBy: req.user.id,
+            timestamp: new Date()
+        });
         await order.save();
 
         res.json({

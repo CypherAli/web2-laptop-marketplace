@@ -11,19 +11,19 @@ const {
     assignConversation
 } = require('../controllers/chatController');
 const auth = require('../middleware/auth');
+const optionalAuth = require('../middleware/optionalAuth');
 const authorize = require('../middleware/authorize');
 
-// All routes require authentication
+// Public routes (allow anonymous users to chat with partners)
+router.post('/conversations', optionalAuth, createConversation);
+router.get('/conversations/:conversationId/messages', optionalAuth, getMessages);
+router.post('/conversations/:conversationId/messages', optionalAuth, sendMessage);
+
+// Authenticated user routes
 router.use(auth);
 
-// Conversation routes
 router.get('/conversations', getConversations);
-router.post('/conversations', createConversation);
 router.get('/unread-count', getUnreadCount);
-
-// Message routes
-router.get('/conversations/:conversationId/messages', getMessages);
-router.post('/conversations/:conversationId/messages', sendMessage);
 router.put('/conversations/:conversationId/read', markAsRead);
 
 // Admin-only routes

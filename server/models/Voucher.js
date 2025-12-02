@@ -159,7 +159,7 @@ const UserVoucherSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Indexes
-VoucherSchema.index({ code: 1 });
+// code already has unique: true, no need for separate index
 VoucherSchema.index({ 'validity.endDate': 1, 'validity.isActive': 1 });
 
 UserVoucherSchema.index({ user: 1, status: 1 });

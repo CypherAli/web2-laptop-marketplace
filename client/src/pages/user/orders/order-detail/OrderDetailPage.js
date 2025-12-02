@@ -47,12 +47,13 @@ const OrderDetailPage = () => {
 
     const getStatusInfo = (status) => {
         const statusMap = {
-            'pending': { label: 'Pending', color: '#f59e0b', icon: '⏳' },
-            'processing': { label: 'Processing', color: '#3b82f6', icon: '📦' },
-            'shipped': { label: 'Shipping', color: '#8b5cf6', icon: '🚚' },
-            'delivered': { label: 'Delivered', color: '#10b981', icon: '✅' },
-            'cancelled': { label: 'Cancelled', color: '#ef4444', icon: '❌' },
-            'refunded': { label: 'Đã hoàn tiền', color: '#6b7280', icon: '💰' }
+            'pending': { label: '⏳ Chờ xác nhận', color: '#f59e0b', icon: '⏳' },
+            'confirmed': { label: '✅ Đã xác nhận', color: '#16a085', icon: '✅' },
+            'processing': { label: '📦 Đang xử lý', color: '#3b82f6', icon: '📦' },
+            'shipped': { label: '🚚 Đang giao', color: '#8b5cf6', icon: '🚚' },
+            'delivered': { label: '✅ Đã giao', color: '#10b981', icon: '✅' },
+            'cancelled': { label: '❌ Đã hủy', color: '#ef4444', icon: '❌' },
+            'refunded': { label: '💰 Đã hoàn tiền', color: '#6b7280', icon: '💰' }
         };
         return statusMap[status] || { label: status, color: '#6b7280', icon: '📋' };
     };
@@ -157,9 +158,9 @@ const OrderDetailPage = () => {
                     <div className="order-left">
                         {/* Products */}
                         <div className="order-section">
-                            <h2>Sản phẩm ({order.items.length})</h2>
+                            <h2>Sản phẩm ({order.items?.length || 0})</h2>
                             <div className="order-products">
-                                {order.items.map((item, index) => (
+                                {order.items?.map((item, index) => (
                                     <div key={index} className="product-item">
                                         <img 
                                             src={item.imageUrl || '/placeholder-laptop.png'} 
@@ -168,17 +169,23 @@ const OrderDetailPage = () => {
                                         />
                                         <div className="product-info">
                                             <h3>{item.name}</h3>
+                                            {item.sellerName && (
+                                                <p className="product-seller">
+                                                    <span className="seller-icon">🏪</span>
+                                                    <span className="seller-name">{item.sellerName}</span>
+                                                </p>
+                                            )}
                                             <p className="product-brand">{item.brand}</p>
                                             {item.specifications && (
                                                 <div className="product-specs">
                                                     {item.specifications.processor && (
-                                                        <span>CPU: {item.specifications.processor}</span>
+                                                        <span>💻 {item.specifications.processor}</span>
                                                     )}
                                                     {item.specifications.ram && (
-                                                        <span>RAM: {item.specifications.ram}</span>
+                                                        <span>🎯 {item.specifications.ram}</span>
                                                     )}
                                                     {item.specifications.storage && (
-                                                        <span>Ổ cứng: {item.specifications.storage}</span>
+                                                        <span>💾 {item.specifications.storage}</span>
                                                     )}
                                                 </div>
                                             )}
@@ -188,7 +195,7 @@ const OrderDetailPage = () => {
                                             <p className="price">{(item.price * item.quantity).toLocaleString()}đ</p>
                                         </div>
                                     </div>
-                                ))}
+                                )) || []}
                             </div>
                         </div>
 

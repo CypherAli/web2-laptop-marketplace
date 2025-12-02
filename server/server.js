@@ -38,8 +38,8 @@ app.use('/api/admin', require('./routes/adminRoute'));
 app.use('/api/reviews', require('./routes/reviewRoute'));
 app.use('/api/comparisons', require('./routes/comparisonRoute'));
 app.use('/api/analytics', require('./routes/analyticsRoute'));
-// app.use('/api/chat', require('./routes/chatRoute')); // Old chat system
-app.use('/api', require('./routes/chat')); // New live chat system
+app.use('/api/chat', require('./routes/chatRoute')); // Updated chat system with anonymous support
+app.use('/api', require('./routes/chat')); // Old live chat system
 app.use('/api/user', require('./routes/userRoute'));
 
 // New User System Routes

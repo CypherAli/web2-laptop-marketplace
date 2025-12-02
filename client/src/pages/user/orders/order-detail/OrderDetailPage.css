@@ -226,6 +226,27 @@
     color: #1f2937;
 }
 
+.product-seller {
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+}
+
+.seller-icon {
+    font-size: 16px;
+}
+
+.seller-name {
+    color: #7c3aed;
+    font-weight: 600;
+    background: linear-gradient(135deg, #f3e8ff, #ede9fe);
+    padding: 2px 12px;
+    border-radius: 12px;
+    border: 1px solid #e9d5ff;
+}
+
 .product-brand {
     margin: 0 0 8px 0;
     color: #6b7280;

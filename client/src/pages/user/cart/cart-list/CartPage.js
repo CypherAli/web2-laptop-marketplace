@@ -25,6 +25,35 @@ const CartPage = () => {
     const [notes, setNotes] = useState('');
     const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
+    // Group cart items by seller
+    const groupItemsBySeller = () => {
+        console.log('🔍 GROUPING CART ITEMS:', cartItems);
+        const grouped = {};
+        cartItems.forEach(item => {
+            const sellerId = item.seller?._id || item.seller || 'unknown';
+            const sellerName = item.sellerName || item.seller?.shopName || item.seller?.username || 'Unknown Shop';
+            
+            console.log(`🔍 Item: ${item.name}`);
+            console.log(`   - sellerId: ${sellerId}`);
+            console.log(`   - sellerName: ${sellerName}`);
+            console.log(`   - item.sellerName: ${item.sellerName}`);
+            console.log(`   - item.seller?.shopName: ${item.seller?.shopName}`);
+            
+            if (!grouped[sellerId]) {
+                grouped[sellerId] = {
+                    sellerId,
+                    sellerName,
+                    items: []
+                };
+            }
+            grouped[sellerId].items.push(item);
+        });
+        
+        const result = Object.values(grouped);
+        console.log('🔍 GROUPED RESULT:', result);
+        return result;
+    };
+
     // Toggle item selection
     const toggleItemSelection = (itemId) => {
         setSelectedItems(prev => 
@@ -80,11 +109,17 @@ const CartPage = () => {
             const orderData = {
                 items: selectedCartItems.map(item => ({
                     product: item._id,
+                    seller: item.seller?._id || item.seller,
+                    sellerName: item.sellerName || item.seller?.shopName || item.seller?.username || 'Unknown Shop',
                     name: item.name,
+                    brand: item.brand,
                     price: item.price,
                     quantity: item.quantity,
-                    imageUrl: item.imageUrl
+                    imageUrl: item.imageUrl,
+                    specifications: item.specifications
                 })),
+                subtotal: getSelectedTotal(),
+                shippingFee: getShippingFee(),
                 totalAmount: getSelectedTotal() + getShippingFee(),
                 shippingAddress: shippingInfo,
                 paymentMethod: paymentMethod,
@@ -179,9 +214,23 @@ const CartPage = () => {
                         )}
                     </div>
 
-                    {/* Cart Items List */}
+                    {/* Cart Items List - Grouped by Seller */}
                     <div className="cart-items-list">
-                        {cartItems.map(item => (
+                        {groupItemsBySeller().map(sellerGroup => (
+                            <div key={sellerGroup.sellerId} className="seller-group">
+                                {/* Seller Header */}
+                                <div className="seller-header">
+                                    <div className="seller-info">
+                                        <span className="shop-icon">🏪</span>
+                                        <h3>{sellerGroup.sellerName}</h3>
+                                    </div>
+                                    <span className="items-count">
+                                        {sellerGroup.items.length} sản phẩm
+                                    </span>
+                                </div>
+
+                                {/* Items in this shop */}
+                                {sellerGroup.items.map(item => (
                             <div 
                                 key={item._id} 
                                 className={`cart-item-card ${selectedItems.includes(item._id) ? 'selected' : ''}`}
@@ -271,6 +320,8 @@ const CartPage = () => {
                                         🗑️
                                     </button>
                                 </div>
+                            </div>
+                                ))}
                             </div>
                         ))}
                     </div>

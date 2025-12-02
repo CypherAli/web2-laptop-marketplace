@@ -27,17 +27,16 @@ exports.getConversations = async (req, res) => {
         console.error('Get conversations error:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Lỗi khi tải danh sách hội thoại' 
+            message: 'Error loading conversations' 
         });
     }
 };
 
 // @desc    Get or create conversation between user and admin
 // @route   POST /api/chat/conversations
-// @access  Private
+// @access  Private/Public (Anonymous allowed for partner chat)
 exports.createConversation = async (req, res) => {
     try {
-        const userId = req.user.id;
         const { targetUserId, subject, type } = req.body;
         
         // Get target user info to determine conversation type
@@ -45,13 +44,70 @@ exports.createConversation = async (req, res) => {
         if (!targetUser) {
             return res.status(404).json({ 
                 success: false, 
-                message: 'Không tìm thấy người dùng' 
+                message: 'User not found' 
             });
         }
         
         // Determine conversation type based on user roles
         let conversationType;
         let participants;
+        
+        // Handle anonymous users
+        if (!req.isAuthenticated) {
+            // Anonymous user can only chat with partners
+            if (targetUser.role !== 'partner') {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Please login to chat with admin' 
+                });
+            }
+            
+            conversationType = 'anonymous_partner';
+            participants = [
+                { 
+                    role: 'anonymous', 
+                    anonymousId: req.anonymousId,
+                    anonymousName: req.anonymousName 
+                },
+                { user: targetUserId, role: 'partner' }
+            ];
+            
+            // Check if conversation already exists for this anonymous user
+            let conversation = await Conversation.findOne({
+                type: conversationType,
+                'participants.anonymousId': req.anonymousId,
+                'participants.user': targetUserId,
+                status: { $ne: 'closed' }
+            }).populate('participants.user', 'username email role avatar shopName');
+            
+            if (conversation) {
+                return res.json({
+                    success: true,
+                    conversation,
+                    isNew: false
+                });
+            }
+            
+            // Create new conversation for anonymous user
+            conversation = await Conversation.create({
+                participants,
+                type: conversationType,
+                subject: subject || 'Product Consultation',
+                unreadCount: new Map()
+            });
+            
+            await conversation.populate('participants.user', 'username email role avatar shopName');
+            
+            return res.status(201).json({
+                success: true,
+                conversation,
+                isNew: true,
+                anonymousId: req.anonymousId
+            });
+        }
+        
+        // Authenticated users
+        const userId = req.user.id;
         
         if (req.user.role === 'client' && targetUser.role === 'partner') {
             // User chat with partner
@@ -88,7 +144,7 @@ exports.createConversation = async (req, res) => {
         } else {
             return res.status(400).json({ 
                 success: false, 
-                message: 'Không thể tạo cuộc hội thoại với người dùng này' 
+                message: 'Cannot create conversation with this user' 
             });
         }
         
@@ -127,14 +183,14 @@ exports.createConversation = async (req, res) => {
         console.error('Create conversation error:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Lỗi khi tạo cuộc hội thoại' 
+            message: 'Error creating conversation' 
         });
     }
 };
 
 // @desc    Get messages for a conversation
 // @route   GET /api/chat/conversations/:conversationId/messages
-// @access  Private
+// @access  Private/Public (Anonymous allowed)
 exports.getMessages = async (req, res) => {
     try {
         const { conversationId } = req.params;
@@ -145,18 +201,28 @@ exports.getMessages = async (req, res) => {
         if (!conversation) {
             return res.status(404).json({ 
                 success: false, 
-                message: 'Không tìm thấy cuộc hội thoại' 
+                message: 'Conversation not found' 
             });
         }
         
-        const isParticipant = conversation.participants.some(p => 
-            p.user.equals(req.user.id)
-        );
+        // Check if user is participant (handle both authenticated and anonymous)
+        let isParticipant = false;
+        
+        if (req.isAuthenticated) {
+            isParticipant = conversation.participants.some(p => 
+                p.user && p.user.equals(req.user.id)
+            );
+        } else {
+            // Anonymous user
+            isParticipant = conversation.participants.some(p => 
+                p.anonymousId === req.anonymousId
+            );
+        }
         
         if (!isParticipant) {
             return res.status(403).json({ 
                 success: false, 
-                message: 'Bạn không có quyền truy cập cuộc hội thoại này' 
+                message: 'You do not have permission to access this conversation' 
             });
         }
         
@@ -175,8 +241,10 @@ exports.getMessages = async (req, res) => {
             isDeleted: false
         });
         
-        // Mark messages as read
-        await conversation.markAsRead(req.user.id);
+        // Mark messages as read (only for authenticated users)
+        if (req.isAuthenticated) {
+            await conversation.markAsRead(req.user.id);
+        }
         
         res.json({
             success: true,
@@ -189,14 +257,14 @@ exports.getMessages = async (req, res) => {
         console.error('Get messages error:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Lỗi khi tải tin nhắn' 
+            message: 'Error loading messages' 
         });
     }
 };
 
 // @desc    Send a message
 // @route   POST /api/chat/conversations/:conversationId/messages
-// @access  Private
+// @access  Private/Public (Anonymous allowed)
 exports.sendMessage = async (req, res) => {
     try {
         const { conversationId } = req.params;
@@ -207,46 +275,76 @@ exports.sendMessage = async (req, res) => {
         if (!conversation) {
             return res.status(404).json({ 
                 success: false, 
-                message: 'Không tìm thấy cuộc hội thoại' 
+                message: 'Conversation not found' 
             });
         }
         
-        const isParticipant = conversation.participants.some(p => 
-            p.user.equals(req.user.id)
-        );
+        // Check if user is participant
+        let isParticipant = false;
+        
+        if (req.isAuthenticated) {
+            isParticipant = conversation.participants.some(p => 
+                p.user && p.user.equals(req.user.id)
+            );
+        } else {
+            // Anonymous user
+            isParticipant = conversation.participants.some(p => 
+                p.anonymousId === req.anonymousId
+            );
+        }
         
         if (!isParticipant) {
             return res.status(403).json({ 
                 success: false, 
-                message: 'Bạn không có quyền gửi tin nhắn trong cuộc hội thoại này' 
+                message: 'You do not have permission to send messages in this conversation' 
             });
         }
         
         // Create message
-        const newMessage = await Message.create({
+        let messageData = {
             conversation: conversationId,
-            sender: req.user.id,
-            senderRole: req.user.role,
             message,
             attachments: attachments || [],
             replyTo: replyTo || null
-        });
+        };
         
-        await newMessage.populate('sender', 'username email role avatar');
+        if (req.isAuthenticated) {
+            messageData.sender = req.user.id;
+            messageData.senderRole = req.user.role;
+        } else {
+            messageData.senderRole = 'anonymous';
+            messageData.anonymousId = req.anonymousId;
+            messageData.anonymousName = req.anonymousName;
+        }
+        
+        const newMessage = await Message.create(messageData);
+        
+        if (req.isAuthenticated) {
+            await newMessage.populate('sender', 'username email role avatar');
+        }
         
         // Update conversation
         conversation.lastMessage = {
             text: message,
-            sender: req.user.id,
+            sender: req.isAuthenticated ? req.user.id : null,
             timestamp: new Date()
         };
         
-        // Increment unread count for other participants
-        conversation.participants.forEach(p => {
-            if (!p.user.equals(req.user.id)) {
-                conversation.incrementUnread(p.user);
-            }
-        });
+        // Increment unread count for other participants (only for authenticated users)
+        if (req.isAuthenticated) {
+            conversation.participants.forEach(p => {
+                if (p.user && !p.user.equals(req.user.id)) {
+                    conversation.incrementUnread(p.user);
+                }
+            });
+        } else {
+            // For anonymous, increment unread for partner
+            conversation.participants.forEach(p => {
+                if (p.user && p.role === 'partner') {
+                    conversation.incrementUnread(p.user);
+                }
+            });
+        }
         
         await conversation.save();
         
@@ -258,7 +356,7 @@ exports.sendMessage = async (req, res) => {
         console.error('Send message error:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Lỗi khi gửi tin nhắn' 
+            message: 'Error sending message' 
         });
     }
 };
@@ -282,13 +380,13 @@ exports.markAsRead = async (req, res) => {
         
         res.json({
             success: true,
-            message: 'Đã đánh dấu là đã đọc'
+            message: 'Marked as read'
         });
     } catch (error) {
         console.error('Mark as read error:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Lỗi khi đánh dấu đã đọc' 
+            message: 'Error marking as read' 
         });
     }
 };
@@ -319,7 +417,7 @@ exports.getUnreadCount = async (req, res) => {
         console.error('Get unread count error:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Lỗi khi tải số tin nhắn chưa đọc' 
+            message: 'Error loading unread message count' 
         });
     }
 };
@@ -340,20 +438,20 @@ exports.archiveConversation = async (req, res) => {
         if (!conversation) {
             return res.status(404).json({ 
                 success: false, 
-                message: 'Không tìm thấy cuộc hội thoại' 
+                message: 'Conversation not found' 
             });
         }
         
         res.json({
             success: true,
-            message: 'Đã lưu trữ cuộc hội thoại',
+            message: 'Conversation archived',
             conversation
         });
     } catch (error) {
         console.error('Archive conversation error:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Lỗi khi lưu trữ cuộc hội thoại' 
+            message: 'Error archiving conversation' 
         });
     }
 };
@@ -371,7 +469,7 @@ exports.assignConversation = async (req, res) => {
         if (!admin || admin.role !== 'admin') {
             return res.status(400).json({ 
                 success: false, 
-                message: 'Admin không hợp lệ' 
+                message: 'Invalid admin' 
             });
         }
         
@@ -384,20 +482,20 @@ exports.assignConversation = async (req, res) => {
         if (!conversation) {
             return res.status(404).json({ 
                 success: false, 
-                message: 'Không tìm thấy cuộc hội thoại' 
+                message: 'Conversation not found' 
             });
         }
         
         res.json({
             success: true,
-            message: 'Đã phân công cuộc hội thoại',
+            message: 'Conversation assigned',
             conversation
         });
     } catch (error) {
         console.error('Assign conversation error:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Lỗi khi phân công cuộc hội thoại' 
+            message: 'Error assigning conversation' 
         });
     }
 };

@@ -5,19 +5,28 @@ const ConversationSchema = new mongoose.Schema({
         user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
-            required: true
+            required: false  // Not required for anonymous users
         },
         role: {
             type: String,
-            enum: ['client', 'partner', 'admin'],
+            enum: ['client', 'partner', 'admin', 'anonymous'],
             required: true
+        },
+        // For anonymous users
+        anonymousId: {
+            type: String,
+            required: false
+        },
+        anonymousName: {
+            type: String,
+            required: false
         }
     }],
     
     // Type of conversation
     type: {
         type: String,
-        enum: ['user_admin', 'partner_admin', 'user_partner'],
+        enum: ['user_admin', 'partner_admin', 'user_partner', 'anonymous_partner'],
         required: true
     },
     

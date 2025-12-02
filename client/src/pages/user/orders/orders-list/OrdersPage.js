@@ -55,17 +55,18 @@ const OrdersPage = () => {
 
     const getStatusInfo = (status) => {
         const statusMap = {
-            pending: { label: 'Pending', color: '#f39c12', icon: '⏳' },
-            processing: { label: 'Processing', color: '#3498db', icon: '📦' },
-            shipped: { label: 'Shipping', color: '#9b59b6', icon: '🚚' },
-            delivered: { label: 'Delivered', color: '#27ae60', icon: '✅' },
-            cancelled: { label: 'Cancelled', color: '#e74c3c', icon: '❌' }
+            pending: { label: '⏳ Chờ xác nhận', color: '#f39c12', icon: '⏳' },
+            confirmed: { label: '✅ Đã xác nhận', color: '#16a085', icon: '✅' },
+            processing: { label: '📦 Đang xử lý', color: '#3498db', icon: '📦' },
+            shipped: { label: '🚚 Đang giao', color: '#9b59b6', icon: '🚚' },
+            delivered: { label: '✅ Đã giao', color: '#27ae60', icon: '✅' },
+            cancelled: { label: '❌ Đã hủy', color: '#e74c3c', icon: '❌' }
         };
         return statusMap[status] || { label: status, color: '#95a5a6', icon: '❓' };
     };
 
     const getStatusStep = (status) => {
-        const steps = ['pending', 'processing', 'shipped', 'delivered'];
+        const steps = ['pending', 'confirmed', 'processing', 'shipped', 'delivered'];
         return steps.indexOf(status);
     };
 
@@ -86,7 +87,7 @@ const OrdersPage = () => {
     const statusCounts = {
         all: orders.length,
         pending: orders.filter(o => o.status === 'pending').length,
-        processing: orders.filter(o => o.status === 'processing').length,
+        processing: orders.filter(o => o.status === 'processing' || o.status === 'confirmed').length,
         shipped: orders.filter(o => o.status === 'shipped').length,
         delivered: orders.filter(o => o.status === 'delivered').length,
         cancelled: orders.filter(o => o.status === 'cancelled').length
@@ -210,29 +211,29 @@ const OrdersPage = () => {
                                 {order.status !== 'cancelled' && (
                                     <div className="status-timeline">
                                         <div className="timeline-step">
-                                            <div className={`step-indicator ${currentStep >= 0 ? 'completed' : ''}`}>
-                                                {currentStep >= 0 ? '✓' : '⏳'}
-                                            </div>
-                                            <span className="step-label">Chờ xác nhận</span>
-                                        </div>
-                                        <div className={`timeline-line ${currentStep >= 1 ? 'completed' : ''}`}></div>
-                                        <div className="timeline-step">
                                             <div className={`step-indicator ${currentStep >= 1 ? 'completed' : ''}`}>
-                                                {currentStep >= 1 ? '✓' : '📦'}
+                                                {currentStep >= 1 ? '✓' : '✅'}
                                             </div>
-                                            <span className="step-label">Đang xử lý</span>
+                                            <span className="step-label">Đã xác nhận</span>
                                         </div>
                                         <div className={`timeline-line ${currentStep >= 2 ? 'completed' : ''}`}></div>
                                         <div className="timeline-step">
                                             <div className={`step-indicator ${currentStep >= 2 ? 'completed' : ''}`}>
-                                                {currentStep >= 2 ? '✓' : '🚚'}
+                                                {currentStep >= 2 ? '✓' : '📦'}
                                             </div>
-                                            <span className="step-label">Đang giao</span>
+                                            <span className="step-label">Đang xử lý</span>
                                         </div>
                                         <div className={`timeline-line ${currentStep >= 3 ? 'completed' : ''}`}></div>
                                         <div className="timeline-step">
                                             <div className={`step-indicator ${currentStep >= 3 ? 'completed' : ''}`}>
-                                                {currentStep >= 3 ? '✓' : '📍'}
+                                                {currentStep >= 3 ? '✓' : '🚚'}
+                                            </div>
+                                            <span className="step-label">Đang giao</span>
+                                        </div>
+                                        <div className={`timeline-line ${currentStep >= 4 ? 'completed' : ''}`}></div>
+                                        <div className="timeline-step">
+                                            <div className={`step-indicator ${currentStep >= 4 ? 'completed' : ''}`}>
+                                                {currentStep >= 4 ? '✓' : '📍'}
                                             </div>
                                             <span className="step-label">Đã giao</span>
                                         </div>

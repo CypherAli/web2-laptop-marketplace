@@ -144,13 +144,20 @@ const PartnerDashboard = () => {
                         <p style={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.9)', margin: 0 }}>{user.shopName}</p>
                     )}
                 </div>
-                <div>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                    <button 
+                        className="btn-new-product"
+                        onClick={() => navigate('/partner/orders')}
+                        style={{ background: 'white', color: '#667eea', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    >
+                        📦 Quản lý đơn hàng
+                    </button>
                     <button 
                         className="btn-new-product"
                         onClick={() => navigate('/manager')}
-                        style={{ background: 'white', color: '#667eea' }}
+                        style={{ background: 'rgba(255, 255, 255, 0.2)', color: 'white', border: '2px solid white' }}
                     >
-                        📦 Quản lý sản phẩm
+                        🛍️ Quản lý sản phẩm
                     </button>
                 </div>
             </div>
@@ -260,14 +267,19 @@ const PartnerDashboard = () => {
                                 </div>
                             </div>
 
-                            <div style={{ background: 'white', padding: '28px', borderRadius: '16px', boxShadow: '0 4px 16px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: '20px', transition: 'all 0.3s ease' }}>
+                            <div 
+                                style={{ background: 'white', padding: '28px', borderRadius: '16px', boxShadow: '0 4px 16px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: '20px', transition: 'all 0.3s ease', cursor: 'pointer' }}
+                                onClick={() => navigate('/partner/orders')}
+                            >
                                 <div style={{ width: '72px', height: '72px', borderRadius: '16px', background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
                                     <FiShoppingBag size={32} />
                                 </div>
                                 <div style={{ flex: 1 }}>
                                     <h3 style={{ fontSize: '13px', color: '#9ca3af', margin: '0 0 8px 0', fontWeight: 700, textTransform: 'uppercase' }}>Tổng đơn hàng</h3>
                                     <p style={{ fontSize: '32px', fontWeight: 800, color: '#1f2937', margin: '8px 0', lineHeight: 1 }}>{stats.totalOrders || 0}</p>
-                                    <span style={{ fontSize: '13px', color: '#6b7280' }}>{stats.totalSoldItems || 0} sản phẩm đã bán</span>
+                                    <span style={{ fontSize: '13px', color: '#6b7280' }}>
+                                        {stats.totalSoldItems || 0} sản phẩm đã bán • Click để xem
+                                    </span>
                                 </div>
                             </div>
 

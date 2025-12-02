@@ -8,8 +8,11 @@ const OrderItemSchema = new mongoose.Schema({
     },
     seller: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
+        // index: true removed - using compound index below instead
     },
+    sellerName: { type: String }, // Shop name for display
     name: { type: String, required: true },
     brand: { type: String },
     price: { type: Number, required: true },
@@ -20,7 +23,18 @@ const OrderItemSchema = new mongoose.Schema({
         processor: String,
         ram: String,
         storage: String
-    }
+    },
+    // Status for each item (controlled by respective seller)
+    status: {
+        type: String,
+        enum: ['confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'returned'],
+        default: 'confirmed'
+    },
+    statusHistory: [{
+        status: String,
+        note: String,
+        timestamp: { type: Date, default: Date.now }
+    }]
 });
 
 const StatusHistorySchema = new mongoose.Schema({

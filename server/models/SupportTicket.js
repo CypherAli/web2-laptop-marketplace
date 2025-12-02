@@ -160,7 +160,7 @@ const SupportTicketSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Indexes
-SupportTicketSchema.index({ ticketNumber: 1 });
+// ticketNumber already has unique: true, no need for separate index
 SupportTicketSchema.index({ user: 1, status: 1 });
 SupportTicketSchema.index({ assignedTo: 1, status: 1 });
 SupportTicketSchema.index({ category: 1, priority: 1 });

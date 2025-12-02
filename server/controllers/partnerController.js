@@ -249,4 +249,204 @@ exports.getRevenueByBrand = async (req, res) => {
     }
 };
 
+// Get partner's orders (orders containing their products)
+exports.getMyOrders = async (req, res) => {
+    try {
+        const partnerId = req.user.id;
+        const { page = 1, limit = 10, status } = req.query;
+
+        const pageNum = Number(page);
+        const limitNum = Number(limit);
+        const skip = (pageNum - 1) * limitNum;
+
+        // Build filter to find orders containing partner's products
+        const filter = {
+            'items.seller': partnerId
+        };
+        
+        if (status) {
+            filter.status = status;
+        }
+
+        // Get orders containing partner's products
+        const orders = await Order.find(filter)
+            .populate('user', 'username email phone')
+            .populate('items.product', 'name brand imageUrl')
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limitNum);
+
+        const totalOrders = await Order.countDocuments(filter);
+        const totalPages = Math.ceil(totalOrders / limitNum);
+
+        res.json({
+            orders,
+            currentPage: pageNum,
+            totalPages,
+            totalOrders
+        });
+    } catch (err) {
+        console.error('Get partner orders error:', err);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+// Update item status in order (partner can only update their own items)
+exports.updateOrderItemStatus = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const { itemId, status, note } = req.body;
+        const partnerId = req.user.id;
+
+        const order = await Order.findById(orderId)
+            .populate('user', 'username email');
+
+        if (!order) {
+            return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
+        }
+
+        // Find the specific item
+        const item = order.items.id(itemId);
+        
+        if (!item) {
+            return res.status(404).json({ message: 'Không tìm thấy sản phẩm trong đơn hàng' });
+        }
+
+        // Check if partner owns this item
+        if (item.seller.toString() !== partnerId) {
+            return res.status(403).json({ 
+                message: 'Bạn không có quyền cập nhật sản phẩm này' 
+            });
+        }
+
+        // Validate status transition for item
+        const validTransitions = {
+            'confirmed': ['processing', 'cancelled'],
+            'processing': ['shipped', 'cancelled'],
+            'shipped': ['delivered'],
+            'delivered': ['returned'],
+        };
+
+        if (!validTransitions[item.status] || 
+            !validTransitions[item.status].includes(status)) {
+            return res.status(400).json({ 
+                message: `Không thể chuyển từ trạng thái "${item.status}" sang "${status}"` 
+            });
+        }
+
+        // Special handling for cancellation - restore stock
+        if (status === 'cancelled' && item.status !== 'cancelled') {
+            const Product = require('../models/Product');
+            const product = await Product.findById(item.product);
+            if (product) {
+                product.stock += item.quantity;
+                product.sold = Math.max(0, (product.sold || 0) - item.quantity);
+                await product.save();
+                console.log(`✅ Restored ${item.quantity} units of ${product.name}. New stock: ${product.stock}`);
+            }
+        }
+
+        // Update item status
+        item.status = status;
+        item.statusHistory.push({
+            status,
+            note: note || `Cập nhật bởi ${req.user.shopName || req.user.username}`,
+            timestamp: new Date()
+        });
+
+        // Auto-update order status based on all items
+        const allStatuses = order.items.map(i => i.status);
+        
+        if (allStatuses.every(s => s === 'delivered')) {
+            order.status = 'delivered';
+        } else if (allStatuses.every(s => s === 'cancelled')) {
+            order.status = 'cancelled';
+        } else if (allStatuses.some(s => s === 'shipped')) {
+            order.status = 'shipped';
+        } else if (allStatuses.some(s => s === 'processing')) {
+            order.status = 'processing';
+        }
+
+        await order.save();
+
+        // Send notification to customer
+        const Notification = require('../models/Notification');
+        await Notification.createNotification({
+            user: order.user._id,
+            type: 'order_updated',
+            title: '📦 Cập nhật đơn hàng',
+            message: `Sản phẩm "${item.name}" trong đơn #${order.orderNumber}: ${getStatusText(status)}`,
+            relatedOrder: order._id,
+            actionUrl: `/orders/${order._id}`,
+            actionText: 'Xem chi tiết',
+            priority: 'high'
+        });
+
+        // Emit real-time notification
+        const io = req.app.get('io');
+        if (io) {
+            io.to(`user:${order.user._id}`).emit('notification:new', {
+                type: 'order_updated',
+                message: `Sản phẩm "${item.name}" đã được cập nhật`,
+                orderId: order._id
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Cập nhật sản phẩm thành công',
+            order: await order.populate('items.product', 'name brand imageUrl')
+        });
+    } catch (err) {
+        console.error('Update order item status error:', err);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+// Get order detail (for partner)
+exports.getOrderDetail = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const partnerId = req.user.id;
+
+        const order = await Order.findById(orderId)
+            .populate('user', 'username email phone')
+            .populate('items.product', 'name brand imageUrl stock')
+            .populate('statusHistory.updatedBy', 'username');
+
+        if (!order) {
+            return res.status(404).json({ message: 'Không tìm thấy đơn hàng' });
+        }
+
+        // Check if partner owns any product in this order
+        const hasPartnerProduct = order.items.some(item => 
+            item.seller && item.seller.toString() === partnerId
+        );
+
+        if (!hasPartnerProduct) {
+            return res.status(403).json({ 
+                message: 'Bạn không có quyền xem đơn hàng này' 
+            });
+        }
+
+        res.json(order);
+    } catch (err) {
+        console.error('Get order detail error:', err);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+// Helper function to get status text in Vietnamese
+function getStatusText(status) {
+    const statusMap = {
+        'confirmed': 'Đã xác nhận',
+        'processing': 'Đang xử lý',
+        'shipped': 'Đang giao hàng',
+        'delivered': 'Đã giao hàng',
+        'cancelled': 'Đã hủy',
+        'returned': 'Đã trả hàng'
+    };
+    return statusMap[status] || status;
+}
+
 module.exports = exports;

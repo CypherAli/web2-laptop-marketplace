@@ -42,13 +42,32 @@ export const CartProvider = ({ children }) => {
     const loadCartFromAPI = async () => {
         setLoading(true);
         try {
+            // Clear localStorage to prevent stale data
+            localStorage.removeItem('cart');
+            
             const response = await axios.get('/cart');
-            const apiCart = response.data.items.map(item => ({
-                _id: item.product._id,
-                ...item.product,
-                quantity: item.quantity,
-                cartItemId: item._id // Store cart item ID for updates
-            }));
+            console.log('🔍 RAW API RESPONSE:', response.data);
+            console.log('🔍 ITEMS:', response.data.items);
+            
+            const apiCart = response.data.items.map(item => {
+                console.log('🔍 ITEM:', item);
+                console.log('   - sellerName from API:', item.sellerName);
+                console.log('   - seller object:', item.seller);
+                
+                const mappedItem = {
+                    _id: item.product._id,
+                    ...item.product,
+                    quantity: item.quantity,
+                    cartItemId: item._id, // Store cart item ID for updates
+                    seller: item.seller, // Include seller object
+                    sellerName: item.sellerName || item.seller?.shopName || item.seller?.username || 'Unknown Shop'
+                };
+                
+                console.log('   - MAPPED sellerName:', mappedItem.sellerName);
+                return mappedItem;
+            });
+            
+            console.log('🔍 MAPPED CART:', apiCart);
             setCartItems(apiCart);
             
             // Sync to localStorage
@@ -81,14 +100,26 @@ export const CartProvider = ({ children }) => {
                     quantity 
                 });
                 
-                // Update local state from API response
-                const apiCart = response.data.items.map(item => ({
-                    _id: item.product._id,
-                    ...item.product,
-                    quantity: item.quantity,
-                    cartItemId: item._id
-                }));
+                console.log('🔍 ADD TO CART RESPONSE:', response.data);
+                
+                // Update local state from API response WITH seller info
+                const apiCart = response.data.items.map(item => {
+                    console.log('🔍 Mapping item after add:', item);
+                    return {
+                        _id: item.product._id,
+                        ...item.product,
+                        quantity: item.quantity,
+                        cartItemId: item._id,
+                        seller: item.seller,
+                        sellerName: item.sellerName || item.seller?.shopName || item.seller?.username || 'Unknown Shop'
+                    };
+                });
+                
+                console.log('🔍 MAPPED CART after add:', apiCart);
                 setCartItems(apiCart);
+                
+                // Update localStorage
+                localStorage.setItem('cart', JSON.stringify(apiCart));
             } catch (error) {
                 console.error('Failed to add to cart:', error);
                 throw error;
@@ -143,14 +174,22 @@ export const CartProvider = ({ children }) => {
             try {
                 const response = await axios.put(`/cart/${item.cartItemId}`, { quantity });
                 
-                // Update local state from API response
+                console.log('🔍 UPDATE QUANTITY RESPONSE:', response.data);
+                
+                // Update local state from API response WITH seller info
                 const apiCart = response.data.items.map(item => ({
                     _id: item.product._id,
                     ...item.product,
                     quantity: item.quantity,
-                    cartItemId: item._id
+                    cartItemId: item._id,
+                    seller: item.seller,
+                    sellerName: item.sellerName || item.seller?.shopName || item.seller?.username || 'Unknown Shop'
                 }));
+                
                 setCartItems(apiCart);
+                
+                // Update localStorage
+                localStorage.setItem('cart', JSON.stringify(apiCart));
             } catch (error) {
                 console.error('Failed to update quantity:', error);
                 throw error;

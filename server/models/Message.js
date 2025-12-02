@@ -10,13 +10,25 @@ const MessageSchema = new mongoose.Schema({
     sender: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: false  // Not required for anonymous users
     },
     
     senderRole: {
         type: String,
-        enum: ['client', 'partner', 'admin'],
+        enum: ['client', 'partner', 'admin', 'anonymous'],
         required: true
+    },
+    
+    // For anonymous users
+    anonymousId: {
+        type: String,
+        required: false
+    },
+    
+    anonymousName: {
+        type: String,
+        required: false,
+        default: 'Khách'
     },
     
     // Message content

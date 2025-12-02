@@ -5,7 +5,10 @@ const {
     getMyStats,
     getRevenueByMonth,
     getRevenueByBrand,
-    toggleProductStatus
+    toggleProductStatus,
+    getMyOrders,
+    updateOrderItemStatus,
+    getOrderDetail
 } = require('../controllers/partnerController');
 const auth = require('../middleware/auth');
 const authorize = require('../middleware/authorize');
@@ -19,6 +22,11 @@ router.get('/stats', auth, partnerOrAdmin, getMyStats);
 router.get('/revenue', auth, partnerOrAdmin, getRevenueByMonth);
 router.get('/revenue-by-brand', auth, partnerOrAdmin, getRevenueByBrand);
 router.patch('/products/:id/toggle-status', auth, partnerOrAdmin, toggleProductStatus);
+
+// Order management routes
+router.get('/orders', auth, partnerOrAdmin, getMyOrders);
+router.get('/orders/:orderId', auth, partnerOrAdmin, getOrderDetail);
+router.patch('/orders/:orderId/items/:itemId/status', auth, partnerOrAdmin, updateOrderItemStatus);
 
 // Get list of active partners (for chat widget)
 router.get('/list-active', async (req, res) => {

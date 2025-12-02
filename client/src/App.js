@@ -11,14 +11,14 @@ import ScrollToTop from './components/common/ScrollToTop';
 import AuthContext from './context/AuthContext';
 
 // Chat Widgets - Different for each role
-import PartnerChatWidget from './components/chat/PartnerChatWidget';
 import PartnerLiveChat from './components/chat/PartnerLiveChat';
 import AdminChatWidget from './components/chat/AdminChatWidget';
+import AnonymousChatWidget from './components/chat/AnonymousChatWidget';
 
 // Import ALL pages directly - NO LAZY LOADING for maximum stability
 import HomePage from './pages/home/HomePage';
 import ProductDetailPageUltra from './pages/product/ProductDetailPageUltra';
-import DealsPageNew from './pages/deals/DealsPageNew';
+import DealsPage from './pages/deals/DealsPage';
 import BestSellersPage from './pages/product/BestSellersPage';
 import BlogPage from './pages/common/BlogPage';
 import BlogDetailPage from './pages/common/BlogDetailPage';
@@ -41,6 +41,7 @@ import OrderDetailPage from './pages/user/orders/order-detail/OrderDetailPage';
 import ManagerDashboard from './pages/manager/ManagerDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PartnerDashboard from './pages/partner/PartnerDashboard';
+import PartnerOrders from './pages/partner/PartnerOrders';
 import HuongDanMuaHang from './pages/chat/HuongDanMuaHang';
 import InstallmentGuidePage from './pages/guide/InstallmentGuidePage';
 import ProfilePage from './pages/user/profile/ProfilePage';
@@ -60,7 +61,7 @@ function App() {
         {/* === Public Routes === */}
         <Route path="/" element={<HomePage />} />
         <Route path="/product/:id" element={<ProductDetailPageUltra />} />
-        <Route path="/deals" element={<DealsPageNew />} />
+        <Route path="/deals" element={<DealsPage />} />
         <Route path="/best-sellers" element={<BestSellersPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:id" element={<BlogDetailPage />} />
@@ -100,6 +101,8 @@ function App() {
         {/* === Protected Partner Routes === */}
         <Route element={<PrivateRoute allowedRoles={['partner', 'admin']} />}>
           <Route path="/manager" element={<ManagerDashboard />} />
+          <Route path="/partner/dashboard" element={<PartnerDashboard />} />
+          <Route path="/partner/orders" element={<PartnerOrders />} />
           <Route path="/partner-dashboard" element={<PartnerDashboard />} />
           <Route path="/dashboard/partner" element={<PartnerDashboard />} />
         </Route>
@@ -138,7 +141,7 @@ function App() {
       ) : user?.role === 'admin' ? (
         <AdminChatWidget />
       ) : (
-        <PartnerChatWidget />
+        <AnonymousChatWidget />
       )}
     </RoleBasedLayout>
     </ErrorBoundary>

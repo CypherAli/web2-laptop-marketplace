@@ -159,7 +159,7 @@ const WarrantySchema = new mongoose.Schema({
 // Indexes
 WarrantySchema.index({ user: 1, status: 1 });
 WarrantySchema.index({ 'warrantyPeriod.endDate': 1 });
-WarrantySchema.index({ serialNumber: 1 });
+// serialNumber already has unique: true, no need for separate index
 
 // Virtual for days remaining
 WarrantySchema.virtual('daysRemaining').get(function() {
