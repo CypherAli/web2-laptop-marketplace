@@ -163,16 +163,19 @@ Client: http://localhost:3001
 
 ## 👤 Tài khoản mặc định
 
+**⚠️ Tất cả mật khẩu mặc định: `123456`**
+
 ### Admin
 - Email: admin@laptop.com
-- Password: admin123
+- Password: 123456
 
-### Partner (Demo)
-- Email: partner@laptop.com
-- Password: partner123
+### Partner (nếu có trong DB)
+- Email: partner@laptop.com hoặc laptoppro@shop.com
+- Password: 123456
 
 ### Client
 - Đăng ký tự do tại /register
+- Password mặc định khi test: 123456
 
 ## 📝 API Endpoints
 

@@ -12,7 +12,7 @@ const User = require('./models/User');
 const ADMIN_CREDENTIALS = {
     username: 'admin',
     email: 'admin@laptop.com',
-    password: 'admin123',
+    password: '123456',
     role: 'admin',
     isApproved: true,
     isActive: true
@@ -39,9 +39,9 @@ const createAdminUser = async () => {
                 output: process.stdout
             });
             
-            readline.question('Do you want to reset password to "admin123"? (y/n): ', async (answer) => {
+            readline.question('Do you want to reset password to "123456"? (y/n): ', async (answer) => {
                 if (answer.toLowerCase() === 'y') {
-                    existingAdmin.password = 'admin123';
+                    existingAdmin.password = '123456';
                     await existingAdmin.save();
                     console.log('✅ Password reset successfully!');
                 }
