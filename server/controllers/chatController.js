@@ -330,20 +330,24 @@ exports.sendMessage = async (req, res) => {
             timestamp: new Date()
         };
         
-        // Increment unread count for other participants (only for authenticated users)
+        // Increment unread count for other participants
         if (req.isAuthenticated) {
-            conversation.participants.forEach(p => {
+            for (const p of conversation.participants) {
                 if (p.user && !p.user.equals(req.user.id)) {
-                    conversation.incrementUnread(p.user);
+                    const userIdStr = p.user.toString();
+                    const current = conversation.unreadCount.get(userIdStr) || 0;
+                    conversation.unreadCount.set(userIdStr, current + 1);
                 }
-            });
+            }
         } else {
             // For anonymous, increment unread for partner
-            conversation.participants.forEach(p => {
+            for (const p of conversation.participants) {
                 if (p.user && p.role === 'partner') {
-                    conversation.incrementUnread(p.user);
+                    const userIdStr = p.user.toString();
+                    const current = conversation.unreadCount.get(userIdStr) || 0;
+                    conversation.unreadCount.set(userIdStr, current + 1);
                 }
-            });
+            }
         }
         
         await conversation.save();
@@ -496,6 +500,85 @@ exports.assignConversation = async (req, res) => {
         res.status(500).json({ 
             success: false, 
             message: 'Error assigning conversation' 
+        });
+    }
+};
+
+// @desc    Get all customers chatting with partner
+// @route   GET /api/chat/partner/:partnerId/customers
+// @access  Private (Partner)
+exports.getPartnerCustomers = async (req, res) => {
+    try {
+        const { partnerId } = req.params;
+        
+        console.log('🔍 getPartnerCustomers called for partner:', partnerId);
+        console.log('🔍 req.user:', req.user);
+        console.log('🔍 req.user.id:', req.user.id);
+        console.log('🔍 req.user.role:', req.user.role);
+        
+        // Verify partner owns this data (unless admin)
+        // Convert both to string for comparison
+        if (req.user.role !== 'admin' && req.user.id.toString() !== partnerId.toString()) {
+            console.log('❌ Authorization failed - user ID mismatch');
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Unauthorized access' 
+            });
+        }
+        
+        console.log('✅ Authorization passed');
+        
+        // Find all conversations where partner is a participant
+        const conversations = await Conversation.find({
+            'participants.user': partnerId,
+            status: { $ne: 'closed' }
+        })
+        .populate('participants.user', 'username email avatar shopName')
+        .populate('lastMessage.sender', 'username')
+        .sort({ 'lastMessage.timestamp': -1 });
+        
+        console.log(`📊 Found ${conversations.length} total conversations for partner`);
+        
+        // Filter and transform to customer list
+        const customers = conversations
+            .map(conv => {
+                // Find the non-partner participant
+                const customerParticipant = conv.participants.find(p => 
+                    (!p.user || !p.user._id.equals(partnerId)) && 
+                    (p.role === 'client' || p.role === 'anonymous')
+                );
+                
+                if (!customerParticipant) {
+                    console.log('⚠️ No customer participant found in conversation:', conv._id);
+                    return null;
+                }
+                
+                return {
+                    conversationId: conv._id,
+                    customerId: customerParticipant.user?._id,
+                    customerName: customerParticipant.anonymousName || customerParticipant.user?.username || 'Guest',
+                    customerEmail: customerParticipant.user?.email,
+                    customerAvatar: customerParticipant.user?.avatar,
+                    isAnonymous: customerParticipant.role === 'anonymous',
+                    anonymousId: customerParticipant.anonymousId,
+                    lastMessage: conv.lastMessage,
+                    unreadCount: conv.unreadCount.get(partnerId) || 0,
+                    updatedAt: conv.updatedAt
+                };
+            })
+            .filter(c => c !== null);
+        
+        console.log(`✅ Returning ${customers.length} customers to partner`);
+        
+        res.json({
+            success: true,
+            customers
+        });
+    } catch (error) {
+        console.error('Get partner customers error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Error loading customers' 
         });
     }
 };

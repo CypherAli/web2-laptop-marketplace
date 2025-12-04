@@ -117,7 +117,12 @@ exports.getAllProducts = async (req, res) => {
         });
         
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Get all products error:', err);
+        res.status(500).json({ 
+            success: false,
+            error: err.message,
+            message: 'Failed to fetch products'
+        });
     }
 };
 
@@ -126,10 +131,18 @@ exports.getProductById = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id)
             .populate('createdBy', 'username shopName shopDescription');
-        if (!product) return res.status(404).json({ message: "Product not found" });
+        if (!product) return res.status(404).json({ 
+            success: false,
+            message: "Product not found" 
+        });
         res.json(product);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Get product by ID error:', err);
+        res.status(500).json({ 
+            success: false,
+            error: err.message,
+            message: 'Failed to fetch product'
+        });
     }
 };
 
@@ -146,7 +159,12 @@ exports.createProduct = async (req, res) => {
         
         res.status(201).json(product);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Create product error:', err);
+        res.status(500).json({ 
+            success: false,
+            error: err.message,
+            message: 'Failed to create product'
+        });
     }
 };
 
@@ -163,10 +181,18 @@ exports.updateProduct = async (req, res) => {
             { new: true, runValidators: true }
         ).populate('createdBy', 'username shopName');
         
-        if (!product) return res.status(404).json({ message: "Product not found" });
+        if (!product) return res.status(404).json({ 
+            success: false,
+            message: "Product not found" 
+        });
         res.json(product);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Update product error:', err);
+        res.status(500).json({ 
+            success: false,
+            error: err.message,
+            message: 'Failed to update product'
+        });
     }
 };
 
@@ -174,10 +200,21 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
     try {
         const product = await Product.findByIdAndDelete(req.params.id);
-        if (!product) return res.status(404).json({ message: "Product not found" });
-        res.json({ message: "Product deleted successfully" });
+        if (!product) return res.status(404).json({ 
+            success: false,
+            message: "Product not found" 
+        });
+        res.json({ 
+            success: true,
+            message: "Product deleted successfully" 
+        });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Delete product error:', err);
+        res.status(500).json({ 
+            success: false,
+            error: err.message,
+            message: 'Failed to delete product'
+        });
     }
 };
 
@@ -187,6 +224,11 @@ exports.getAllBrands = async (req, res) => {
         const brands = await Product.distinct('brand');
         res.json(brands.sort()); // Return sorted array of unique brands
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Get all brands error:', err);
+        res.status(500).json({ 
+            success: false,
+            error: err.message,
+            message: 'Failed to fetch brands'
+        });
     }
 };

@@ -15,14 +15,17 @@ connectDB();
 // Socket.IO setup
 const io = socketIO(server, {
     cors: {
-        origin: process.env.CLIENT_URL || 'http://localhost:3001',
+        origin: ['http://localhost:3000', 'http://localhost:3001', process.env.CLIENT_URL].filter(Boolean),
         methods: ['GET', 'POST'],
         credentials: true
     }
 });
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:3000', 'http://localhost:3001', process.env.CLIENT_URL].filter(Boolean),
+    credentials: true
+}));
 app.use(express.json()); // Cho phép đọc JSON
 
 // Serve static files for uploads
@@ -190,55 +193,37 @@ io.on('connection', (socket) => {
         console.log(`📨 User joined conversation: ${conversationId}`);
     });
     
-    // Send message (existing system)
+    // Broadcast message (existing system) - Note: Message is created by API, this just broadcasts
     socket.on('message:send', async (data) => {
         try {
-            const { conversationId, message, senderId, senderRole, attachments } = data;
+            const { conversationId, messageId } = data;
             
-            // Create message in database
-            const newMessage = await Message.create({
-                conversation: conversationId,
-                sender: senderId,
-                senderRole,
-                message,
-                attachments: attachments || []
-            });
+            console.log('📡 Broadcasting message:', messageId, 'to conversation:', conversationId);
             
-            await newMessage.populate('sender', 'username email role avatar');
+            // Fetch the message that was already created by API
+            const newMessage = await Message.findById(messageId)
+                .populate('sender', 'username email role avatar shopName');
             
-            // Update conversation
-            const conversation = await Conversation.findById(conversationId);
-            if (conversation) {
-                conversation.lastMessage = {
-                    text: message,
-                    sender: senderId,
-                    timestamp: new Date()
-                };
-                
-                // Increment unread for other participants
-                conversation.participants.forEach(p => {
-                    if (p.user.toString() !== senderId.toString()) {
-                        const userId = p.user.toString();
-                        const current = conversation.unreadCount.get(userId) || 0;
-                        conversation.unreadCount.set(userId, current + 1);
-                    }
-                });
-                
-                await conversation.save();
+            if (!newMessage) {
+                console.error('❌ Message not found:', messageId);
+                return;
             }
             
             // Broadcast to conversation room
             io.to(`conversation:${conversationId}`).emit('message:received', newMessage);
             
-            // Notify other participants
-            conversation.participants.forEach(p => {
-                if (p.user.toString() !== senderId.toString()) {
-                    io.to(`user:${p.user}`).emit('notification:new_message', {
-                        conversationId,
-                        message: newMessage
-                    });
-                }
-            });
+            // Notify other participants in their user rooms
+            const conversation = await Conversation.findById(conversationId);
+            if (conversation) {
+                conversation.participants.forEach(p => {
+                    if (p.user && p.user.toString() !== newMessage.sender?._id?.toString()) {
+                        io.to(`user:${p.user}`).emit('notification:new_message', {
+                            conversationId,
+                            message: newMessage
+                        });
+                    }
+                });
+            }
         } catch (error) {
             console.error('Socket message:send error:', error);
             socket.emit('error', { message: 'Lỗi khi gửi tin nhắn' });

@@ -8,7 +8,8 @@ const {
     markAsRead,
     getUnreadCount,
     archiveConversation,
-    assignConversation
+    assignConversation,
+    getPartnerCustomers
 } = require('../controllers/chatController');
 const auth = require('../middleware/auth');
 const optionalAuth = require('../middleware/optionalAuth');
@@ -25,6 +26,9 @@ router.use(auth);
 router.get('/conversations', getConversations);
 router.get('/unread-count', getUnreadCount);
 router.put('/conversations/:conversationId/read', markAsRead);
+
+// Partner routes
+router.get('/partner/:partnerId/customers', authorize('partner', 'admin'), getPartnerCustomers);
 
 // Admin-only routes
 router.put('/conversations/:conversationId/archive', authorize('admin'), archiveConversation);

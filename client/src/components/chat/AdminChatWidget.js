@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef, useContext, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiX, FiSend, FiMinus, FiUsers } from 'react-icons/fi';
 import AuthContext from '../../context/AuthContext';
@@ -7,7 +7,7 @@ import './PartnerChatWidget.css'; // Reuse the same styles
 
 /**
  * Admin Chat Widget
- * Admin có thể chat với Partners và Users
+ * Admin can chat with Partners and Users using new conversation system
  */
 const AdminChatWidget = () => {
     const { user } = useContext(AuthContext);
@@ -15,6 +15,7 @@ const AdminChatWidget = () => {
     const [isMinimized, setIsMinimized] = useState(false);
     const [showUserList, setShowUserList] = useState(true);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [conversationId, setConversationId] = useState(null);
     const [messageInput, setMessageInput] = useState('');
     const [messages, setMessages] = useState([]);
     const [partners, setPartners] = useState([]);
@@ -30,6 +31,8 @@ const AdminChatWidget = () => {
     // Socket.IO setup
     useEffect(() => {
         if (!user || !isOpen || !adminId) return;
+
+        console.log('🔌 AdminChatWidget: Initializing socket for admin:', adminId);
 
         const newSocket = io(process.env.REACT_APP_SERVER_URL || 'http://localhost:5000', {
             transports: ['polling', 'websocket'],
@@ -51,27 +54,23 @@ const AdminChatWidget = () => {
             setIsConnected(false);
         });
 
-        newSocket.on('chat:message', (message) => {
+        // New conversation system - receive messages
+        newSocket.on('message:received', (message) => {
             console.log('📩 Admin received message:', message);
             
             // Only add if it's for current conversation
-            if (selectedUser && 
-                ((message.senderId === adminId && message.receiverId === selectedUser._id) ||
-                 (message.senderId === selectedUser._id && message.receiverId === adminId))) {
-                
+            if (conversationId && message.conversation === conversationId) {
                 setMessages(prev => {
+                    // Check for duplicates by ID or temp message
                     const exists = prev.some(m => 
-                        m._id === message._id || 
-                        (m.message === message.message && 
-                         m.senderId === message.senderId && 
-                         Math.abs(new Date(m.createdAt) - new Date(message.createdAt)) < 2000)
+                        m._id === message._id ||
+                        (m.isTemp && m.message === message.message)
                     );
                     
                     if (exists) {
+                        console.log('⚠️ Duplicate detected, replacing temp');
                         return prev.map(m => 
-                            m.isTemp && m.message === message.message && m.senderId === message.senderId
-                                ? { ...message, isTemp: false }
-                                : m
+                            (m.isTemp && m.message === message.message) ? { ...message, isTemp: false } : m
                         );
                     }
                     
@@ -83,7 +82,7 @@ const AdminChatWidget = () => {
         return () => {
             newSocket.disconnect();
         };
-    }, [user, selectedUser, isOpen, adminId]);
+    }, [user, conversationId, isOpen, adminId]);
 
     useEffect(() => {
         if (isOpen) {
@@ -142,12 +141,36 @@ const AdminChatWidget = () => {
         }
     };
 
-    const fetchMessages = async (targetUserId) => {
+    const createOrGetConversation = async (targetUserId) => {
         try {
-            if (!adminId) return;
-            
             const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-            const response = await fetch(`${apiUrl}/chat/history/${adminId}/${targetUserId}`, {
+            const response = await fetch(`${apiUrl}/chat/conversations`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    targetUserId,
+                    subject: 'Admin Support'
+                })
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                setConversationId(data.conversation._id);
+                return data.conversation._id;
+            }
+        } catch (error) {
+            console.error('Error creating conversation:', error);
+        }
+        return null;
+    };
+
+    const fetchMessages = async (convId) => {
+        try {
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+            const response = await fetch(`${apiUrl}/chat/conversations/${convId}/messages`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -178,93 +201,86 @@ const AdminChatWidget = () => {
         setIsMinimized(!isMinimized);
     };
 
-    const handleSelectUser = (targetUser) => {
+    const handleSelectUser = async (targetUser) => {
         setSelectedUser(targetUser);
         setShowUserList(false);
-        fetchMessages(targetUser._id);
         
-        // Join chat room via socket
-        if (socket?.connected) {
-            socket.emit('chat:join', { userId: adminId, partnerId: targetUser._id });
+        // Create or get conversation
+        const convId = await createOrGetConversation(targetUser._id);
+        if (convId) {
+            fetchMessages(convId);
+            
+            // Join conversation room via socket
+            if (socket?.connected) {
+                socket.emit('conversation:join', convId);
+            }
         }
     };
 
     const handleBackToList = () => {
-        if (socket?.connected && selectedUser) {
-            socket.emit('chat:leave', { userId: adminId, partnerId: selectedUser._id });
-        }
-        
         setShowUserList(true);
         setSelectedUser(null);
+        setConversationId(null);
         setMessages([]);
     };
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
         
-        if (!messageInput.trim() || !selectedUser || !adminId) return;
+        if (!messageInput.trim() || !selectedUser || !adminId || !conversationId) return;
 
         const tempId = `temp_${Date.now()}`;
         const messageData = {
             _id: tempId,
             message: messageInput.trim(),
-            senderId: adminId,
-            senderName: user.name || user.username || 'Admin',
-            receiverId: selectedUser._id,
-            receiverName: selectedUser.name || selectedUser.shopName || selectedUser.username || 'User',
+            senderRole: 'admin',
+            sender: { 
+                username: user.name || user.username || 'Admin',
+                _id: adminId 
+            },
             createdAt: new Date(),
             isTemp: true
         };
 
         setMessages(prev => [...prev, messageData]);
+        const messageCopy = messageInput.trim();
         setMessageInput('');
 
         try {
-            if (socket?.connected) {
-                console.log('📤 Admin sending via socket:', messageData.message);
-                socket.emit('chat:send', messageData);
-                
-                setTimeout(() => {
-                    setMessages(prev => 
-                        prev.map(msg => 
-                            msg._id === tempId ? { ...msg, isTemp: false } : msg
-                        )
-                    );
-                }, 500);
-            } else {
-                // Fallback to API
-                const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-                
-                const payload = {
-                    senderId: adminId,
-                    senderName: user.name || user.username || 'Admin',
-                    receiverId: selectedUser._id,
-                    receiverName: selectedUser.name || selectedUser.shopName || selectedUser.username || 'User',
-                    message: messageData.message
-                };
-                
-                const response = await fetch(`${apiUrl}/chat/send`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    },
-                    body: JSON.stringify(payload)
-                });
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+            
+            const response = await fetch(`${apiUrl}/chat/conversations/${conversationId}/messages`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ message: messageCopy })
+            });
 
-                const data = await response.json();
+            const data = await response.json();
+            
+            if (data.success) {
+                console.log('✅ Admin message sent successfully');
+                // Replace temp message with real one
+                setMessages(prev => 
+                    prev.map(msg => 
+                        msg._id === tempId ? { ...data.message, isTemp: false } : msg
+                    )
+                );
                 
-                if (data.success) {
-                    setMessages(prev => 
-                        prev.map(msg => 
-                            msg._id === tempId ? { ...data.chat, isTemp: false } : msg
-                        )
-                    );
+                // Broadcast via socket
+                if (socket?.connected) {
+                    socket.emit('message:send', {
+                        conversationId,
+                        messageId: data.message._id
+                    });
                 }
             }
         } catch (error) {
             console.error('Error sending message:', error);
             setMessages(prev => prev.filter(msg => msg._id !== tempId));
+            alert('Không thể gửi tin nhắn. Vui lòng thử lại.');
         }
     };
 
@@ -389,19 +405,23 @@ const AdminChatWidget = () => {
                                 <>
                                     {/* Messages */}
                                     <div className="messages-container">
-                                        {messages.map((msg, index) => (
-                                            <div 
-                                                key={msg._id || index}
-                                                className={`message ${msg.senderId === adminId ? 'sent' : 'received'} ${msg.isTemp ? 'temp' : ''}`}
-                                            >
-                                                <div className="message-content">
-                                                    <div className="message-text">{msg.message}</div>
-                                                    <div className="message-time">
-                                                        {formatTime(msg.createdAt || msg.timestamp)}
+                                        {messages.map((msg, index) => {
+                                            const isOwnMessage = msg.sender?._id === adminId || msg.senderRole === 'admin';
+                                            
+                                            return (
+                                                <div 
+                                                    key={msg._id || index}
+                                                    className={`message ${isOwnMessage ? 'sent' : 'received'} ${msg.isTemp ? 'temp' : ''}`}
+                                                >
+                                                    <div className="message-content">
+                                                        <div className="message-text">{msg.message}</div>
+                                                        <div className="message-time">
+                                                            {formatTime(msg.createdAt || msg.timestamp)}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                         <div ref={messagesEndRef} />
                                     </div>
 

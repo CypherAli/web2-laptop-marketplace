@@ -40,8 +40,17 @@ const PartnerLiveChat = () => {
         console.log('📋 Loading customers for partner:', partnerId);
 
         try {
+            const token = localStorage.getItem('token');
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+            
             const response = await fetch(
-                `http://localhost:5000/api/chat/partner/${partnerId}/customers`
+                `${apiUrl}/chat/partner/${partnerId}/customers`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
             );
             const data = await response.json();
             
@@ -89,42 +98,39 @@ const PartnerLiveChat = () => {
             setIsConnected(false);
         });
 
-        // Receive new message from customer
-        newSocket.on('chat:message', (message) => {
+        // Receive new message (new conversation system)
+        newSocket.on('message:received', (message) => {
             console.log('📩 Partner received message:', message);
             
-            // If message is for this partner
-            if (message.receiverId === partnerId) {
-                // Update customer list
-                loadCustomers();
-                
-                // If currently chatting with this customer, add message
-                if (selectedCustomer && message.senderId === selectedCustomer._id) {
-                    setMessages(prev => {
-                        // Check for duplicates more thoroughly
-                        const exists = prev.some(m => 
-                            m._id === message._id || 
-                            (m.message === message.message && 
-                             m.senderId === message.senderId && 
-                             Math.abs(new Date(m.createdAt) - new Date(message.createdAt)) < 2000)
+            // If currently viewing this conversation, add message
+            if (selectedCustomer && selectedCustomer.conversationId === message.conversation) {
+                setMessages(prev => {
+                    // Check for duplicates by ID or temp ID
+                    const exists = prev.some(m => 
+                        m._id === message._id ||
+                        (m.isTemp && m.message === message.message)
+                    );
+                    
+                    if (exists) {
+                        console.log('⚠️ Duplicate message detected, replacing temp with real');
+                        // Replace temp message with real one
+                        return prev.map(m => 
+                            (m.isTemp && m.message === message.message) ? { ...message, isTemp: false } : m
                         );
-                        
-                        if (exists) {
-                            console.log('⚠️ Duplicate message detected, skipping');
-                            return prev;
-                        }
-                        
-                        console.log('✅ Adding new message from customer');
-                        return [...prev, message];
-                    });
-                } else {
-                    // Increase unread count for other customers
-                    setUnreadCounts(prev => ({
-                        ...prev,
-                        [message.senderId]: (prev[message.senderId] || 0) + 1
-                    }));
-                }
+                    }
+                    
+                    console.log('✅ Adding new message');
+                    return [...prev, message];
+                });
             }
+        });
+        
+        // Receive notification of new message in other conversations
+        newSocket.on('notification:new_message', ({ conversationId, message }) => {
+            console.log('🔔 New message notification for conversation:', conversationId);
+            
+            // Reload customer list to update last message and unread counts
+            loadCustomers();
         });
 
         return () => {
@@ -142,10 +148,20 @@ const PartnerLiveChat = () => {
         }
     }, [isOpen, loadCustomers]);
 
-    const loadChatHistory = async (customerId) => {
+    const loadChatHistory = async (customer) => {
         try {
+            const token = localStorage.getItem('token');
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+            
+            // Load messages from conversation
             const response = await fetch(
-                `http://localhost:5000/api/chat/history/${customerId}/${partnerId}`
+                `${apiUrl}/chat/conversations/${customer.conversationId}/messages`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
             );
             const data = await response.json();
             
@@ -154,7 +170,7 @@ const PartnerLiveChat = () => {
                 // Reset unread count for this customer
                 setUnreadCounts(prev => {
                     const newCounts = { ...prev };
-                    delete newCounts[customerId];
+                    delete newCounts[customer.customerId];
                     return newCounts;
                 });
             }
@@ -165,7 +181,12 @@ const PartnerLiveChat = () => {
 
     const handleSelectCustomer = (customer) => {
         setSelectedCustomer(customer);
-        loadChatHistory(customer._id);
+        loadChatHistory(customer);
+        
+        // Join conversation room via socket
+        if (socket?.connected && customer.conversationId) {
+            socket.emit('conversation:join', customer.conversationId);
+        }
     };
 
     const handleBackToList = () => {
@@ -179,53 +200,61 @@ const PartnerLiveChat = () => {
         const tempId = `temp_${Date.now()}`;
         const messageData = {
             _id: tempId,
-            senderId: partnerId,
-            senderName: user?.shopName || user?.name || 'Partner',
-            receiverId: selectedCustomer._id,
-            receiverName: selectedCustomer.name,
             message: newMessage.trim(),
-            timestamp: new Date(),
-            senderType: 'partner',
+            senderRole: 'partner',
+            sender: { 
+                username: user?.shopName || user?.name || 'Partner',
+                _id: partnerId 
+            },
+            createdAt: new Date(),
             isTemp: true
         };
 
         setMessages(prev => [...prev, messageData]);
+        const messageCopy = newMessage.trim();
         setNewMessage('');
 
         try {
-            // Send via Socket.IO only (server will save and emit)
-            if (socket?.connected) {
-                console.log('📤 Partner sending via socket:', messageData.message);
-                socket.emit('chat:send', messageData);
-                
-                // Mark as sent
-                setTimeout(() => {
-                    setMessages(prev => 
-                        prev.map(msg => 
-                            msg._id === tempId ? { ...msg, isTemp: false } : msg
-                        )
-                    );
-                }, 500);
-            } else {
-                // Fallback to API if socket not connected
-                const response = await fetch('http://localhost:5000/api/chat/send', {
+            const token = localStorage.getItem('token');
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+            
+            // Send via new conversation API
+            const response = await fetch(
+                `${apiUrl}/chat/conversations/${selectedCustomer.conversationId}/messages`,
+                {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(messageData)
-                });
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: messageCopy })
+                }
+            );
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                console.log('✅ Partner message sent successfully');
+                // Replace temp message with real one
+                setMessages(prev => 
+                    prev.map(msg => 
+                        msg._id === tempId ? { ...data.message, isTemp: false } : msg
+                    )
+                );
                 
-                const data = await response.json();
-                if (data.success) {
-                    setMessages(prev => 
-                        prev.map(msg => 
-                            msg._id === tempId ? { ...data.chat, isTemp: false } : msg
-                        )
-                    );
+                // Emit via socket for real-time delivery to other participants
+                if (socket?.connected) {
+                    socket.emit('message:send', {
+                        conversationId: selectedCustomer.conversationId,
+                        messageId: data.message._id
+                    });
                 }
             }
         } catch (error) {
-            console.error('Error sending:', error);
-            setMessages(prev => prev.filter(m => m._id !== tempId));
+            console.error('Error sending message:', error);
+            // Remove temp message on error
+            setMessages(prev => prev.filter(msg => msg._id !== tempId));
+            alert('Không thể gửi tin nhắn. Vui lòng thử lại.');
         }
     };
 
@@ -287,7 +316,7 @@ const PartnerLiveChat = () => {
                                 <div>
                                     <h4>
                                         {selectedCustomer 
-                                            ? selectedCustomer.name 
+                                            ? `${selectedCustomer.customerName}${selectedCustomer.isAnonymous ? ' (Guest)' : ''}`
                                             : `Customers (${customers.length})`}
                                     </h4>
                                     <span className="header-status">
@@ -319,21 +348,25 @@ const PartnerLiveChat = () => {
                                         ) : (
                                             customers.map(customer => (
                                                 <motion.div
-                                                    key={customer._id}
+                                                    key={customer.conversationId}
                                                     className="customer-item"
                                                     onClick={() => handleSelectCustomer(customer)}
                                                     whileHover={{ scale: 1.02 }}
                                                 >
                                                     <div className="customer-avatar">
-                                                        {customer.name?.charAt(0) || 'C'}
+                                                        {customer.isAnonymous && '👤'}
+                                                        {!customer.isAnonymous && (customer.customerName?.charAt(0) || 'C')}
                                                     </div>
                                                     <div className="customer-info">
-                                                        <h5>{customer.name || 'Khách hàng'}</h5>
-                                                        <p>{customer.lastMessage || 'Bắt đầu chat...'}</p>
+                                                        <h5>
+                                                            {customer.customerName || 'Khách hàng'}
+                                                            {customer.isAnonymous && ' (Guest)'}
+                                                        </h5>
+                                                        <p>{customer.lastMessage?.text || 'Bắt đầu chat...'}</p>
                                                     </div>
-                                                    {unreadCounts[customer._id] > 0 && (
+                                                    {customer.unreadCount > 0 && (
                                                         <span className="customer-unread">
-                                                            {unreadCounts[customer._id]}
+                                                            {customer.unreadCount}
                                                         </span>
                                                     )}
                                                 </motion.div>
@@ -350,21 +383,31 @@ const PartnerLiveChat = () => {
                                                     <p>Chưa có tin nhắn</p>
                                                 </div>
                                             ) : (
-                                                messages.map(msg => (
-                                                    <motion.div
-                                                        key={msg._id}
-                                                        className={`message ${msg.senderId === partnerId ? 'partner' : 'customer'}`}
-                                                        initial={{ opacity: 0, y: 10 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                    >
-                                                        <div className="message-content">
-                                                            <p>{msg.message}</p>
-                                                            <span className="message-time">
-                                                                <FiClock size={12} /> {formatTime(msg.timestamp)}
-                                                            </span>
-                                                        </div>
-                                                    </motion.div>
-                                                ))
+                                                messages.map(msg => {
+                                                    const isPartnerMessage = msg.senderRole === 'partner' || 
+                                                                           (msg.sender && msg.sender._id === partnerId);
+                                                    return (
+                                                        <motion.div
+                                                            key={msg._id}
+                                                            className={`message ${isPartnerMessage ? 'partner' : 'customer'}`}
+                                                            initial={{ opacity: 0, y: 10 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                        >
+                                                            <div className="message-sender">
+                                                                {isPartnerMessage 
+                                                                    ? (msg.sender?.username || user?.shopName || 'Shop')
+                                                                    : (msg.anonymousName || msg.sender?.username || 'Khách')}
+                                                            </div>
+                                                            <div className="message-content">
+                                                                <p>{msg.message}</p>
+                                                                <span className="message-time">
+                                                                    <FiClock size={12} /> {formatTime(msg.createdAt)}
+                                                                    {msg.isTemp && ' • Đang gửi...'}
+                                                                </span>
+                                                            </div>
+                                                        </motion.div>
+                                                    );
+                                                })
                                             )}
                                             <div ref={messagesEndRef} />
                                         </div>

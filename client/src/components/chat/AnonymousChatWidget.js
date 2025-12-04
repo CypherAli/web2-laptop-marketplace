@@ -18,6 +18,7 @@ const AnonymousChatWidget = () => {
     const [conversationId, setConversationId] = useState(null);
     const [anonymousId, setAnonymousId] = useState(null);
     const [anonymousName, setAnonymousName] = useState('Khách');
+    const [isSending, setIsSending] = useState(false);
     const messagesEndRef = useRef(null);
     const pollingIntervalRef = useRef(null);
 
@@ -166,22 +167,28 @@ const AnonymousChatWidget = () => {
         setSelectedPartner(partner);
         setShowPartnerList(false);
         
-        // Try to get existing conversation ID from localStorage
-        let convId = null;
-        if (!user) {
-            convId = localStorage.getItem(`conversation_${partner._id}`);
-        }
-        
-        // Create or get conversation
-        if (!convId) {
-            convId = await createOrGetConversation(partner._id);
+        // Clear old anonymous conversation IDs when logged in
+        if (user) {
+            // Don't use localStorage conversation ID for authenticated users
+            const convId = await createOrGetConversation(partner._id);
+            if (convId) {
+                await fetchMessages(convId);
+            }
         } else {
-            setConversationId(convId);
-        }
-        
-        // Fetch messages
-        if (convId) {
-            await fetchMessages(convId);
+            // For anonymous users, try to get existing conversation ID from localStorage
+            let convId = localStorage.getItem(`conversation_${partner._id}`);
+            
+            // Create or get conversation
+            if (!convId) {
+                convId = await createOrGetConversation(partner._id);
+            } else {
+                setConversationId(convId);
+            }
+            
+            // Fetch messages
+            if (convId) {
+                await fetchMessages(convId);
+            }
         }
     };
 
@@ -200,8 +207,15 @@ const AnonymousChatWidget = () => {
     const handleSendMessage = async (e) => {
         e.preventDefault();
         
-        if (!messageInput.trim() || !conversationId) return;
+        if (!messageInput.trim() || !conversationId || isSending) return;
 
+        setIsSending(true);
+        
+        // Temporarily stop polling to avoid conflicts
+        if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current);
+        }
+        
         const tempId = `temp_${Date.now()}`;
         const messageData = {
             _id: tempId,
@@ -238,7 +252,23 @@ const AnonymousChatWidget = () => {
             console.error('Error sending message:', error);
             // Remove temp message if failed
             setMessages(prev => prev.filter(msg => msg._id !== tempId));
-            alert('Cannot send message. Please try again.');
+            
+            // Show user-friendly error message
+            const errorMsg = error.response?.data?.message || 'Không thể gửi tin nhắn. Vui lòng thử lại.';
+            alert(errorMsg);
+        } finally {
+            setIsSending(false);
+            
+            // Restart polling for anonymous users after a short delay
+            if (!user && conversationId) {
+                setTimeout(() => {
+                    if (!pollingIntervalRef.current && conversationId) {
+                        pollingIntervalRef.current = setInterval(() => {
+                            fetchMessages(conversationId);
+                        }, 3000);
+                    }
+                }, 1000);
+            }
         }
     };
 
@@ -428,7 +458,8 @@ const AnonymousChatWidget = () => {
                                             <button
                                                 type="submit"
                                                 className="send-button"
-                                                disabled={!messageInput.trim()}
+                                                disabled={!messageInput.trim() || isSending}
+                                                title={isSending ? 'Đang gửi...' : 'Gửi tin nhắn'}
                                             >
                                                 <FiSend size={18} />
                                             </button>
